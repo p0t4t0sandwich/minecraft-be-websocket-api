@@ -8,13 +8,31 @@ This API is a wrapper for Minecraft Bedrock Edition's websocket capabilities. It
 
 ## TODO
 
-- [ ] Build a basic websocket server
+- [x] Build a basic websocket server
 - [ ] Implement basic websocket protocol for sending commands and listening to events
 - [ ] Implement REST API
 - [ ] Build SDK for interacting with the API
 
 ## Resources
 
-<https://gist.github.com/pirosuke/1ca2aa4d8920f41dfbabcbc7dc2a669f>
+### Promising example implementaion
+
+<https://github.com/railsbob/minecraft-wss>
+
+### Events
 
 <https://gist.github.com/jocopa3/5f718f4198f1ea91a37e3a9da468675c>
+
+<https://github.com/MisteFr/minecraft-bedrock-documentation/blob/master/release/1.12.0.28/1.12.0.28_wssEvents.md>
+
+<https://gist.github.com/jocopa3/54b42fb6361952997c4a6e38945e306f>
+
+### Misc
+
+<https://gist.github.com/pirosuke/1ca2aa4d8920f41dfbabcbc7dc2a669f>
+
+<https://github.com/Sandertv/mcwss/blob/master/encryption.go#L16>
+
+<https://github.com/Nathan-Nesbitt/Minecraft_API/blob/development/src/minecraft_api.js>
+
+<https://github.com/askvictor/mineclass>
