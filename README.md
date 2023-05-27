@@ -1,10 +1,10 @@
 # Minecraft_BE_API
 
-An API that utilizes Minecraft Bedrock Edition's websocket capabilities to administer commands and listen to in-game events.
+An API that utilizes Minecraft Bedrock Edition's (and Minecraft Education Edition's) websocket capabilities to administer commands and listen to in-game events.
 
 ## About
 
-This API is a wrapper for Minecraft Bedrock Edition's websocket capabilities. It allows you to send commands to the server and listen to events that happen in-game. I'm going further with this and implementing a REST API into the websocket server. This will abstract the websocket protocol and allow you to use the API as if it were a REST API. REST API event callbacks require a callback URL and a listening webserver.
+This API is a wrapper for Minecraft Bedrock Edition's (and Minecraft Education Edition's) websocket capabilities. It allows you to send commands to the server and listen to events that happen in-game. I'm going further with this and implementing a REST API into the websocket server. This will abstract the websocket protocol and allow you to use the API as if it were a REST API. REST API event callbacks require a callback URL and a listening webserver.
 
 ## TODO
 
@@ -12,6 +12,8 @@ This API is a wrapper for Minecraft Bedrock Edition's websocket capabilities. It
 - [ ] Implement basic websocket protocol for sending commands and listening to events
 - [ ] Implement REST API
 - [ ] Build SDK for interacting with the API
+- [ ] Some sort of sideloading/plugin system?
+- [ ] Extrapolated Command API/simplification of commands
 
 ## Resources
 
