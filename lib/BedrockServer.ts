@@ -1,4 +1,4 @@
-import { EventName, Event, PlayerMessageEvent } from "./Events.js";
+import { EventName, BedrockEvent, PlayerMessageEvent } from "./Events.js";
 import { CommandMessage, SubscribeMessage } from "./Messages.js";
 
 export class BedrockServer {
@@ -26,12 +26,16 @@ export class BedrockServer {
         if (message == "ping" || message == "pong") return;
 
         const res = JSON.parse(message);
-        if (res.header.messagePurpose === 'event') {
+
+        if (res.header?.eventName) {
+            const event: BedrockEvent = res;
+            event.server = this.userID;
+
             // Handle subscribed events
-            const eventName = res.header.eventName;
+            const eventName = event.header.eventName;
             if (this.events[eventName]) {
                 this.events[eventName].forEach((callback: Function) => {
-                    callback(res);
+                    callback(event);
                 });
             }
 
@@ -45,9 +49,11 @@ export class BedrockServer {
     }
 
     // Subscribe to event
-    async subscribeToEvent(event: string, callback: (res: Event) => void) {
+    async subscribeToEvent(event: EventName, callback: (res: Event) => void) {
         if (!this.events[event]) this.events[event] = [];
         this.events[event].push(callback);
+
+        console.log('Subscribed to ' + event + ' from ' + this.userID);
 
         // Send subscribe message
         const subscribeMessage: SubscribeMessage = new SubscribeMessage(event);
@@ -55,7 +61,7 @@ export class BedrockServer {
     }
 
     // Unsubscribe from event
-    async unsubscribeFromEvent(event: string) {
+    async unsubscribeFromEvent(event: EventName) {
         if (!this.events[event]) return;
 
         // Send unsubscribe message
@@ -75,7 +81,7 @@ export class BedrockServer {
     // Events
 
     // PlayerMessage
-    async onPlayerMessage(callback: (res: PlayerMessageEvent) => void) {
-        this.subscribeToEvent(EventName.PlayerMessage, callback);
-    }
+    // async onPlayerMessage(callback: (res: PlayerMessageEvent) => void) {
+    //     this.subscribeToEvent(EventName.PlayerMessage, callback);
+    // }
 }

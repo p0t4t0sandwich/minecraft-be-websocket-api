@@ -16,6 +16,7 @@ export const wss: WebSocketServer = new WebSocketServer({ port: WEBSOCKET_PORT }
 // Minecraft Web Socket
 const mwss: MinecraftWebSocket = new MinecraftWebSocket(wss);
 
+// Add PlayerMessage Event listener
 await mwss.on(EventName.PlayerMessage, async (event: PlayerMessageEvent) => {
     console.log("PlayerMessageEvent received: ", event);
 

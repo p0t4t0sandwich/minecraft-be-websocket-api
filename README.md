@@ -13,7 +13,7 @@ You need to disable encrypted web sockets for this to work. There's no way in he
 ## TODO
 
 - [x] Build a basic websocket server
-- [ ] Implement basic websocket protocol for sending commands and listening to events
+- [x] Implement basic websocket protocol for sending commands and listening to events
 - [ ] Implement REST API
 - [ ] Build SDK for interacting with the API
 - [ ] Some sort of sideloading/plugin system?

@@ -16,13 +16,14 @@ interface EventHeader {
 type EventBody = any;
 
 // Event interface
-export interface Event {
+export interface BedrockEvent {
+    server: string;
     header: EventHeader;
     body: EventBody;
 }
 
 // PlayerMessageEvent
-export interface PlayerMessageEvent extends Event {
+export interface PlayerMessageEvent extends BedrockEvent {
     header: {
         eventName: EventName.PlayerMessage,
         messagePurpose: "event",
