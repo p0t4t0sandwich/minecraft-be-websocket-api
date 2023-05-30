@@ -1,6 +1,5 @@
 import { WebSocketServer } from "ws";
 
-
 import { MinecraftWebSocket } from "./lib/MinecraftWebSocket.js";
 import { EventName, PlayerMessageEvent } from "./lib/Events.js";
 
@@ -18,12 +17,19 @@ const mwss: MinecraftWebSocket = new MinecraftWebSocket(wss);
 
 // Add PlayerMessage Event listener
 await mwss.on(EventName.PlayerMessage, async (event: PlayerMessageEvent) => {
-    console.log("PlayerMessageEvent received: ", event);
-
     // Ignore messages from the websocket server
     if (event.body.sender == "Teacher") return
 
-    await mwss.sendCommand(event.server, `tellraw @a {"rawtext":[{"text":"${event.body.sender} said: ${event.body.message}"}]}`);
+    // Rename command
+    if (event.body.message.startsWith("!rename")) {
+        const playerName: string = event.body.sender;
+        const newName: string = event.body.message.split(" ")[1];
+
+        await mwss.sendCommand(event.server, `tag "${playerName}" add "${newName}"`);
+
+        await mwss.sendCommand(event.server, `tag "${playerName}" list`);
+    }
 });
 
+// Start the websocket server
 await mwss.start();

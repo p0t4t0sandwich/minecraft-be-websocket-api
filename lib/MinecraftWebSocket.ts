@@ -40,8 +40,16 @@ export class MinecraftWebSocket {
         this.eventListeners.push({ eventName: eventName, callback: callback })
     }
 
+    // Send command
     async sendCommand(server: string, command: string) {
         return await this.servers[server].sendCommand(command);
+    }
+
+    // Load listeners { eventName: EventName, callback: (event: BedrockEvent) => void) }
+    async loadListeners(listeners: any[]) {
+        for (var listener in listeners) {
+            this.eventListeners.push(listeners[listener]);
+        }
     }
 
     // Start the websocket server

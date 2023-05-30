@@ -25,10 +25,10 @@ export class BedrockServer {
     async onMessage(message: string) {
         if (message == "ping" || message == "pong") return;
 
-        const res = JSON.parse(message);
+        const res: any = JSON.parse(message);
 
-        if (res.header?.eventName) {
-            const event: BedrockEvent = res;
+        if (res.header?.messagePurpose == "event") {
+            const event: BedrockEvent = <BedrockEvent>res;
             event.server = this.userID;
 
             // Handle subscribed events
@@ -40,6 +40,10 @@ export class BedrockServer {
             }
 
             console.log('Event: ' + eventName + ' from ' + this.userID + ': ' + message);
+        } else if (res.header?.messagePurpose == "commandResponse") {
+            console.log('CommandResponse from ' + this.userID + ': ' + message);
+        } else {
+            console.log('Message from ' + this.userID + ': ' + message);
         }
     }
 
@@ -77,11 +81,4 @@ export class BedrockServer {
         const commandMessage: CommandMessage = new CommandMessage(command);
         await this.send(JSON.stringify(commandMessage));
     }
-
-    // Events
-
-    // PlayerMessage
-    // async onPlayerMessage(callback: (res: PlayerMessageEvent) => void) {
-    //     this.subscribeToEvent(EventName.PlayerMessage, callback);
-    // }
 }
