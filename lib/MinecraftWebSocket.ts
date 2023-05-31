@@ -9,8 +9,8 @@ import { fileURLToPath } from 'url';
 import { BedrockServer } from "./BedrockServer.js";
 
 // General type imports
-import { BedrockEvent, EventName } from "./Events.js";
-import { Listener } from "./Listeners.js";
+import { BedrockEvent, EventName } from "./events/Events.js";
+import { Listener } from "./listeners/Listeners.js";
 
 
 export class MinecraftWebSocket {
@@ -77,9 +77,10 @@ export class MinecraftWebSocket {
         const plugins: string[] = readdirSync(pluginsDir);
 
         // Load listeners from plugins
-        var listeners: Listener[] = [];
-        for (var plugin in plugins) {
-            var pluginPath: string = join(pluginsDir, plugins[plugin]);
+        let listeners: Listener[] = [];
+        for (const plugin of plugins) {
+            console.log("Loading plugin: " + plugin);
+            var pluginPath: string = join(pluginsDir, plugin);
             var pluginListeners: Listener[] = await import(pluginPath).then((module) => module.listeners);
             listeners = listeners.concat(pluginListeners);
         }

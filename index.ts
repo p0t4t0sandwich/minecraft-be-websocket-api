@@ -1,7 +1,7 @@
 import { MinecraftWebSocket } from "./lib/MinecraftWebSocket.js";
 
 
-// Web Sockets
+// Web Socket Port
 const WEBSOCKET_PORT: number = <number><unknown>process.env.WEBSOCKET_PORT || 4005;
 
 // Minecraft Web Socket

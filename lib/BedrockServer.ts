@@ -1,12 +1,14 @@
-import { EventName, BedrockEvent, PlayerMessageEvent } from "./Events.js";
-import { CommandMessage, SubscribeMessage } from "./Messages.js";
+import { CommandMessage } from "./commands/CommandMessage.js";
+import { EventSubscribeMessage, EventUnsubscribeMessage } from "./events/EventMessages.js";
+import { EventName, BedrockEvent } from "./events/Events.js";
+
 
 export class BedrockServer {
     // Parameters
     public userID: string;
     public ws: WebSocket;
-    public isAlive: boolean = true;
-    public events: any = {};
+    public isAlive: boolean;
+    public events: any;
 
     // Constructor
     constructor(userID: string, ws: any) {
@@ -60,7 +62,7 @@ export class BedrockServer {
         console.log('Subscribed to ' + event + ' from ' + this.userID);
 
         // Send subscribe message
-        const subscribeMessage: SubscribeMessage = new SubscribeMessage(event);
+        const subscribeMessage: EventSubscribeMessage = new EventSubscribeMessage(event);
         await this.send(JSON.stringify(subscribeMessage));
     }
 
@@ -69,7 +71,7 @@ export class BedrockServer {
         if (!this.events[event]) return;
 
         // Send unsubscribe message
-        const unsubscribeMessage: SubscribeMessage = new SubscribeMessage(event);
+        const unsubscribeMessage: EventUnsubscribeMessage = new EventUnsubscribeMessage(event);
         await this.send(JSON.stringify(unsubscribeMessage));
 
         // Remove event

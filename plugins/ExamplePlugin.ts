@@ -2,8 +2,8 @@
 // { eventName: EventName, callback: (event: BedrockEvent) => void) }
 
 import { mwss } from "../index.js";
-import { EventName, PlayerMessageEvent } from "../lib/Events.js";
-import { Listener } from "../lib/Listeners.js";
+import { EventName, PlayerMessageEvent } from "../lib/events/Events.js";
+import { Listener } from "../lib/listeners/Listeners.js";
 
 export const listeners: Listener[] = [
     {
