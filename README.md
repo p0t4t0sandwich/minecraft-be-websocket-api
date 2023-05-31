@@ -90,3 +90,5 @@ export const listeners: Listener[] = [
 <https://github.com/Nathan-Nesbitt/Minecraft_API/blob/development/src/minecraft_api.js>
 
 <https://github.com/askvictor/mineclass>
+
+<https://github.com/jocopa3/PEWS-API>

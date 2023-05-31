@@ -6,7 +6,10 @@ import { MessageBody, MessageHeader } from "../messages/Messages.js";
 export enum EventName {
     BlockBroken = "BlockBroken",
     BlockPlaced = "BlockPlaced",
-    PlayerMessage = "PlayerMessage"
+    ItemNamed = "ItemNamed", // Might not work
+    ItemUsed = "ItemUsed",
+    PlayerMessage = "PlayerMessage",
+    PlayerTransform = "PlayerTransform" // Player Movement
 }
 
 // EventHeader interface
@@ -52,14 +55,18 @@ interface Player {
     yRot: number;
 }
 
-// Tool interface
-interface Tool {
+// Item interface
+interface Item {
     aux: number;
+    id: string;
+    namespace: "minecraft" | string;
+}
+
+// Tool interface
+interface Tool extends Item {
     enchantments: [];
     freeStackSize: number;
-    id: string;
     maxStackSize: number;
-    namespace: string;
     stackSize: number;
 }
 
@@ -116,6 +123,29 @@ export class BlockPlacedEvent extends BedrockEvent {
     }
 }
 
+// ItemUsedEvent
+interface ItemUsedBody extends EventBody {
+    count: number,
+    item: Item,
+    player: Player,
+    useMethod: number
+}
+
+export class ItemUsedEvent extends BedrockEvent {
+    // Properties
+    server: string;
+    header: EventHeader;
+    body: ItemUsedBody;
+
+    // Constructor
+    constructor(server: string, event: BedrockEvent) {
+        super();
+        this.server = server;
+        this.header = event.header;
+        this.body = <ItemUsedBody>event.body;
+    }
+}
+
 // PlayerMessageEvent
 interface PlayerMessageBody extends EventBody {
     message: string;
@@ -136,5 +166,25 @@ export class PlayerMessageEvent extends BedrockEvent {
         this.server = server;
         this.header = event.header;
         this.body = <PlayerMessageBody>event.body;
+    }
+}
+
+// PlayerTransformEvent
+interface PlayerTransformBody extends EventBody {
+    player: Player;
+}
+
+export class PlayerTransformEvent extends BedrockEvent {
+    // Properties
+    server: string;
+    header: EventHeader;
+    body: PlayerTransformBody;
+
+    // Constructor
+    constructor(server: string, event: BedrockEvent) {
+        super();
+        this.server = server;
+        this.header = event.header;
+        this.body = <PlayerTransformBody>event.body;
     }
 }

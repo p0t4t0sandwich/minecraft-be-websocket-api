@@ -19,7 +19,24 @@ export const listeners: Listener[] = [
         }
     },
     {
-        eventName: EventName.BlockBroken,
-        callback: async (event: BedrockEvent) => {}
+        eventName: EventName.ItemNamed, // Might not work
+        callback: async (event: BedrockEvent) => {
+            console.log(EventName.ItemNamed);
+            console.log(event);
+        }
+    },
+    {
+        eventName: EventName.ItemUsed,
+        callback: async (event: BedrockEvent) => {
+            // console.log(EventName.ItemUsed);
+            // console.log(event);
+        }
+    },
+    {
+        eventName: EventName.PlayerTransform,
+        callback: async (event: BedrockEvent) => {
+            // console.log(EventName.PlayerTransform);
+            // console.log(event);
+        }
     }
 ]

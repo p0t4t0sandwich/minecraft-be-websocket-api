@@ -8,6 +8,8 @@ const WEBSOCKET_PORT: number = <number><unknown>process.env.WEBSOCKET_PORT || 40
 export const mwss: MinecraftWebSocket = new MinecraftWebSocket(WEBSOCKET_PORT);
 
 // Import listeners from plugin
-import { listeners } from "./plugins/ExamplePlugin.js";
+import { listeners as example } from "./plugins/ExamplePlugin.js";
+await mwss.loadListeners(example);
 
-await mwss.loadListeners(listeners);
+import { listeners as namePlayerCommand } from "./plugins/NamePlayerCommand.js";
+await mwss.loadListeners(namePlayerCommand);
