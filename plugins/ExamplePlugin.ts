@@ -2,7 +2,7 @@
 // { eventName: EventName, callback: (event: BedrockEvent) => void) }
 
 import { mwss } from "../index.js";
-import { EventName, PlayerMessageEvent } from "../lib/events/Events.js";
+import { BedrockEvent, EventName, PlayerMessageEvent } from "../lib/events/Events.js";
 import { Listener } from "../lib/listeners/Listeners.js";
 
 export const listeners: Listener[] = [
@@ -17,5 +17,9 @@ export const listeners: Listener[] = [
 
             await mwss.sendCommand(event.server, `say ${playerName} said ${message}`);
         }
+    },
+    {
+        eventName: EventName.BlockBroken,
+        callback: async (event: BedrockEvent) => {}
     }
 ]

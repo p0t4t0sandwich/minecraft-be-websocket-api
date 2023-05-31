@@ -66,7 +66,7 @@ export class MinecraftWebSocket {
         }
     }
 
-    // Load plugins
+    // Load plugins -- Dynamic imports don't work, so I'm benching this for now
     async loadPlugins(pluginsFolderName: string) {
         // Get path to plugins folder
         const __filename = fileURLToPath(import.meta.url);
@@ -77,15 +77,19 @@ export class MinecraftWebSocket {
         const plugins: string[] = readdirSync(pluginsDir);
 
         // Load listeners from plugins
-        let listeners: Listener[] = [];
+        let pluginListeners: Listener[] = [];
         for (const plugin of plugins) {
-            console.log("Loading plugin: " + plugin);
-            var pluginPath: string = join(pluginsDir, plugin);
-            var pluginListeners: Listener[] = await import(pluginPath).then((module) => module.listeners);
-            listeners = listeners.concat(pluginListeners);
+            const pluginPath: string = join(pluginsDir, plugin);
+
+            const { listeners } = await import(pluginPath);
+            pluginListeners = pluginListeners.concat(listeners);
+
+            console.log("Loaded " + pluginListeners.length + " listeners from " + plugin);
         }
 
+        console.log("Loaded " + pluginListeners.length + " listeners from " + plugins.length + " plugins");
+
         // Load listeners into server
-        await this.loadListeners(listeners);
+        await this.loadListeners(pluginListeners);
     }
 }
