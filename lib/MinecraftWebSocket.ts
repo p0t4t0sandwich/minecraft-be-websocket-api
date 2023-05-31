@@ -1,8 +1,16 @@
 import { WebSocket, WebSocketServer } from "ws";
 
+// Imports for loading plugins
+import { readdirSync } from "fs";
+import path, { join } from "path";
+import { fileURLToPath } from 'url';
 
+// Bedrock server import
 import { BedrockServer } from "./BedrockServer.js";
+
+// General type imports
 import { BedrockEvent, EventName } from "./Events.js";
+import { Listener } from "./Listeners.js";
 
 
 export class MinecraftWebSocket {
@@ -11,8 +19,14 @@ export class MinecraftWebSocket {
     private eventListeners: any[] = [];
     private servers: any = {};
 
-    constructor(wss: WebSocketServer) {
-        this.wss = wss;
+    constructor(WEBSOCKET_PORT: number) {
+        // Create web socket server
+        this.wss = new WebSocketServer({ port: WEBSOCKET_PORT }, () => {
+            console.log(`MC BE Management Web Socket running on port ${WEBSOCKET_PORT}`);
+        });
+
+        // On connection handler
+        this.wss.on('connection', this.onConnection.bind(this));
     }
 
     async onConnection(ws: WebSocket, req) {
@@ -46,14 +60,31 @@ export class MinecraftWebSocket {
     }
 
     // Load listeners { eventName: EventName, callback: (event: BedrockEvent) => void) }
-    async loadListeners(listeners: any[]) {
+    async loadListeners(listeners: Listener[]) {
         for (var listener in listeners) {
             this.eventListeners.push(listeners[listener]);
         }
     }
 
-    // Start the websocket server
-    async start() {
-        this.wss.on('connection', this.onConnection.bind(this));
+    // Load plugins
+    async loadPlugins(pluginsFolderName: string) {
+        // Get path to plugins folder
+        const __filename = fileURLToPath(import.meta.url);
+        const __dirname = path.dirname(__filename);
+        const pluginsDir: string = join(__dirname, "../" + pluginsFolderName);
+
+        // Get plugins
+        const plugins: string[] = readdirSync(pluginsDir);
+
+        // Load listeners from plugins
+        var listeners: Listener[] = [];
+        for (var plugin in plugins) {
+            var pluginPath: string = join(pluginsDir, plugins[plugin]);
+            var pluginListeners: Listener[] = await import(pluginPath).then((module) => module.listeners);
+            listeners = listeners.concat(pluginListeners);
+        }
+
+        // Load listeners into server
+        await this.loadListeners(listeners);
     }
 }

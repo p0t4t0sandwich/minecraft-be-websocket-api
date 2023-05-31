@@ -14,53 +14,51 @@ You need to disable encrypted web sockets for this to work. There's no way in he
 
 ### Websocket API
 
-```typescript
-import { WebSocketServer } from "ws";
+`index.ts`
 
+```typescript
 import { MinecraftWebSocket } from "./lib/MinecraftWebSocket.js";
-import { EventName, PlayerMessageEvent } from "./lib/Events.js";
 
 
 // Web Sockets
 const WEBSOCKET_PORT: number = <number><unknown>process.env.WEBSOCKET_PORT || 4005;
 
-export const wss: WebSocketServer = new WebSocketServer({ port: WEBSOCKET_PORT }, () => {
-    console.log(`MC BE Management Web Socket running on port ${WEBSOCKET_PORT}`);
-});
-
-
 // Minecraft Web Socket
-const mwss: MinecraftWebSocket = new MinecraftWebSocket(wss);
+export const mwss: MinecraftWebSocket = new MinecraftWebSocket(WEBSOCKET_PORT);
 
-// Add PlayerMessage Event listener
-await mwss.on(EventName.PlayerMessage, async (event: PlayerMessageEvent) => {
-    // Ignore messages from the websocket server
-    if (event.body.sender == "Teacher") return
+// Import listeners from ./plugins
+await mwss.loadPlugins('./plugins');
+```
 
-    await mwss.sendCommand(event.server, `tellraw @a {"rawtext":[{"text":"${event.body.sender} said: ${event.body.message}"}]}`);
-});
+`./plugin/ExamplePlugin.ts`
 
-// Or, load listeners from an array (eg. from another file)
-await mwss.loadListeners([
+```typescript
+import { mwss } from "../index.js";
+import { EventName, PlayerMessageEvent } from "../lib/Events.js";
+import { Listener } from "../lib/Listeners.js";
+
+export const listeners: Listener[] = [
     {
         eventName: EventName.PlayerMessage,
         callback: async (event: PlayerMessageEvent) => {
+            const playerName: string = event.body.sender;
+            const message: string = event.body.message;
+
             // Ignore messages from the websocket server
             if (event.body.sender == "Teacher") return
-            
-            await mwss.sendCommand(event.server, `tellraw @a {"rawtext":[{"text":"${event.body.sender} said: ${event.body.message}"}]}`);
+
+            await mwss.sendCommand(event.server, `say ${playerName} said ${message}`);
         }
     }
-]);
-
-// Start the websocket server
-await mwss.start();
+]
 ```
 
 ## TODO
 
 - [x] Build a basic websocket server
 - [x] Implement basic websocket protocol for sending commands and listening to events
+- [ ] Have command feedback be sent back to the method that sent the command
+  - [ ] include timeout error
 - [ ] Implement REST API
 - [ ] Build SDK for interacting with the API
 - [x] Some sort of sideloading/plugin system?
