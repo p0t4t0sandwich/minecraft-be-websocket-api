@@ -1,16 +1,16 @@
-import { Message, MessageBody } from "../messages/Messages.js";
+import { Message, MessageBody, MessageHeader } from "../messages/Messages.js";
 
-export interface CommandBody extends MessageBody {
+// CommandRequestMessage
+interface CommandRequestBody extends MessageBody {
     origin: {
-        type: "player";
+        type: "player" | string;
     };
     commandLine: string;
     version: 1;
 }
 
-// CommandMessage
-export class CommandMessage extends Message {
-    body: CommandBody = {
+export class CommandRequestMessage extends Message {
+    body: CommandRequestBody = {
         origin: {
             type: "player"
         },
@@ -24,5 +24,19 @@ export class CommandMessage extends Message {
         this.header.messagePurpose = "commandRequest";
         this.header.messageType = "commandRequest";
         this.body.commandLine = command;
+    }
+}
+
+// CommandResponseMessage
+type CommandResponseBody = MessageBody;
+
+export class CommandResponseMessage extends Message {
+    body: CommandResponseBody;
+
+    // Constructor
+    constructor(res: Message) {
+        super();
+        this.header.messagePurpose = "commandResponse";
+        this.body = res.body;
     }
 }

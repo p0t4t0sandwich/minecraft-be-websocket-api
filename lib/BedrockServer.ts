@@ -1,4 +1,4 @@
-import { CommandMessage } from "./commands/CommandMessage.js";
+import { CommandRequestMessage, CommandResponseMessage } from "./commands/CommandMessage.js";
 import { EventSubscribeMessage, EventUnsubscribeMessage } from "./events/EventMessages.js";
 import { EventName, BedrockEvent } from "./events/Events.js";
 
@@ -79,8 +79,10 @@ export class BedrockServer {
     }
 
     // Send command
-    async sendCommand(command: string) {
-        const commandMessage: CommandMessage = new CommandMessage(command);
+    async sendCommand(command: string): Promise<void> {
+        const commandMessage: CommandRequestMessage = new CommandRequestMessage(command);
         await this.send(JSON.stringify(commandMessage));
+
+        // return new CommandResponseMessage();
     }
 }

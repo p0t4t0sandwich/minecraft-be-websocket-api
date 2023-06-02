@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 export interface MessageHeader {
     requestId: string;
     messagePurpose: string;
-    messageType: string;
+    messageType?: string;
     version: number;
 }
 
@@ -23,4 +23,29 @@ export class Message {
         version: 1
     };
     body: MessageBody = {};
+
+    // Methods
+    getUUID(): string {
+        return this.header.requestId;
+    }
+}
+
+// ErrorMessage
+interface ErrorMessageBody extends MessageBody {
+    statusCode: number;
+    statusMessage: string;
+}
+
+export class ErrorMessage extends Message {
+    body: ErrorMessageBody;
+
+    // Constructor
+    constructor(statusCode: number, statusMessage: string) {
+        super();
+        this.body = {
+            statusCode: statusCode,
+            statusMessage: statusMessage
+        };
+        this.header.messagePurpose = "error";
+    }
 }
