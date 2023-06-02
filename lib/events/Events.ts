@@ -4,15 +4,26 @@ import { MessageBody, MessageHeader } from "../messages/Messages.js";
 
 // EventName enum
 
+// Notes:
+// - ItemNamed may not work
+// - StartWorld may not work
+// - WorldLoaded may not work
+// - WorldGenerated may not work
+// - WorldUnloaded may not work
+
 export enum EventName {
     BlockBroken = "BlockBroken",
     BlockPlaced = "BlockPlaced",
-    ItemNamed = "ItemNamed", // Might not work
+    ItemNamed = "ItemNamed",
     ItemUsed = "ItemUsed",
     PlayerJoin = "PlayerJoin",
     PlayerLeave = "PlayerLeave",
     PlayerMessage = "PlayerMessage",
-    PlayerTransform = "PlayerTransform", // Player Movement
+    PlayerTransform = "PlayerTransform",
+    StartWorld = "StartWorld",
+    WorldLoaded = "WorldLoaded",
+    WorldGenerated = "WorldGenerated",
+    WorldUnloaded = "WorldUnloaded",
 }
 
 // EventHeader interface

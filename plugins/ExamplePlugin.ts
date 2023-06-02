@@ -3,43 +3,86 @@
 
 import { mwss } from "../index.js";
 import { BedrockServer } from "../lib/BedrockServer.js";
+import { MinecraftWebSocket } from "../lib/MinecraftWebSocket.js";
+import { Plugin } from "../lib/Plugin.js";
 import { BedrockEvent, EventName, PlayerMessageEvent } from "../lib/events/Events.js";
-import { Listener } from "../lib/listeners/Listeners.js";
 
-export const listeners: Listener[] = [
-    {
-        eventName: EventName.PlayerMessage,
-        callback: async (event: PlayerMessageEvent) => {
-            const playerName: string = event.body.sender;
-            const message: string = event.body.message;
-            const server: BedrockServer = mwss.getServer(event.server);
+export class ExamplePlugin extends Plugin {
+    // Constructor
+    constructor() {
+        super();
 
-            // Ignore messages from the websocket server
-            if (event.body.sender == "Teacher") return
+        this.name = "Example Plugin";
+        this.description = "An example plugin for MWSS.";
+        this.version = "1.0.0";
+        this.author = "p0t4t0sandwich";
 
-            await server.sendCommand(`say ${playerName} said ${message}`);
-        }
-    },
-    {
-        eventName: EventName.PlayerJoin,
-        callback: async (event: BedrockEvent) => {
-            console.log(EventName.PlayerJoin);
-            console.log(event);
-            const server: BedrockServer = mwss.getServer(event.server);
-
-            await server.sendCommand(`say ${event.body.player} joined the game`);
-            await server.unsubscribeFromEvent(EventName.PlayerJoin);
-        }
-    },
-    {
-        eventName: EventName.PlayerLeave,
-        callback: async (event: BedrockEvent) => {
-            console.log(EventName.PlayerLeave);
-            console.log(event);
-            const server: BedrockServer = mwss.getServer(event.server);
-
-            await server.sendCommand(`say ${event.body.player} left the game`);
-            await server.unsubscribeFromEvent(EventName.PlayerLeave);
-        }
+        this.setListeners([
+            {
+                eventName: EventName.PlayerMessage,
+                callback: async (event: PlayerMessageEvent) => {
+                    const playerName: string = event.body.sender;
+                    const message: string = event.body.message;
+                    const server: BedrockServer = mwss.getServer(event.server);
+        
+                    // Ignore messages from the websocket server
+                    if (event.body.sender == "Teacher") return
+        
+                    await server.sendCommand(`say ${playerName} said ${message}`);
+                }
+            },
+            {
+                eventName: EventName.StartWorld,
+                callback: async (event: BedrockEvent) => {
+                    const server: BedrockServer = mwss.getServer(event.server);
+        
+                    console.log(event.body);
+                    console.log(event.header);
+        
+                    await server.unsubscribeFromEvent(EventName.StartWorld);
+                }
+            },
+            {
+                eventName: EventName.WorldGenerated,
+                callback: async (event: BedrockEvent) => {
+                    const server: BedrockServer = mwss.getServer(event.server);
+        
+                    console.log(event.body);
+                    console.log(event.header);
+        
+                    await server.unsubscribeFromEvent(EventName.WorldGenerated);
+                }
+            },
+            {
+                eventName: EventName.WorldLoaded,
+                callback: async (event: BedrockEvent) => {
+                    const server: BedrockServer = mwss.getServer(event.server);
+        
+                    console.log(event.body);
+                    console.log(event.header);
+        
+                    await server.unsubscribeFromEvent(EventName.WorldLoaded);
+                }
+            },
+            {
+                eventName: EventName.WorldUnloaded,
+                callback: async (event: BedrockEvent) => {
+                    const server: BedrockServer = mwss.getServer(event.server);
+        
+                    console.log(event.body);
+                    console.log(event.header);
+        
+                    await server.unsubscribeFromEvent(EventName.WorldUnloaded);
+                }
+            }
+        ]);
     }
-]
+
+    // Methods
+
+    // Start
+    async start(mwss: MinecraftWebSocket) {
+        this.mwss = mwss;
+        console.log("Example plugin started!");
+    }
+}

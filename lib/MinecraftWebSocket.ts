@@ -11,6 +11,7 @@ import { BedrockServer } from "./BedrockServer.js";
 // General type imports
 import { BedrockEvent, EventName } from "./events/Events.js";
 import { Listener } from "./listeners/Listeners.js";
+import { Plugin } from "./Plugin.js";
 
 
 export class MinecraftWebSocket {
@@ -66,7 +67,19 @@ export class MinecraftWebSocket {
         }
     }
 
-    // Load plugins -- Dynamic imports don't work, so I'm benching this for now
+    // Load Plugin
+    async loadPlugin(plugin: Plugin) {
+        // Load listeners from plugin
+        let pluginListeners: Listener[] = plugin.getListeners();
+
+        // Load listeners into server
+        await this.loadListeners(pluginListeners);
+
+        // Start plugin
+        await plugin.start(this);
+    }
+
+    // Load plugins -- Dynamic imports don't work, so I'm benching this for now -- needs a rewrite for the new plugin system
     async loadPlugins(pluginsFolderName: string) {
         // Get path to plugins folder
         const __filename = fileURLToPath(import.meta.url);

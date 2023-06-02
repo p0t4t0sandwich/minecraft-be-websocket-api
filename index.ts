@@ -1,15 +1,18 @@
 import { MinecraftWebSocket } from "./lib/MinecraftWebSocket.js";
 
+// Import Plugins
+import { ExamplePlugin } from "./plugins/ExamplePlugin.js";
+import { NamePlayerCommand } from "./testPlugins/NamePlayerCommand.js";
 
-// Web Socket Port
-const WEBSOCKET_PORT: number = <number><unknown>process.env.WEBSOCKET_PORT || 4005;
+async function main() {
+    // Web Socket Port
+    const WEBSOCKET_PORT: number = <number><unknown>process.env.WEBSOCKET_PORT || 4005;
 
-// Minecraft Web Socket
-export const mwss: MinecraftWebSocket = new MinecraftWebSocket(WEBSOCKET_PORT);
+    // Minecraft Web Socket
+    const mwss: MinecraftWebSocket = new MinecraftWebSocket(WEBSOCKET_PORT);
 
-// Import listeners from plugin
-import { listeners as example } from "./plugins/ExamplePlugin.js";
-await mwss.loadListeners(example);
-
-import { listeners as namePlayerCommand } from "./plugins/NamePlayerCommand.js";
-await mwss.loadListeners(namePlayerCommand);
+    // Load plugins
+    await mwss.loadPlugin(new ExamplePlugin());
+    await mwss.loadPlugin(new NamePlayerCommand());
+}
+main();
