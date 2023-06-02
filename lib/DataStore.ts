@@ -61,7 +61,7 @@ export class DataStore {
         // Loop through data stores
         for (const storeName in this.data) {
             // Save the store
-            const dataFile = join(this.dataDir, storeName);
+            const dataFile = join(this.dataDir, storeName + ".json");
             await fs.promises.writeFile(dataFile, JSON.stringify(this.data[storeName]));
         }
     }

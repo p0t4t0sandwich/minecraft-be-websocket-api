@@ -1,7 +1,6 @@
 // ExamplePlugin
 // { eventName: EventName, callback: (event: BedrockEvent) => void) }
 
-import { mwss } from "../index.js";
 import { BedrockServer } from "../lib/BedrockServer.js";
 import { MinecraftWebSocket } from "../lib/MinecraftWebSocket.js";
 import { Plugin } from "../lib/Plugin.js";
@@ -10,20 +9,22 @@ import { BedrockEvent, EventName, PlayerMessageEvent } from "../lib/events/Event
 export class ExamplePlugin extends Plugin {
     // Constructor
     constructor() {
-        super();
+        // Set plugin info
+        super(
+            "Example Plugin",
+            "An example plugin for MWSS.",
+            "1.0.0",
+            "p0t4t0sandwich"
+        );
 
-        this.name = "Example Plugin";
-        this.description = "An example plugin for MWSS.";
-        this.version = "1.0.0";
-        this.author = "p0t4t0sandwich";
-
+        // Set listeners
         this.setListeners([
             {
                 eventName: EventName.PlayerMessage,
                 callback: async (event: PlayerMessageEvent) => {
                     const playerName: string = event.body.sender;
                     const message: string = event.body.message;
-                    const server: BedrockServer = mwss.getServer(event.server);
+                    const server: BedrockServer = this.mwss.getServer(event.server);
         
                     // Ignore messages from the websocket server
                     if (event.body.sender == "Teacher") return
@@ -34,7 +35,7 @@ export class ExamplePlugin extends Plugin {
             {
                 eventName: EventName.StartWorld,
                 callback: async (event: BedrockEvent) => {
-                    const server: BedrockServer = mwss.getServer(event.server);
+                    const server: BedrockServer = this.mwss.getServer(event.server);
         
                     console.log(event.body);
                     console.log(event.header);
@@ -45,7 +46,7 @@ export class ExamplePlugin extends Plugin {
             {
                 eventName: EventName.WorldGenerated,
                 callback: async (event: BedrockEvent) => {
-                    const server: BedrockServer = mwss.getServer(event.server);
+                    const server: BedrockServer = this.mwss.getServer(event.server);
         
                     console.log(event.body);
                     console.log(event.header);
@@ -56,7 +57,7 @@ export class ExamplePlugin extends Plugin {
             {
                 eventName: EventName.WorldLoaded,
                 callback: async (event: BedrockEvent) => {
-                    const server: BedrockServer = mwss.getServer(event.server);
+                    const server: BedrockServer = this.mwss.getServer(event.server);
         
                     console.log(event.body);
                     console.log(event.header);
@@ -67,7 +68,7 @@ export class ExamplePlugin extends Plugin {
             {
                 eventName: EventName.WorldUnloaded,
                 callback: async (event: BedrockEvent) => {
-                    const server: BedrockServer = mwss.getServer(event.server);
+                    const server: BedrockServer = this.mwss.getServer(event.server);
         
                     console.log(event.body);
                     console.log(event.header);

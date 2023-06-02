@@ -5,19 +5,20 @@ import { Listener } from "./listeners/Listeners.js";
 
 export class Plugin {
     // Properties
-    name: string;
-    description: string;
-    version: string;
-    author: string;
+    readonly name: string;
+    readonly description: string;
+    readonly version: string;
+    readonly author: string;
 
     private listeners: Listener[] = [];
     public mwss: MinecraftWebSocket;
 
     // Constructor
-    constructor() {
-        this.name = "Example Plugin";
-        this.version = "0.0.1";
-        this.description = "An example plugin for MWSS";
+    constructor(name: string, description: string, version: string, author: string) {
+        this.name = name;
+        this.description = description;
+        this.version = version;
+        this.author = author;
     }
 
     // Methods
