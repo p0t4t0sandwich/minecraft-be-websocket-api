@@ -15,7 +15,7 @@ import { Listener } from "./listeners/Listeners.js";
 
 export class MinecraftWebSocket {
     // Parameters
-    public wss: WebSocketServer;
+    private wss: WebSocketServer;
     private eventListeners: any[] = [];
     private servers: any = {};
 
@@ -49,14 +49,14 @@ export class MinecraftWebSocket {
         });
     }
 
+    // Get server
+    getServer(server: string) {
+        return this.servers[server];
+    }
+
     // Event listener
     async on(eventName: EventName, callback: (event: BedrockEvent) => void) {
         this.eventListeners.push({ eventName: eventName, callback: callback })
-    }
-
-    // Send command
-    async sendCommand(server: string, command: string) {
-        return await this.servers[server].sendCommand(command);
     }
 
     // Load listeners { eventName: EventName, callback: (event: BedrockEvent) => void) }

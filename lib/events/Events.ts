@@ -3,13 +3,16 @@
 import { MessageBody, MessageHeader } from "../messages/Messages.js";
 
 // EventName enum
+
 export enum EventName {
     BlockBroken = "BlockBroken",
     BlockPlaced = "BlockPlaced",
     ItemNamed = "ItemNamed", // Might not work
     ItemUsed = "ItemUsed",
+    PlayerJoin = "PlayerJoin",
+    PlayerLeave = "PlayerLeave",
     PlayerMessage = "PlayerMessage",
-    PlayerTransform = "PlayerTransform" // Player Movement
+    PlayerTransform = "PlayerTransform", // Player Movement
 }
 
 // EventHeader interface
@@ -143,6 +146,46 @@ export class ItemUsedEvent extends BedrockEvent {
         this.server = server;
         this.header = event.header;
         this.body = <ItemUsedBody>event.body;
+    }
+}
+
+// PlayerJoinEvent
+interface PlayerJoinBody extends EventBody {
+    player: Player;
+}
+
+export class PlayerJoinEvent extends BedrockEvent {
+    // Properties
+    server: string;
+    header: EventHeader;
+    body: PlayerJoinBody;
+
+    // Constructor
+    constructor(server: string, event: BedrockEvent) {
+        super();
+        this.server = server;
+        this.header = event.header;
+        this.body = <PlayerJoinBody>event.body;
+    }
+}
+
+// PlayerLeaveEvent
+interface PlayerLeaveBody extends EventBody {
+    player: Player;
+}
+
+export class PlayerLeaveEvent extends BedrockEvent {
+    // Properties
+    server: string;
+    header: EventHeader;
+    body: PlayerLeaveBody;
+
+    // Constructor
+    constructor(server: string, event: BedrockEvent) {
+        super();
+        this.server = server;
+        this.header = event.header;
+        this.body = <PlayerLeaveBody>event.body;
     }
 }
 
