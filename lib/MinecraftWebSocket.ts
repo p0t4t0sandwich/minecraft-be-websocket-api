@@ -12,6 +12,7 @@ import { BedrockServer } from "./BedrockServer.js";
 import { BedrockEvent, EventName } from "./events/Events.js";
 import { Listener } from "./listeners/Listeners.js";
 import { Plugin } from "./Plugin.js";
+import { MinecraftRESTServer } from "./MinecraftRESTServer.js";
 
 
 export class MinecraftWebSocket {
@@ -104,5 +105,9 @@ export class MinecraftWebSocket {
 
         // Load listeners into server
         await this.loadListeners(pluginListeners);
+    }
+
+    startRestServer(REST_PORT: number): MinecraftRESTServer {
+        return new MinecraftRESTServer(REST_PORT, this);
     }
 }

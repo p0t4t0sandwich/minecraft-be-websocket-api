@@ -11,6 +11,10 @@ async function main() {
     // Minecraft Web Socket
     const mwss: MinecraftWebSocket = new MinecraftWebSocket(WEBSOCKET_PORT);
 
+    // Rest Port
+    const REST_PORT: number = <number><unknown>process.env.REST_PORT || 4006;
+    await mwss.startRestServer(REST_PORT);
+
     // Load plugins
     await mwss.loadPlugin(new ExamplePlugin());
     await mwss.loadPlugin(new NamePlayerCommand());
