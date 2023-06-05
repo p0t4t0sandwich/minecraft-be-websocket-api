@@ -1,4 +1,4 @@
-import { Message, MessageBody, MessageHeader } from "../messages/Messages.js";
+import { Message, MessageBody } from "../messages/Messages.js";
 
 // CommandRequestMessage
 interface CommandRequestBody extends MessageBody {

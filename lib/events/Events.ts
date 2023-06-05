@@ -254,14 +254,14 @@ export class BedrockEvent {
 }
 
 // Block interface
-interface Block {
+export interface Block {
     aux: number;
     id: string;
     namespace: "minecraft" | string;
 }
 
 // Player interface
-interface Player {
+export interface Player {
     color: string;
     dimension: number;
     id: number;
@@ -277,14 +277,14 @@ interface Player {
 }
 
 // Item interface
-interface Item {
+export interface Item {
     aux: number;
     id: string;
     namespace: "minecraft" | string;
 }
 
 // Tool interface
-interface Tool extends Item {
+export interface Tool extends Item {
     enchantments: [];
     freeStackSize: number;
     maxStackSize: number;
