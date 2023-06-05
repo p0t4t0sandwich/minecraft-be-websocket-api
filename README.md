@@ -1,4 +1,4 @@
-# Minecraft_BE_API
+# Minecraft Bedrock Websocket API
 
 An API that utilizes Minecraft Bedrock Edition's (and Minecraft Education Edition's) websocket capabilities to administer commands and listen to in-game events.
 

@@ -34,6 +34,13 @@ export class MinecraftWebSocket {
     async onConnection(ws: WebSocket, req) {
         var url = req.url;
         var userID = url.slice(1);
+
+        if (this.servers[userID]) {
+            ws.close();
+            console.log('Duplicate connection: ' + userID);
+            return;
+        }
+
         this.servers[userID] = new BedrockServer(userID, ws);
         console.log('Connected: ' + userID);
 

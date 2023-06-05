@@ -37,6 +37,7 @@ export class CommandResponseMessage extends Message {
     constructor(res: Message) {
         super();
         this.header.messagePurpose = "commandResponse";
+        if (res.header.requestId) this.header.requestId = res.header.requestId;
         this.body = res.body;
     }
 }

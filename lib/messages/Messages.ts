@@ -16,6 +16,7 @@ export interface MessageBody {
 // Message
 export class Message {
     // Properties
+    server: string;
     header: MessageHeader = {
         requestId: uuidv4(),
         messagePurpose: "",
