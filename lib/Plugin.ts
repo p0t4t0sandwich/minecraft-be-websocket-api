@@ -1,5 +1,6 @@
 // Plugin Class for extending the core functionality of the framework
 
+import { MinecraftRESTServer } from "./MinecraftRESTServer.js";
 import { MinecraftWebSocket } from "./MinecraftWebSocket.js";
 import { Listener } from "./listeners/Listeners.js";
 
@@ -12,6 +13,7 @@ export class Plugin {
 
     private listeners: Listener[] = [];
     public mwss: MinecraftWebSocket;
+    public mrest: MinecraftRESTServer;
 
     // Constructor
     constructor(name: string, description: string, version: string, author: string) {

@@ -45,11 +45,12 @@ export class DataStore {
         for (const file of files) {
             // If the file is a JSON file, load it
             if (file.endsWith(".json")) {
+                const fileName = file.replace(".json", "");
                 const dataFile = join(this.dataDir, file);
                 const dataBuffer = fs.readFileSync(dataFile);
 
                 // Load data into memory
-                data[file] = JSON.parse(dataBuffer.toString());
+                data[fileName] = JSON.parse(dataBuffer.toString());
             }
         }
 

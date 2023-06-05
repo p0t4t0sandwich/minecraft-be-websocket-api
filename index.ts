@@ -2,7 +2,7 @@ import { MinecraftWebSocket } from "./lib/MinecraftWebSocket.js";
 
 // Import Plugins
 import { ExamplePlugin } from "./plugins/ExamplePlugin.js";
-import { NamePlayerCommand } from "./testPlugins/NamePlayerCommand.js";
+import { SFIMCCamp } from "./testPlugins/SFIMCCamp.js";
 
 async function main() {
     // Web Socket Port
@@ -17,6 +17,6 @@ async function main() {
 
     // Load plugins
     await mwss.loadPlugin(new ExamplePlugin());
-    await mwss.loadPlugin(new NamePlayerCommand());
+    await mwss.loadPlugin(new SFIMCCamp());
 }
 main();
