@@ -56,22 +56,108 @@ export const listeners: Listener[] = [
 ]
 ```
 
+### REST API
+
+#### Send Command
+
+URL encoded query/slug parameters:
+
+```http
+POST /command/:server?command=say Hello World!
+POST /command?server=ServerName&command=say Hello World!
+```
+
+JSON body:
+
+```json
+{
+    "server": "ServerName",
+    "command": "say Hello World!"
+}
+```
+
+JSON response:
+
+```json
+{
+    "header": {
+        "requestId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "messagePurpose": "commandResponse",
+        "version": 1
+    },
+    "body": {
+        "message": "Hello World!",
+        "statusCode": 0
+    }
+}
+```
+
+#### Subscribe to an Event
+
+URL encoded query/slug parameters:
+
+```http
+POST /event/:server?eventName=PlayerMessage?callback_uri=http://localhost:4000/event
+POST /event?server=ServerName&eventName=PlayerMessage?callback_uri=http://localhost:4000/event
+```
+
+JSON body:
+
+```json
+{
+    "server": "ServerName",
+    "eventName": "PlayerMessage",
+    "callback_uri": "http://localhost:4000/event"
+}
+```
+
+JSON response:
+
+```json
+{
+    "message": "Subscribed to PlayerMessage",
+}
+```
+
+#### Unsubscribe from an Event
+
+URL encoded query/slug parameters:
+
+```http
+DELETE /event/:server?eventName=PlayerMessage?callback_uri=http://localhost:4000/event
+DELETE /event?server=ServerName&eventName=PlayerMessage?callback_uri=http://localhost:4000/event
+```
+
+JSON body:
+
+```json
+{
+    "server": "ServerName",
+    "eventName": "PlayerMessage",
+    "callback_uri": "http://localhost:4000/event"
+}
+```
+
+JSON response:
+
+```json
+{
+    "message": "Unsubscribed from PlayerMessage",
+}
+```
+
 ## TODO
 
 - [x] Build a basic websocket server
 - [x] Implement basic websocket protocol for sending commands and listening to events
-- [ ] Have command feedback be sent back to the method that sent the command
+- [x] Have command feedback be sent back to the method that sent the command
   - [ ] include timeout error
-- [ ] Implement REST API
+- [x] Implement REST API
 - [ ] Build SDK for interacting with the API
 - [x] Some sort of sideloading/plugin system?
-- [ ] Extrapolated Command API/simplification of commands
+- [ ] Abstracted custom Command API/simplification of commands
 
 ## Resources
-
-### Promising example implementaion
-
-<https://github.com/railsbob/minecraft-wss>
 
 ### Events
 
@@ -92,3 +178,5 @@ export const listeners: Listener[] = [
 <https://github.com/askvictor/mineclass>
 
 <https://github.com/jocopa3/PEWS-API>
+
+<https://github.com/railsbob/minecraft-wss>

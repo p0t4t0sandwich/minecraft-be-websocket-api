@@ -18,6 +18,7 @@ import { MinecraftRESTServer } from "./MinecraftRESTServer.js";
 export class MinecraftWebSocket {
     // Parameters
     private wss: WebSocketServer;
+    private rest: MinecraftRESTServer;
     private eventListeners: any[] = [];
     private servers: any = {};
 
@@ -114,7 +115,9 @@ export class MinecraftWebSocket {
         await this.loadListeners(pluginListeners);
     }
 
+    // Start REST server
     startRestServer(REST_PORT: number): MinecraftRESTServer {
-        return new MinecraftRESTServer(REST_PORT, this);
+        this.rest = new MinecraftRESTServer(REST_PORT, this);
+        return this.rest;
     }
 }

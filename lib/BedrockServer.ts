@@ -74,7 +74,7 @@ export class BedrockServer {
     }
 
     // Subscribe to event
-    async subscribeToEvent(event: EventName, callback: (res: Event) => void) {
+    async subscribeToEvent(event: EventName, callback: (event: BedrockEvent) => void) {
         if (!this.events[event]) this.events[event] = [];
         this.events[event].push(callback);
 
