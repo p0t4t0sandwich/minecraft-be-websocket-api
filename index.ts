@@ -2,8 +2,6 @@ import { MinecraftWebSocket } from "./lib/MinecraftWebSocket.js";
 
 // Import Plugins
 import { ExamplePlugin } from "./plugins/ExamplePlugin.js";
-import { SFIMCCamp } from "./testPlugins/SFIMCCamp.js";
-
 async function main() {
     // Minecraft Web Socket
     const WEBSOCKET_PORT: number = <number><unknown>process.env.WEBSOCKET_PORT || 4005;
@@ -15,6 +13,5 @@ async function main() {
 
     // Load plugins
     await mwss.loadPlugin(new ExamplePlugin());
-    await mwss.loadPlugin(new SFIMCCamp());
 }
 main();
