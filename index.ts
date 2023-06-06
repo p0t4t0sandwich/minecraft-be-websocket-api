@@ -5,13 +5,11 @@ import { ExamplePlugin } from "./plugins/ExamplePlugin.js";
 import { SFIMCCamp } from "./testPlugins/SFIMCCamp.js";
 
 async function main() {
-    // Web Socket Port
-    const WEBSOCKET_PORT: number = <number><unknown>process.env.WEBSOCKET_PORT || 4005;
-
     // Minecraft Web Socket
+    const WEBSOCKET_PORT: number = <number><unknown>process.env.WEBSOCKET_PORT || 4005;
     const mwss: MinecraftWebSocket = new MinecraftWebSocket(WEBSOCKET_PORT);
 
-    // Rest Port
+    // Minecraft REST API
     const REST_PORT: number = <number><unknown>process.env.REST_PORT || 4006;
     mwss.startRestServer(REST_PORT);
 

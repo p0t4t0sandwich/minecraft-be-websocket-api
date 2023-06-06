@@ -21,41 +21,70 @@ You need to disable encrypted web sockets for this to work. There's no way in he
 ```typescript
 import { MinecraftWebSocket } from "./lib/MinecraftWebSocket.js";
 
+// Import Plugins
+import { ExamplePlugin } from "./plugins/ExamplePlugin.js";
 
-// Web Sockets
-const WEBSOCKET_PORT: number = <number><unknown>process.env.WEBSOCKET_PORT || 4005;
+async function main() {
+    // Minecraft Web Socket
+    const WEBSOCKET_PORT: number = <number><unknown>process.env.WEBSOCKET_PORT || 4005;
+    const mwss: MinecraftWebSocket = new MinecraftWebSocket(WEBSOCKET_PORT);
 
-// Minecraft Web Socket
-export const mwss: MinecraftWebSocket = new MinecraftWebSocket(WEBSOCKET_PORT);
+    // Minecraft REST API
+    const REST_PORT: number = <number><unknown>process.env.REST_PORT || 4006;
+    mwss.startRestServer(REST_PORT);
 
-// Import listeners from plugin
-import { listeners } from "./plugins/ExamplePlugin.js";
-
-await mwss.loadListeners(listeners);
+    // Load plugins
+    await mwss.loadPlugin(new ExamplePlugin());
+}
+main();
 
 ```
 
 `./plugin/ExamplePlugin.ts`
 
 ```typescript
-import { mwss } from "../index.js";
-import { EventName, PlayerMessageEvent } from "../lib/Events.js";
-import { Listener } from "../lib/Listeners.js";
+import { BedrockServer } from "../lib/BedrockServer.js";
+import { MinecraftWebSocket } from "../lib/MinecraftWebSocket.js";
+import { Plugin } from "../lib/Plugin.js";
+import { BedrockEvent, EventName, PlayerMessageEvent } from "../lib/events/Events.js";
 
-export const listeners: Listener[] = [
-    {
-        eventName: EventName.PlayerMessage,
-        callback: async (event: PlayerMessageEvent) => {
-            const playerName: string = event.body.sender;
-            const message: string = event.body.message;
+export class ExamplePlugin extends Plugin {
+    // Constructor
+    constructor() {
+        // Set plugin info
+        super(
+            "Example Plugin",
+            "An example plugin for MWSS.",
+            "1.0.0",
+            "p0t4t0sandwich"
+        );
 
-            // Ignore messages from the websocket server
-            if (event.body.sender == "Teacher") return
-
-            await mwss.sendCommand(event.server, `say ${playerName} said ${message}`);
-        }
+        // Set listeners
+        this.setListeners([
+            {
+                eventName: EventName.PlayerMessage,
+                callback: async (event: PlayerMessageEvent) => {
+                    const playerName: string = event.body.sender;
+                    const message: string = event.body.message;
+                    const server: BedrockServer = this.mwss.getServer(event.server);
+        
+                    // Ignore messages from the websocket server
+                    if (event.body.sender == "Teacher") return
+        
+                    await server.sendCommand(`say ${playerName} said ${message}`);
+                }
+            }
+        ]);
     }
-]
+
+    // Methods
+
+    // Start
+    async start(mwss: MinecraftWebSocket) {
+        this.mwss = mwss;
+        console.log("Example plugin started!");
+    }
+}
 ```
 
 ### REST API
