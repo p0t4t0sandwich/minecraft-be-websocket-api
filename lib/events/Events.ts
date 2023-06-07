@@ -251,6 +251,26 @@ export class BedrockEvent {
     server: string;
     header: EventHeader;
     body: EventBody;
+
+    // Constructor
+    constructor(server: string, header: EventHeader, body: EventBody) {
+        this.server = server;
+        this.header = header;
+        this.body = body;
+    }
+
+    // Getters
+    getServer(): string {
+        return this.server;
+    }
+
+    getHeader(): EventHeader {
+        return this.header;
+    }
+
+    getBody(): EventBody {
+        return this.body;
+    }
 }
 
 // Block interface
@@ -295,7 +315,7 @@ export interface Tool extends Item {
 // Event response interfaces
 
 // BlockBrokenEvent
-interface BlockBrokenBody extends EventBody {
+export interface BlockBrokenBody extends EventBody {
     block: Block,
     count: number,
     destructionMethod: string,
@@ -306,21 +326,33 @@ interface BlockBrokenBody extends EventBody {
 
 export class BlockBrokenEvent extends BedrockEvent {
     // Properties
-    server: string;
-    header: EventHeader;
     body: BlockBrokenBody;
 
     // Constructor
-    constructor(server: string, event: BedrockEvent) {
-        super();
-        this.server = server;
-        this.header = event.header;
-        this.body = <BlockBrokenBody>event.body;
+    constructor(event: BedrockEvent) {
+        super(event.getServer(), event.getHeader(), event.getBody());
+    }
+
+    // Getters
+    getBody(): BlockBrokenBody {
+        return this.body;
+    }
+
+    getPlayer(): Player {
+        return this.body.player;
+    }
+
+    getBlock(): Block {
+        return this.body.block;
+    }
+
+    getTool(): Tool {
+        return this.body.tool;
     }
 }
 
 // BlockPlacedEvent
-interface BlockPlacedBody extends EventBody {
+export interface BlockPlacedBody extends EventBody {
     block: Block,
     count: number,
     placedUnderwater: boolean,
@@ -331,21 +363,33 @@ interface BlockPlacedBody extends EventBody {
 
 export class BlockPlacedEvent extends BedrockEvent {
     // Properties
-    server: string;
-    header: EventHeader;
     body: BlockPlacedBody;
 
     // Constructor
-    constructor(server: string, event: BedrockEvent) {
-        super();
-        this.server = server;
-        this.header = event.header;
-        this.body = <BlockPlacedBody>event.body;
+    constructor(event: BedrockEvent) {
+        super(event.getServer(), event.getHeader(), event.getBody());
+    }
+
+    // Getters
+    getBody(): BlockPlacedBody {
+        return this.body;
+    }
+
+    getPlayer(): Player {
+        return this.body.player;
+    }
+
+    getBlock(): Block {
+        return this.body.block;
+    }
+
+    getTool(): Tool {
+        return this.body.tool;
     }
 }
 
 // ItemUsedEvent
-interface ItemUsedBody extends EventBody {
+export interface ItemUsedBody extends EventBody {
     count: number,
     item: Item,
     player: Player,
@@ -354,61 +398,64 @@ interface ItemUsedBody extends EventBody {
 
 export class ItemUsedEvent extends BedrockEvent {
     // Properties
-    server: string;
-    header: EventHeader;
     body: ItemUsedBody;
 
     // Constructor
-    constructor(server: string, event: BedrockEvent) {
-        super();
-        this.server = server;
-        this.header = event.header;
-        this.body = <ItemUsedBody>event.body;
+    constructor(event: BedrockEvent) {
+        super(event.getServer(), event.getHeader(), event.getBody());
     }
 }
 
 // PlayerJoinEvent
-interface PlayerJoinBody extends EventBody {
+export interface PlayerJoinBody extends EventBody {
     player: Player;
 }
 
 export class PlayerJoinEvent extends BedrockEvent {
     // Properties
-    server: string;
-    header: EventHeader;
     body: PlayerJoinBody;
 
     // Constructor
-    constructor(server: string, event: BedrockEvent) {
-        super();
-        this.server = server;
-        this.header = event.header;
-        this.body = <PlayerJoinBody>event.body;
+    constructor(event: BedrockEvent) {
+        super(event.getServer(), event.getHeader(), event.getBody());
+    }
+
+    // Getters
+    getBody(): PlayerJoinBody {
+        return this.body;
+    }
+
+    getPlayer(): Player {
+        return this.body.player;
     }
 }
 
 // PlayerLeaveEvent
-interface PlayerLeaveBody extends EventBody {
+export interface PlayerLeaveBody extends EventBody {
     player: Player;
 }
 
 export class PlayerLeaveEvent extends BedrockEvent {
     // Properties
-    server: string;
-    header: EventHeader;
     body: PlayerLeaveBody;
 
     // Constructor
-    constructor(server: string, event: BedrockEvent) {
-        super();
-        this.server = server;
-        this.header = event.header;
-        this.body = <PlayerLeaveBody>event.body;
+    constructor(event: BedrockEvent) {
+        super(event.getServer(), event.getHeader(), event.getBody());
+    }
+
+    // Getters
+    getBody(): PlayerLeaveBody {
+        return this.body;
+    }
+
+    getPlayer(): Player {
+        return this.body.player;
     }
 }
 
 // PlayerMessageEvent
-interface PlayerMessageBody extends EventBody {
+export interface PlayerMessageBody extends EventBody {
     message: string;
     sender: string;
     receiver: string;
@@ -417,35 +464,47 @@ interface PlayerMessageBody extends EventBody {
 
 export class PlayerMessageEvent extends BedrockEvent {
     // Properties
-    server: string;
-    header: EventHeader;
     body: PlayerMessageBody;
 
     // Constructor
-    constructor(server: string, event: BedrockEvent) {
-        super();
-        this.server = server;
-        this.header = event.header;
-        this.body = <PlayerMessageBody>event.body;
+    constructor(event: BedrockEvent) {
+        super(event.getServer(), event.getHeader(), event.getBody());
+    }
+
+    // Getters
+    getBody(): PlayerMessageBody {
+        return this.body;
+    }
+
+    getSender(): string {
+        return this.body.sender;
+    }
+
+    getReceiver(): string {
+        return this.body.receiver;
+    }
+
+    getMessage(): string {
+        return this.body.message;
     }
 }
 
 // PlayerTransformEvent
-interface PlayerTransformBody extends EventBody {
+export interface PlayerTransformBody extends EventBody {
     player: Player;
 }
 
 export class PlayerTransformEvent extends BedrockEvent {
     // Properties
-    server: string;
-    header: EventHeader;
     body: PlayerTransformBody;
 
     // Constructor
-    constructor(server: string, event: BedrockEvent) {
-        super();
-        this.server = server;
-        this.header = event.header;
-        this.body = <PlayerTransformBody>event.body;
+    constructor(event: BedrockEvent) {
+        super(event.getServer(), event.getHeader(), event.getBody());
+    }
+
+    // Getters
+    getBody(): PlayerTransformBody {
+        return this.body;
     }
 }

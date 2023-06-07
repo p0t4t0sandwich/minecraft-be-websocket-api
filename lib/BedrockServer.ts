@@ -1,4 +1,4 @@
-import { CommandRequestMessage, CommandResponseMessage } from "./commands/CommandMessage.js";
+import { CommandRequestMessage, CommandResponseMessage, ListCommandResponseMessage } from "./commands/CommandMessage.js";
 import { EventSubscribeMessage, EventUnsubscribeMessage } from "./events/EventMessages.js";
 import { EventName, BedrockEvent } from "./events/Events.js";
 import { Message } from "./messages/Messages.js";
@@ -34,8 +34,7 @@ export class BedrockServer {
 
         // Handle events
         if (res.header?.messagePurpose == "event") {
-            const event: BedrockEvent = <BedrockEvent>res;
-            event.server = this.userID;
+            const event: BedrockEvent = new BedrockEvent(this.userID, res.header, res.body);
 
             // Handle subscribed events
             const eventName = event.header.eventName;
@@ -97,17 +96,30 @@ export class BedrockServer {
         delete this.events[event];
     }
 
-    // Send command
-    async sendCommand(command: string): Promise<CommandResponseMessage> {
-        const commandMessage: CommandRequestMessage = new CommandRequestMessage(command);
+    // Send command message
+    async sendCommandMessage<T,R>(commandMessage: T): Promise<R> {
         await this.send(JSON.stringify(commandMessage));
 
-        const comandUUID = commandMessage.getUUID();
+        const comandUUID = (<CommandRequestMessage>commandMessage).getUUID();
 
         return new Promise((resolve, reject) => {
-            this.commandResponses[comandUUID] = (response: CommandResponseMessage) => {
+            this.commandResponses[comandUUID] = (response: R) => {
                 resolve(response);
             }
         });
+    }
+
+    // Send command
+    async sendCommand(command: string): Promise<CommandResponseMessage> {
+        const commandMessage: CommandRequestMessage = new CommandRequestMessage(command);
+        const commandResponse: CommandResponseMessage = await this.sendCommandMessage<CommandRequestMessage, CommandResponseMessage>(commandMessage);
+        return new CommandResponseMessage(commandResponse);
+    }
+
+    // Player List command
+    async listCommand(): Promise<ListCommandResponseMessage> {
+        const listCommand: CommandRequestMessage = new CommandRequestMessage('list');
+        const listResponse: ListCommandResponseMessage = await this.sendCommandMessage<CommandRequestMessage, ListCommandResponseMessage>(listCommand);
+        return new ListCommandResponseMessage(listResponse);
     }
 }

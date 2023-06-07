@@ -1,7 +1,7 @@
 import { Message, MessageBody } from "../messages/Messages.js";
 
 // CommandRequestMessage
-interface CommandRequestBody extends MessageBody {
+export interface CommandRequestBody extends MessageBody {
     origin: {
         type: "player" | string;
     };
@@ -28,7 +28,7 @@ export class CommandRequestMessage extends Message {
 }
 
 // CommandResponseMessage
-type CommandResponseBody = MessageBody;
+export type CommandResponseBody = MessageBody;
 
 export class CommandResponseMessage extends Message {
     body: CommandResponseBody;
@@ -39,5 +39,28 @@ export class CommandResponseMessage extends Message {
         this.header.messagePurpose = "commandResponse";
         if (res.header.requestId) this.header.requestId = res.header.requestId;
         this.body = res.body;
+    }
+}
+
+// ListCommandResponse
+export interface ListCommandResponseBody extends CommandResponseBody {
+    currentPlayerCount: number;
+    maxPlayerCount: number;
+    players: string;
+    statusCode: number;
+    statusMessage: string;
+}
+
+export class ListCommandResponseMessage extends CommandResponseMessage {
+    body: ListCommandResponseBody;
+
+    // Constructor
+    constructor(res: CommandResponseMessage) {
+        super(res);
+    }
+
+    // Getters
+    public getPlayers(): string[] {
+        return this.body.players.split(", ");
     }
 }
