@@ -184,7 +184,7 @@ JSON response:
 - [x] Have command feedback be sent back to the method that sent the command
   - [ ] include timeout error
 - [x] Implement REST API
-- [ ] Build SDK for interacting with the API
+- [x] Build SDK for interacting with the API
   - [ ] Set up helper function to set up a simple webserver for event callbacks
 - [x] Some sort of sideloading/plugin system?
 - [ ] Abstracted custom Command API/simplification of commands

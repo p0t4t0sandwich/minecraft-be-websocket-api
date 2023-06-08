@@ -10,19 +10,15 @@ export interface CommandRequestBody extends MessageBody {
 }
 
 export class CommandRequestMessage extends Message {
-    body: CommandRequestBody = {
-        origin: {
-            type: "player"
-        },
-        commandLine: "",
-        version: 1
-    };
+    // Properties
+    body: CommandRequestBody;
 
     // Constructor
     constructor(command: string) {
         super();
         this.header.messagePurpose = "commandRequest";
         this.header.messageType = "commandRequest";
+        this.body.origin.type = "player"
         this.body.commandLine = command;
     }
 }

@@ -17,6 +17,7 @@ import { MinecraftRESTServer } from "./MinecraftRESTServer.js";
 
 export class MinecraftWebSocket {
     // Parameters
+    private ip: string = "";
     private wss: WebSocketServer;
     private mrest: MinecraftRESTServer;
     private eventListeners: any[] = [];
@@ -25,7 +26,7 @@ export class MinecraftWebSocket {
     constructor(WEBSOCKET_PORT: number) {
         // Create web socket server
         this.wss = new WebSocketServer({ port: WEBSOCKET_PORT }, () => {
-            console.log(`MC BE Management Web Socket running on port ${WEBSOCKET_PORT}`);
+            console.log(`MC BE Management Web Socket running at ws://${this.ip}:${WEBSOCKET_PORT}`);
         });
 
         // On connection handler

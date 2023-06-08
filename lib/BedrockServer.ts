@@ -116,10 +116,58 @@ export class BedrockServer {
         return new CommandResponseMessage(commandResponse);
     }
 
-    // Player List command
+    // TODO: Create response class
+    // Effect command
+    async effectCommand(target: string, effect: string, seconds: number, amplifier: number): Promise<CommandResponseMessage> {
+        const effectCommand: CommandRequestMessage = new CommandRequestMessage(`effect ${target} ${effect} ${seconds} ${amplifier}`);
+        const effectResponse: CommandResponseMessage = await this.sendCommandMessage<CommandRequestMessage, CommandResponseMessage>(effectCommand);
+        return new CommandResponseMessage(effectResponse);
+    }
+
+    // TODO: Create response class
+    // Gamemode command
+    async gamemodeCommand(gamemode: string, player: string): Promise<CommandResponseMessage> {
+        const gamemodeCommand: CommandRequestMessage = new CommandRequestMessage(`gamemode ${gamemode} ${player}`);
+        const gamemodeResponse: CommandResponseMessage = await this.sendCommandMessage<CommandRequestMessage, CommandResponseMessage>(gamemodeCommand);
+        return new CommandResponseMessage(gamemodeResponse);
+    }
+
+    // List command
     async listCommand(): Promise<ListCommandResponseMessage> {
         const listCommand: CommandRequestMessage = new CommandRequestMessage('list');
         const listResponse: ListCommandResponseMessage = await this.sendCommandMessage<CommandRequestMessage, ListCommandResponseMessage>(listCommand);
         return new ListCommandResponseMessage(listResponse);
+    }
+
+    // TODO: Create response class
+    // Say command
+    async sayCommand(message: string): Promise<CommandResponseMessage> {
+        const sayCommand: CommandRequestMessage = new CommandRequestMessage(`say ${message}`);
+        const sayResponse: CommandResponseMessage = await this.sendCommandMessage<CommandRequestMessage, CommandResponseMessage>(sayCommand);
+        return new CommandResponseMessage(sayResponse);
+    }
+
+    // TODO: Create response class
+    // Teleport player to position command
+    async teleportPlayerToPositionCommand(player: string, x: number, y: number, z: number): Promise<CommandResponseMessage> {
+        const teleportCommand: CommandRequestMessage = new CommandRequestMessage(`tp ${player} ${x} ${y} ${z}`);
+        const teleportResponse: CommandResponseMessage = await this.sendCommandMessage<CommandRequestMessage, CommandResponseMessage>(teleportCommand);
+        return new CommandResponseMessage(teleportResponse);
+    }
+
+    // TODO: Create response class
+    // Teleport player to player command
+    async teleportPlayerToPlayerCommand(player: string, target: string): Promise<CommandResponseMessage> {
+        const teleportCommand: CommandRequestMessage = new CommandRequestMessage(`tp ${player} ${target}`);
+        const teleportResponse: CommandResponseMessage = await this.sendCommandMessage<CommandRequestMessage, CommandResponseMessage>(teleportCommand);
+        return new CommandResponseMessage(teleportResponse);
+    }
+
+    // TODO: Create response class
+    // Tell command
+    async tellCommand(player: string, message: string): Promise<CommandResponseMessage> {
+        const tellCommand: CommandRequestMessage = new CommandRequestMessage(`tell ${player} ${message}`);
+        const tellResponse: CommandResponseMessage = await this.sendCommandMessage<CommandRequestMessage, CommandResponseMessage>(tellCommand);
+        return new CommandResponseMessage(tellResponse);
     }
 }

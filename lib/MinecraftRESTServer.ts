@@ -11,6 +11,7 @@ export const ROOT_ENDPOINT: string = <string>process.env.ROOT_ENDPOINT || "/api/
 
 export class MinecraftRESTServer {
     // Properties
+    private ip: string = "";
     private port: number;
     private router: Router;
     private app: Express;
@@ -45,7 +46,7 @@ export class MinecraftRESTServer {
 
         // Start webserver
         this.app.listen(this.port, () => {
-            console.log(`MC BE Management REST API running on port ${REST_PORT}`);
+            console.log(`MC BE Management REST API running at http://${this.ip}:${REST_PORT}`);
         });
     }
 

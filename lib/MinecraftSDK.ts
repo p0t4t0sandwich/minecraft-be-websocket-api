@@ -1,6 +1,6 @@
 // Minecraft SDK for the Minecraft BE REST API
 
-import { CommandResponseMessage } from "./commands/CommandMessage.js";
+import { CommandResponseMessage, ListCommandResponseMessage } from "./commands/CommandMessage.js";
 import { EventName } from "./events/Events.js";
 
 export class MinecraftSDK {
@@ -33,15 +33,6 @@ export class MinecraftSDK {
         }
     }
 
-    // Send command
-    async sendCommand(server: string, command: string): Promise<CommandResponseMessage> {
-        // Send command
-        const response = await this.apiCall(this.rootEndpoint + "/command", "POST", { server, command });
-
-        // Return response
-        return await response.json();
-    }
-
     // Subscribe to event
     async subscribeToEvent(server: string, event: EventName, callback_uri: string): Promise<void> {
         // Subscribe to event
@@ -52,5 +43,68 @@ export class MinecraftSDK {
     async unsubscribeFromEvent(server: string, event: EventName): Promise<void> {
         // Unsubscribe from event
         await this.apiCall(this.rootEndpoint + "/event", "DELETE", { server, event });
+    }
+
+    // Send command message
+    async sendCommandMessage<R>(server: string, command: string): Promise<R> {
+        // Send command
+        const response = <R>(await this.apiCall(this.rootEndpoint + "/command", "POST", { server, command }));
+
+        // Return response
+        return response;
+    }
+
+    // Send command
+    async sendCommand(server: string, command: string): Promise<CommandResponseMessage> {
+        // Send command
+        return await this.sendCommandMessage<CommandResponseMessage>(server, command);
+    }
+
+    // TODO: Create response class
+    // Effect command
+    async effectCommand(server: string, target: string, effect: string, seconds: number, amplifier: number): Promise<CommandResponseMessage> {
+        // Send Effect command
+        return await this.sendCommandMessage<CommandResponseMessage>(server, `effect ${target} ${effect} ${seconds} ${amplifier}`);
+    }
+
+    // TODO: Create response class
+    // Gamemode command
+    async gamemodeCommand(server: string, gamemode: string, player: string): Promise<CommandResponseMessage> {
+        // Send Gamemode command
+        return await this.sendCommandMessage<CommandResponseMessage>(server, `gamemode ${gamemode} ${player}`);
+    }
+
+    // List command
+    async listCommand(server: string): Promise<ListCommandResponseMessage> {
+        // Send List command
+        return await this.sendCommandMessage<ListCommandResponseMessage>(server, "list");
+    }
+
+    // TODO: Create response class
+    // Say command
+    async sayCommand(server: string, message: string): Promise<CommandResponseMessage> {
+        // Send Say command
+        return await this.sendCommandMessage<CommandResponseMessage>(server, `say ${message}`);
+    }
+
+    // TODO: Create response class
+    // Teleport player to position command
+    async teleportCommand(server: string, target: string, x: number, y: number, z: number): Promise<CommandResponseMessage> {
+        // Send Teleport command
+        return await this.sendCommandMessage<CommandResponseMessage>(server, `tp ${target} ${x} ${y} ${z}`);
+    }
+
+    // TODO: Create response class
+    // Teleport player to player command
+    async teleportPlayerToPlayerCommand(server: string, target: string, destination: string): Promise<CommandResponseMessage> {
+        // Send Teleport command
+        return await this.sendCommandMessage<CommandResponseMessage>(server, `tp ${target} ${destination}`);
+    }
+
+    // TODO: Create response class
+    // Tell command
+    async tellCommand(server: string, target: string, message: string): Promise<CommandResponseMessage> {
+        // Send Tell command
+        return await this.sendCommandMessage<CommandResponseMessage>(server, `tell ${target} ${message}`);
     }
 }
