@@ -18,7 +18,7 @@ export class CommandRequestMessage extends Message {
         super();
         this.header.messagePurpose = "commandRequest";
         this.header.messageType = "commandRequest";
-        this.body.origin.type = "player"
+        this.body.origin = { type: "player" };
         this.body.commandLine = command;
     }
 }
