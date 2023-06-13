@@ -14,10 +14,25 @@ import { Listener } from "./listeners/Listeners.js";
 import { Plugin } from "./Plugin.js";
 import { MinecraftRESTServer } from "./MinecraftRESTServer.js";
 
+// Get IP address
+import { networkInterfaces } from 'os';
+const nets = networkInterfaces();
+const ipAddresses = {};
+for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+        const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4
+        if (net.family === familyV4Value && !net.internal) {
+            if (!ipAddresses[name]) {
+                ipAddresses[name] = [];
+            }
+            ipAddresses[name].push(net.address);
+        }
+    }
+}
 
 export class MinecraftWebSocket {
     // Parameters
-    private ip: string = "";
+    private ip: string = Object.values(ipAddresses)[0][0];
     private wss: WebSocketServer;
     private mrest: MinecraftRESTServer;
     private eventListeners: any[] = [];
@@ -61,8 +76,18 @@ export class MinecraftWebSocket {
     }
 
     // Get server
-    getServer(server: string) {
+    getServer(server: string): BedrockServer {
         return this.servers[server];
+    }
+
+    // Get server names
+    getServerNames(): string[] {
+        return Object.keys(this.servers);
+    }
+
+    // Get IP address
+    getIpAddress(): string {
+        return this.ip;
     }
 
     // Event listener

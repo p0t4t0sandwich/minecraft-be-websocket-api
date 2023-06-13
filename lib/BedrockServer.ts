@@ -132,6 +132,14 @@ export class BedrockServer {
         return new CommandResponseMessage(gamemodeResponse);
     }
 
+    // TODO: Create response class
+    // Globalpause command
+    async globalpauseCommand(pause: boolean): Promise<CommandResponseMessage> {
+        const globalpauseCommand: CommandRequestMessage = new CommandRequestMessage(`globalpause ${pause}`);
+        const globalpauseResponse: CommandResponseMessage = await this.sendCommandMessage<CommandRequestMessage, CommandResponseMessage>(globalpauseCommand);
+        return new CommandResponseMessage(globalpauseResponse);
+    }
+
     // List command
     async listCommand(): Promise<ListCommandResponseMessage> {
         const listCommand: CommandRequestMessage = new CommandRequestMessage('list');

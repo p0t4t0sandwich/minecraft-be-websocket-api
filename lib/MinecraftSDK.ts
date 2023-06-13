@@ -74,6 +74,13 @@ export class MinecraftSDK {
         return await this.sendCommandMessage<CommandResponseMessage>(server, `gamemode ${gamemode} ${player}`);
     }
 
+    // TODO: Create response class
+    // Globalpause command
+    async globalpauseCommand(server: string, pause: boolean): Promise<CommandResponseMessage> {
+        // Send Globalpause command
+        return await this.sendCommandMessage<CommandResponseMessage>(server, `globalpause ${pause}`);
+    }
+
     // List command
     async listCommand(server: string): Promise<ListCommandResponseMessage> {
         // Send List command

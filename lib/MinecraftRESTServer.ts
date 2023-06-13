@@ -19,6 +19,7 @@ export class MinecraftRESTServer {
 
     // Constructor
     constructor(REST_PORT: number, mwss: MinecraftWebSocket) {
+        this.ip = mwss.getIpAddress();
         this.port = REST_PORT;
         this.router = Router();
         this.app = express();
