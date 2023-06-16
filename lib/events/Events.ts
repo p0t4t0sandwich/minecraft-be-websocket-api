@@ -507,4 +507,8 @@ export class PlayerTransformEvent extends BedrockEvent {
     getBody(): PlayerTransformBody {
         return this.body;
     }
+
+    getPlayer(): Player {
+        return this.body.player;
+    }
 }
