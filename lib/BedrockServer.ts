@@ -2,6 +2,7 @@ import { CommandRequestMessage, CommandResponseMessage, ListCommandResponseMessa
 import { EventSubscribeMessage, EventUnsubscribeMessage } from "./events/EventMessages.js";
 import { EventName, BedrockEvent } from "./events/Events.js";
 import { Message } from "./messages/Messages.js";
+import { logger } from "./utils.js";
 
 
 export class BedrockServer {
@@ -43,7 +44,7 @@ export class BedrockServer {
                     callback(event);
                 });
             }
-            console.log('Event: ' + eventName + ' from ' + this.userID + ': ' + message);
+            logger('Event: ' + eventName + ' from ' + this.userID + ': ' + message);
 
         // Handle command responses
         } else if (res.header?.messagePurpose == "commandResponse") {
@@ -55,15 +56,15 @@ export class BedrockServer {
                 delete this.commandResponses[commandUUID];
             }
 
-            console.log('CommandResponse from ' + this.userID + ': ' + message);
+            logger('CommandResponse from ' + this.userID + ': ' + message);
 
         // Handle errors
         } else if (res.header?.messagePurpose == "error") {
-            console.log('Error from ' + this.userID + ': ' + message);
+            logger('Error from ' + this.userID + ': ' + message);
 
         // Handle other messages
         } else {
-            console.log('Message from ' + this.userID + ': ' + message);
+            logger('Message from ' + this.userID + ': ' + message);
         }
     }
 
@@ -77,7 +78,7 @@ export class BedrockServer {
         if (!this.events[event]) this.events[event] = [];
         this.events[event].push(callback);
 
-        console.log('Subscribed to ' + event + ' from ' + this.userID);
+        logger('Subscribed to ' + event + ' from ' + this.userID);
 
         // Send subscribe message
         const subscribeMessage: EventSubscribeMessage = new EventSubscribeMessage(event);
@@ -92,15 +93,18 @@ export class BedrockServer {
         const unsubscribeMessage: EventUnsubscribeMessage = new EventUnsubscribeMessage(event);
         await this.send(JSON.stringify(unsubscribeMessage));
 
+        logger('Unsubscribed from ' + event + " for " + this.userID);
+
         // Remove event
         delete this.events[event];
     }
 
     // Send command message
     async sendCommandMessage<T,R>(commandMessage: T): Promise<R> {
+        logger('CommandMessage to ' + this.userID + ': ' + commandMessage);
         await this.send(JSON.stringify(commandMessage));
 
-        const comandUUID = (<CommandRequestMessage>commandMessage).getUUID();
+        const comandUUID: string = (<CommandRequestMessage>commandMessage).getUUID();
 
         return new Promise((resolve, reject) => {
             this.commandResponses[comandUUID] = (response: R) => {

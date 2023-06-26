@@ -13,26 +13,11 @@ import { BedrockEvent, EventName } from "./events/Events.js";
 import { Listener } from "./listeners/Listeners.js";
 import { Plugin } from "./Plugin.js";
 import { MinecraftRESTServer } from "./MinecraftRESTServer.js";
-
-// Get IP address
-import { networkInterfaces } from 'os';
-const nets = networkInterfaces();
-const ipAddresses = {};
-for (const name of Object.keys(nets)) {
-    for (const net of nets[name]) {
-        const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4
-        if (net.family === familyV4Value && !net.internal) {
-            if (!ipAddresses[name]) {
-                ipAddresses[name] = [];
-            }
-            ipAddresses[name].push(net.address);
-        }
-    }
-}
+import { getIpAddress, logger } from "./utils.js";
 
 export class MinecraftWebSocket {
     // Parameters
-    private ip: string = Object.values(ipAddresses)[0][0];
+    private ip: string = getIpAddress();
     private wss: WebSocketServer;
     private mrest: MinecraftRESTServer;
     private eventListeners: any[] = [];
@@ -41,7 +26,7 @@ export class MinecraftWebSocket {
     constructor(WEBSOCKET_PORT: number) {
         // Create web socket server
         this.wss = new WebSocketServer({ port: WEBSOCKET_PORT }, () => {
-            console.log(`MC BE Management Web Socket running at ws://${this.ip}:${WEBSOCKET_PORT}`);
+            logger(`MC BE Management Web Socket running at ws://${this.ip}:${WEBSOCKET_PORT}`);
         });
 
         // On connection handler
@@ -54,12 +39,12 @@ export class MinecraftWebSocket {
 
         if (this.servers[userID]) {
             ws.close();
-            console.log('Duplicate connection: ' + userID);
+            logger('Duplicate connection: ' + userID);
             return;
         }
 
         this.servers[userID] = new BedrockServer(userID, ws);
-        console.log('Connected: ' + userID);
+        logger('Connected: ' + userID);
 
         // Subscribe to events
         for (var eventListener in this.eventListeners) {
@@ -71,7 +56,7 @@ export class MinecraftWebSocket {
 
         ws.on('close', () => {
             delete this.servers[userID]
-            console.log('Disconnected: ' + userID)
+            logger('Disconnected: ' + userID)
         });
     }
 
@@ -132,10 +117,10 @@ export class MinecraftWebSocket {
             const { listeners } = await import(pluginPath);
             pluginListeners = pluginListeners.concat(listeners);
 
-            console.log("Loaded " + pluginListeners.length + " listeners from " + plugin);
+            logger("Loaded " + pluginListeners.length + " listeners from " + plugin);
         }
 
-        console.log("Loaded " + pluginListeners.length + " listeners from " + plugins.length + " plugins");
+        logger("Loaded " + pluginListeners.length + " listeners from " + plugins.length + " plugins");
 
         // Load listeners into server
         await this.loadListeners(pluginListeners);
