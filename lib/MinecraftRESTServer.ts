@@ -3,7 +3,7 @@ import { MinecraftWebSocket } from './MinecraftWebSocket.js';
 import { CommandResponseMessage } from './commands/CommandMessage.js';
 import { BedrockServer } from './BedrockServer.js';
 import { BedrockEvent, EventName } from './events/Events.js';
-import { logger } from './utils.js';
+import { logger, sendDiscordWebhook } from './utils.js';
 
 
 export const DOMAIN: string = <string>process.env.DOMAIN || "https://api.sperrer.ca";
@@ -49,6 +49,7 @@ export class MinecraftRESTServer {
         // Start webserver
         this.app.listen(this.port, () => {
             logger(`MC BE Management REST API running at http://${this.ip}:${REST_PORT}`);
+            // sendDiscordWebhook('MC BE Management REST API', `Running at http://${this.ip}:${REST_PORT}`);
         });
     }
 

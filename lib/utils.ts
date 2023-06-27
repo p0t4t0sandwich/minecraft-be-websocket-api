@@ -40,4 +40,33 @@ async function logger(message: string, level: string = "info", logPath: string =
     console.log(messageToLog);
 }
 
-export { getIpAddress, logger };
+function sendDiscordWebhook(title: string, description: string, webhookUrl: string = process.env.DISCORD_WEBHOOK_URL): void {
+    // Check if webhook URL is defined
+    if (webhookUrl === undefined) return;
+
+    // Prepare data
+    const data = {
+        "content": null,
+        "embeds": [
+            {
+                "title": title,
+                "description": description
+            }
+        ]
+    };
+
+    // Send webhook
+    fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data),
+    }).then(() => {
+        logger(`Sent Discord webhook: ${title}`);
+    }).catch((error) => {
+        logger(`Error sending Discord webhook: ${error}`);
+    });
+}
+
+export { getIpAddress, logger, sendDiscordWebhook };

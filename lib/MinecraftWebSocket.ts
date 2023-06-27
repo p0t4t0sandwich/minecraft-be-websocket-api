@@ -13,7 +13,7 @@ import { BedrockEvent, EventName } from "./events/Events.js";
 import { Listener } from "./listeners/Listeners.js";
 import { Plugin } from "./Plugin.js";
 import { MinecraftRESTServer } from "./MinecraftRESTServer.js";
-import { getIpAddress, logger } from "./utils.js";
+import { getIpAddress, logger, sendDiscordWebhook } from "./utils.js";
 
 export class MinecraftWebSocket {
     // Parameters
@@ -27,6 +27,7 @@ export class MinecraftWebSocket {
         // Create web socket server
         this.wss = new WebSocketServer({ port: WEBSOCKET_PORT }, () => {
             logger(`MC BE Management Web Socket running at ws://${this.ip}:${WEBSOCKET_PORT}`);
+            sendDiscordWebhook('MC BE Management Web Socket', `Running at ws://${this.ip}:${WEBSOCKET_PORT}`);
         });
 
         // On connection handler
