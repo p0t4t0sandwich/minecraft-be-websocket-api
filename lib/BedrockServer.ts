@@ -101,7 +101,7 @@ export class BedrockServer {
 
     // Send command message
     async sendCommandMessage<T,R>(commandMessage: T): Promise<R> {
-        logger('CommandMessage to ' + this.userID + ': ' + commandMessage);
+        logger('CommandMessage to ' + this.userID + ': ' + JSON.stringify(commandMessage));
         await this.send(JSON.stringify(commandMessage));
 
         const comandUUID: string = (<CommandRequestMessage>commandMessage).getUUID();

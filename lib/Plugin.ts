@@ -3,6 +3,7 @@
 import { MinecraftRESTServer } from "./MinecraftRESTServer.js";
 import { MinecraftWebSocket } from "./MinecraftWebSocket.js";
 import { Listener } from "./listeners/Listeners.js";
+import { logger } from "./utils.js";
 
 export class Plugin {
     // Properties
@@ -43,6 +44,6 @@ export class Plugin {
     // Start
     async start(mwss: MinecraftWebSocket) {
         this.mwss = mwss;
-        console.log("Plugin started");
+        logger("Plugin started", this.name);
     }
 }

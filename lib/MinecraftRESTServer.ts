@@ -3,6 +3,7 @@ import { MinecraftWebSocket } from './MinecraftWebSocket.js';
 import { CommandResponseMessage } from './commands/CommandMessage.js';
 import { BedrockServer } from './BedrockServer.js';
 import { BedrockEvent, EventName } from './events/Events.js';
+import { logger } from './utils.js';
 
 
 export const DOMAIN: string = <string>process.env.DOMAIN || "https://api.sperrer.ca";
@@ -47,7 +48,7 @@ export class MinecraftRESTServer {
 
         // Start webserver
         this.app.listen(this.port, () => {
-            console.log(`MC BE Management REST API running at http://${this.ip}:${REST_PORT}`);
+            logger(`MC BE Management REST API running at http://${this.ip}:${REST_PORT}`);
         });
     }
 
@@ -65,7 +66,7 @@ export class MinecraftRESTServer {
                 body: JSON.stringify(event)
             });
         } catch (err) {
-            console.log(err);
+            logger(err);
         }
     }
 
@@ -106,7 +107,7 @@ export class MinecraftRESTServer {
 
         // Serverside error response
         } catch (err) {
-            console.log(err);
+            logger(err);
             res.type("application/json")
                 .status(500)
                 .json({ "message": "Internal Server Error", "error": err });
@@ -143,7 +144,7 @@ export class MinecraftRESTServer {
 
         // Serverside error response
         } catch (err) {
-            console.log(err);
+            logger(err);
             res.type("application/json")
                 .status(500)
                 .json({ "message": "Internal Server Error", "error": err });
@@ -186,7 +187,7 @@ export class MinecraftRESTServer {
 
         // Serverside error response
         } catch (err) {
-            console.log(err);
+            logger(err);
             res.type("application/json")
                 .status(500)
                 .json({ "message": "Internal Server Error", "error": err });
@@ -224,7 +225,7 @@ export class MinecraftRESTServer {
 
         // Serverside error response
         } catch (err) {
-            console.log(err);
+            logger(err);
             res.type("application/json")
                 .status(500)
                 .json({ "message": "Internal Server Error", "error": err });

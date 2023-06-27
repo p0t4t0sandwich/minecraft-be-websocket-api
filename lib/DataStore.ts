@@ -4,6 +4,7 @@
 import fs from "fs";
 import path, { join } from "path";
 import { fileURLToPath } from 'url';
+import { logger } from "./utils.js";
 
 export class DataStore {
     // Properties
@@ -31,7 +32,7 @@ export class DataStore {
         // Load data
         this.data = this.loadData();
 
-        console.log("Loaded " + Object.keys(this.data).length + " data files from " + this.pluginName);
+        logger("Loaded " + Object.keys(this.data).length + " data files from " + this.pluginName, "DataStore");
     }
 
     // Methods

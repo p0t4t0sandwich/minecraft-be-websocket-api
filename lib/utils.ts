@@ -22,16 +22,13 @@ function getIpAddress(): string {
 
 import fs from 'fs';
 
-async function logger(message: string, logPath: string = 'logs') {
+async function logger(message: string, level: string = "info", logPath: string = 'logs') {
     // Get today's date
     const today = new Date();
     const parsedDateTime = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
 
-    // Get datetime
-    const datetime = new Date().toISOString()
-
     // Message string
-    const messageToLog = `[${new Date().toLocaleString()}] ${message}`;
+    const messageToLog = `[${today.toISOString()}] [${level}]: ${message}`;
 
     if (fs.existsSync(logPath) === false) {
         await fs.promises.mkdir(logPath);
