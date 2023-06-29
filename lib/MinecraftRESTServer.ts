@@ -1,8 +1,8 @@
 import express, { Express, Request, Response, Router } from 'express';
 import { MinecraftWebSocket } from './MinecraftWebSocket.js';
-import { CommandResponseMessage } from './commands/CommandMessage.js';
+import { CommandResponseMessage } from './messages/CommandMessage.js';
 import { BedrockServer } from './BedrockServer.js';
-import { BedrockEvent, EventName } from './events/Events.js';
+import { EventName, BedrockEvent } from "./events/BedrockEvent.js"
 import { logger, sendDiscordWebhook } from './utils.js';
 
 

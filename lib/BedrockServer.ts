@@ -1,8 +1,11 @@
-import { CommandRequestMessage, CommandResponseMessage, ListCommandResponseMessage } from "./commands/CommandMessage.js";
-import { EventSubscribeMessage, EventUnsubscribeMessage } from "./events/EventMessages.js";
-import { EventName, BedrockEvent } from "./events/Events.js";
+import { CommandRequestMessage, CommandResponseMessage } from "./messages/CommandMessage.js";
+import { EventSubscribeMessage, EventUnsubscribeMessage } from "./messages/EventMessages.js";
+import { EventName, BedrockEvent } from "./events/BedrockEvent.js"
 import { Message } from "./messages/Messages.js";
 import { logger } from "./utils.js";
+import { ListCommandResponseMessage } from "./commands/ListCommandResponse.js";
+import { GamemodeCommandResponseMessage } from "./commands/GamemodeCommandResponse.js";
+import { TellCommandResponseMessage } from "./commands/TellCommandResponse.js";
 
 
 export class BedrockServer {
@@ -128,12 +131,11 @@ export class BedrockServer {
         return new CommandResponseMessage(effectResponse);
     }
 
-    // TODO: Create response class
     // Gamemode command
-    async gamemodeCommand(gamemode: string, player: string): Promise<CommandResponseMessage> {
+    async gamemodeCommand(gamemode: string, player: string): Promise<GamemodeCommandResponseMessage> {
         const gamemodeCommand: CommandRequestMessage = new CommandRequestMessage(`gamemode ${gamemode} ${player}`);
-        const gamemodeResponse: CommandResponseMessage = await this.sendCommandMessage<CommandRequestMessage, CommandResponseMessage>(gamemodeCommand);
-        return new CommandResponseMessage(gamemodeResponse);
+        const gamemodeResponse: GamemodeCommandResponseMessage = await this.sendCommandMessage<CommandRequestMessage, GamemodeCommandResponseMessage>(gamemodeCommand);
+        return new GamemodeCommandResponseMessage(gamemodeResponse);
     }
 
     // TODO: Create response class
@@ -175,11 +177,10 @@ export class BedrockServer {
         return new CommandResponseMessage(teleportResponse);
     }
 
-    // TODO: Create response class
     // Tell command
-    async tellCommand(player: string, message: string): Promise<CommandResponseMessage> {
+    async tellCommand(player: string, message: string): Promise<TellCommandResponseMessage> {
         const tellCommand: CommandRequestMessage = new CommandRequestMessage(`tell ${player} ${message}`);
-        const tellResponse: CommandResponseMessage = await this.sendCommandMessage<CommandRequestMessage, CommandResponseMessage>(tellCommand);
-        return new CommandResponseMessage(tellResponse);
+        const tellResponse: TellCommandResponseMessage = await this.sendCommandMessage<CommandRequestMessage, TellCommandResponseMessage>(tellCommand);
+        return new TellCommandResponseMessage(tellResponse);
     }
 }

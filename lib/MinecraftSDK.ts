@@ -1,7 +1,10 @@
 // Minecraft SDK for the Minecraft BE REST API
 
-import { CommandResponseMessage, ListCommandResponseMessage } from "./commands/CommandMessage.js";
-import { EventName } from "./events/Events.js";
+import { CommandResponseMessage } from "./messages/CommandMessage.js";
+import { GamemodeCommandResponseMessage } from "./commands/GamemodeCommandResponse.js";
+import { ListCommandResponseMessage } from "./commands/ListCommandResponse.js";
+import { TellCommandResponseMessage } from "./commands/TellCommandResponse.js";
+import { EventName } from "./events/BedrockEvent.js"
 
 export class MinecraftSDK {
     // Properties
@@ -67,11 +70,10 @@ export class MinecraftSDK {
         return await this.sendCommandMessage<CommandResponseMessage>(server, `effect ${target} ${effect} ${seconds} ${amplifier}`);
     }
 
-    // TODO: Create response class
     // Gamemode command
-    async gamemodeCommand(server: string, gamemode: string, player: string): Promise<CommandResponseMessage> {
+    async gamemodeCommand(server: string, gamemode: string, player: string): Promise<GamemodeCommandResponseMessage> {
         // Send Gamemode command
-        return await this.sendCommandMessage<CommandResponseMessage>(server, `gamemode ${gamemode} ${player}`);
+        return await this.sendCommandMessage<GamemodeCommandResponseMessage>(server, `gamemode ${gamemode} ${player}`);
     }
 
     // TODO: Create response class
@@ -108,10 +110,9 @@ export class MinecraftSDK {
         return await this.sendCommandMessage<CommandResponseMessage>(server, `tp ${target} ${destination}`);
     }
 
-    // TODO: Create response class
     // Tell command
-    async tellCommand(server: string, target: string, message: string): Promise<CommandResponseMessage> {
+    async tellCommand(server: string, target: string, message: string): Promise<TellCommandResponseMessage> {
         // Send Tell command
-        return await this.sendCommandMessage<CommandResponseMessage>(server, `tell ${target} ${message}`);
+        return await this.sendCommandMessage<TellCommandResponseMessage>(server, `tell ${target} ${message}`);
     }
 }

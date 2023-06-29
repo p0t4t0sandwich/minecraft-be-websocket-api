@@ -1,6 +1,8 @@
-import { BedrockEvent, EventName } from "../events/Events.js";
+import { EventName, BedrockEvent } from "../events/BedrockEvent.js"
 
-export interface Listener {
+interface Listener {
     eventName: EventName;
     callback: (event: BedrockEvent) => void;
 }
+
+export { Listener }

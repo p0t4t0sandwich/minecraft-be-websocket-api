@@ -4,7 +4,8 @@
 import { BedrockServer } from "../lib/BedrockServer.js";
 import { MinecraftWebSocket } from "../lib/MinecraftWebSocket.js";
 import { Plugin } from "../lib/Plugin.js";
-import { BedrockEvent, EventName, PlayerMessageEvent } from "../lib/events/Events.js";
+import { BedrockEvent, EventName } from "../lib/events/BedrockEvent.js";
+import { PlayerMessageEvent } from "../lib/events/PlayerMessageEvent.js";
 
 export class ExamplePlugin extends Plugin {
     // Constructor

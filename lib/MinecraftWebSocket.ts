@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 import { BedrockServer } from "./BedrockServer.js";
 
 // General type imports
-import { BedrockEvent, EventName } from "./events/Events.js";
+import { EventName, BedrockEvent } from "./events/BedrockEvent.js"
 import { Listener } from "./listeners/Listeners.js";
 import { Plugin } from "./Plugin.js";
 import { MinecraftRESTServer } from "./MinecraftRESTServer.js";

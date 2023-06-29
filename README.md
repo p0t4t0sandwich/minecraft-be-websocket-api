@@ -179,15 +179,14 @@ JSON response:
 
 ## TODO
 
-- [x] Build a basic websocket server
-- [x] Implement basic websocket protocol for sending commands and listening to events
 - [x] Have command feedback be sent back to the method that sent the command
   - [ ] include timeout error
 - [x] Implement REST API
 - [x] Build SDK for interacting with the API
   - [ ] Set up helper function to set up a simple webserver for event callbacks
-- [x] Some sort of sideloading/plugin system?
 - [ ] Abstracted custom Command API/simplification of commands
+- [ ] Build a plugin for some sort of passthrough; so yo can still use the classroom tool
+  - [ ] Some sort of generic packet event
 
 ## Resources
 

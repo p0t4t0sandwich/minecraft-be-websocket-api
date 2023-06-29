@@ -1,4 +1,4 @@
-import { Message, MessageBody } from "../messages/Messages.js";
+import { Message, MessageBody } from "./Messages.js";
 
 interface EventBody extends MessageBody {
     eventName: string;
