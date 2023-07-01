@@ -33,12 +33,22 @@ interface ListCommandResponseBody extends CommandResponseBody {
 class ListCommandResponseMessage extends CommandResponseMessage {
     body: ListCommandResponseBody;
 
-    // Constructor
+    /**
+     * @constructor
+     * @param res The response packet
+     * @description Constructor for the ListCommandResponseMessage class
+     * @memberof ListCommandResponseMessage
+     */
     constructor(res: CommandResponseMessage) {
         super(res);
     }
 
-    // Getters
+    /**
+     * @method getPlayers
+     * @returns {string[]} The list of players in the server
+     * @description Returns the list of players in the server
+     * @memberof ListCommandResponseMessage
+     */
     public getPlayers(): string[] {
         return this.body.players.split(", ");
     }

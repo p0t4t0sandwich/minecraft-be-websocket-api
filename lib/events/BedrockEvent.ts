@@ -1,11 +1,14 @@
+/**
+ * @author p0t4t0sandwich
+ * @description Generic event packet
+ */
+
 import { MessageBody } from "../messages/Messages.js";
 
-// Notes:
-// Gathered from various packet dumps. Not all events are tested.
-// If the event you want doesn't have a type, use BedrockEvent,
-// then if possible, create a PR and add it to the type definitions.
-
-// EventName enum
+/**
+ * @enum EventName
+ * @description An enum of all the events that can be sent by the server. Gathered from various packet dumps. Not all events are tested. If the event you want doesn't have a type, use BedrockEvent, then if possible, create a PR and add it to the type definitions.
+ */
 enum EventName {
     AdditionalContentLoaded = "AdditionalContentLoaded",
     AgentCommand = "AgentCommand",
@@ -231,41 +234,88 @@ enum EventName {
     EduiOSPurchaseTransaction = "EduiOSPurchaseTransaction",
 }
 
-// EventHeader interface
+/**
+ * @interface EventHeader
+ * @description Event header interface
+ * @property {EventName} eventName Event name
+ * @property {string} messagePurpose Message purpose
+ * @property {number} version Version
+ */
 interface EventHeader {
     eventName: EventName;
     messagePurpose: "event";
     version: number;
 }
 
-// EventBody type
+/**
+ * @interface EventBody
+ * @description Event body interface
+ * @extends MessageBody
+ * @property {any} [key: string] Any key
+ */
 interface EventBody extends MessageBody {
     [key: string]: any;
 }
 
-// Event interface
+
+/**
+ * @class BedrockEvent
+ * @description Bedrock event class
+ * @property {string} server Server
+ * @property {EventHeader} header Event header
+ * @property {EventBody} body Event body
+ * @method getServer Get server
+ * @method getHeader Get event header
+ * @method getBody Get event body
+ * @param {string} server Server
+ * @param {EventHeader} header Event header
+ * @param {EventBody} body Event body
+ */
 class BedrockEvent {
-    // Properties
     server: string;
     header: EventHeader;
     body: EventBody;
 
-    // Constructor
+    /**
+     * @constructor
+     * @param server The server the event is from
+     * @param header The event header
+     * @param body The event body
+     * @description Create a new bedrock event
+     * @memberof BedrockEvent
+     */
     constructor(server: string, header: EventHeader, body: EventBody) {
         this.server = server;
         this.header = header;
         this.body = body;
     }
 
-    // Getters
+    /**
+     * @method getServer
+     * @description Get the server the event is from
+     * @returns {string} The server the event is from
+     * @memberof BedrockEvent
+     */
     getServer(): string {
         return this.server;
     }
 
+    /**
+     * @method getHeader
+     * @description Get the event header
+     * @returns {EventHeader} The event header
+     * @memberof BedrockEvent
+     */
     getHeader(): EventHeader {
         return this.header;
     }
 
+    /**
+     * @method getBody
+     * @description Get the event body
+     * @returns {EventBody} The event body
+     * @memberof BedrockEvent
+     */
     getBody(): EventBody {
         return this.body;
     }
