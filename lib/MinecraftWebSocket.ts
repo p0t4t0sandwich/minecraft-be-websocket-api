@@ -17,7 +17,7 @@ import { getIpAddress, logger, sendDiscordWebhook } from "./utils.js";
 
 export class MinecraftWebSocket {
     // Parameters
-    private ip: string = getIpAddress();
+    private ip: string = process.env.IP_ADDRESS || getIpAddress();
     private wss: WebSocketServer;
     private mrest: MinecraftRESTServer;
     private eventListeners: any[] = [];
