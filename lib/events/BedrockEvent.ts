@@ -267,9 +267,6 @@ interface EventBody extends MessageBody {
  * @method getServer Get server
  * @method getHeader Get event header
  * @method getBody Get event body
- * @param {string} server Server
- * @param {EventHeader} header Event header
- * @param {EventBody} body Event body
  */
 class BedrockEvent {
     server: string;
