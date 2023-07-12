@@ -10,18 +10,16 @@ class BedrockPlayer {
     // Properties
     server: BedrockServer;
     player: Player;
-    permissions: string[] = [];
 
     // Constructor
-    constructor(server: BedrockServer, player: Player, permissions?: string[]) {
+    constructor(server: BedrockServer, player: Player) {
         this.server = server;
         this.player = player;
-        if (permissions) this.permissions = permissions;
     }
 
     // Methods
     hasPermission(permission: string): boolean {
-        return this.permissions.includes(permission);
+        return this.server.getPermissionsHandler().getPermission(this.player.name, permission);
     }
 
     // Get name

@@ -186,8 +186,8 @@ JSON response:
 - [x] Abstracted custom Command API/simplification of commands
 - [ ] Build a plugin for some sort of passthrough; so you can still use the classroom tool
   - [ ] Some sort of generic packet event
-- [ ] A full permissions API
-  - [ ] Text based permissions -- for now
+- [x] A full permissions API
+  - [x] Text based permissions -- for now
   - [ ] Node based permissions
 - [ ] Create way to mute certain events in the log (eg, PlayerTransform)
 

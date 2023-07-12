@@ -9,6 +9,7 @@ import { TellCommandResponseMessage } from "./commands/TellCommandResponse.js";
 import { BedrockPlayer } from "./api/player/BedrockPlayer.js";
 import { PlayerJoinEvent } from "./events/PlayerJoinEvent.js";
 import { PlayerLeaveEvent } from "./events/PlayerLeaveEvent.js";
+import { PermissionsHandler } from "./api/permission/Permissions.js";
 
 type BedrockPlayerMap = { [key: string]: BedrockPlayer };
 
@@ -20,6 +21,7 @@ export class BedrockServer {
     public events: any;
     public commandResponses: any;
     private playerCache: BedrockPlayerMap = {};
+    private permissionsHandler: PermissionsHandler = new PermissionsHandler();
 
     // Constructor
     constructor(userID: string, ws: any) {
@@ -97,6 +99,11 @@ export class BedrockServer {
     // Get player
     getPlayer(playerName: string): BedrockPlayer {
         return this.playerCache[playerName];
+    }
+
+    // Get permissions handler
+    getPermissionsHandler(): PermissionsHandler {
+        return this.permissionsHandler;
     }
 
     // Send message wrapper

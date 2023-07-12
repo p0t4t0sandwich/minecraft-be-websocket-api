@@ -65,6 +65,17 @@ class Command {
     getIsPermissionDefault(): boolean {
         return this.isPermissionDefault;
     }
+
+    // Check permission
+    hasPermission(player: BedrockPlayer): boolean {
+        const playerPermission = player.hasPermission(this.permission);
+
+        if (playerPermission === undefined) {
+            player.server.getPermissionsHandler().setPermission(player.getName(), this.permission, this.isPermissionDefault);
+        } else {
+            return playerPermission;
+        }
+    }
 }
 
 export { Command };
