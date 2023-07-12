@@ -1,7 +1,7 @@
 import { MinecraftWebSocket } from "./lib/MinecraftWebSocket.js";
 
 // Import Plugins
-import { ExamplePlugin } from "./plugins/ExamplePlugin.js";
+import { ExamplePlugin } from "./plugins/ExamplePlugin/ExamplePlugin.js";
 async function main() {
     // Minecraft Web Socket
     const WEBSOCKET_PORT: number = <number><unknown>process.env.WEBSOCKET_PORT || 4005;

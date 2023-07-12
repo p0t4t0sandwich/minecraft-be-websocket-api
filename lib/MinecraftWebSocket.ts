@@ -15,13 +15,16 @@ import { Plugin } from "./Plugin.js";
 import { MinecraftRESTServer } from "./MinecraftRESTServer.js";
 import { getIpAddress, logger, sendDiscordWebhook } from "./utils.js";
 
+
+type BedrockServers = { [key: string]: BedrockServer };
+
 export class MinecraftWebSocket {
     // Parameters
     private ip: string = process.env.IP_ADDRESS || getIpAddress();
     private wss: WebSocketServer;
     private mrest: MinecraftRESTServer;
     private eventListeners: any[] = [];
-    private servers: any = {};
+    private servers: BedrockServers = {};
 
     constructor(WEBSOCKET_PORT: number) {
         // Create web socket server
@@ -34,9 +37,8 @@ export class MinecraftWebSocket {
         this.wss.on('connection', this.onConnection.bind(this));
     }
 
-    async onConnection(ws: WebSocket, req) {
-        var url = req.url;
-        var userID = url.slice(1);
+    async onConnection(ws: WebSocket, req: any) {
+        const userID: string = req.url.slice(1);
 
         if (this.servers[userID]) {
             ws.close();
@@ -48,7 +50,7 @@ export class MinecraftWebSocket {
         logger('Connected: ' + userID);
 
         // Subscribe to events
-        for (var eventListener in this.eventListeners) {
+        for (const eventListener in this.eventListeners) {
             await this.servers[userID].subscribeToEvent(
                 this.eventListeners[eventListener].eventName,
                 this.eventListeners[eventListener].callback

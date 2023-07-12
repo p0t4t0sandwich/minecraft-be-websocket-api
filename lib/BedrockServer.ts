@@ -6,7 +6,11 @@ import { logger } from "./utils.js";
 import { ListCommandResponseMessage } from "./commands/ListCommandResponse.js";
 import { GamemodeCommandResponseMessage } from "./commands/GamemodeCommandResponse.js";
 import { TellCommandResponseMessage } from "./commands/TellCommandResponse.js";
+import { BedrockPlayer } from "./api/player/BedrockPlayer.js";
+import { PlayerJoinEvent } from "./events/PlayerJoinEvent.js";
+import { PlayerLeaveEvent } from "./events/PlayerLeaveEvent.js";
 
+type BedrockPlayerMap = { [key: string]: BedrockPlayer };
 
 export class BedrockServer {
     // Parameters
@@ -15,6 +19,7 @@ export class BedrockServer {
     public isAlive: boolean;
     public events: any;
     public commandResponses: any;
+    private playerCache: BedrockPlayerMap = {};
 
     // Constructor
     constructor(userID: string, ws: any) {
@@ -39,9 +44,27 @@ export class BedrockServer {
         // Handle events
         if (res.header?.messagePurpose == "event") {
             const event: BedrockEvent = new BedrockEvent(this.userID, res.header, res.body);
+            const eventName = event.header.eventName;
+
+
+            // Update player cache
+            switch (eventName) {
+                // Add player to cache
+                case EventName.PlayerJoin:
+                    const playerJoinEvent: PlayerJoinEvent = new PlayerJoinEvent(event);
+                    const player: BedrockPlayer = new BedrockPlayer(this, playerJoinEvent.getPlayer());
+                    this.playerCache[player.getName()] = player;
+                    break;
+
+                // Remove player from cache
+                case EventName.PlayerLeave:
+                    const playerLeaveEvent: PlayerLeaveEvent = new PlayerLeaveEvent(event);
+                    delete this.playerCache[playerLeaveEvent.getPlayer().name];
+                    break;
+            }
+
 
             // Handle subscribed events
-            const eventName = event.header.eventName;
             if (this.events[eventName]) {
                 this.events[eventName].forEach((callback: Function) => {
                     callback(event);
@@ -69,6 +92,11 @@ export class BedrockServer {
         } else {
             logger('Message from ' + this.userID + ': ' + message);
         }
+    }
+
+    // Get player
+    getPlayer(playerName: string): BedrockPlayer {
+        return this.playerCache[playerName];
     }
 
     // Send message wrapper

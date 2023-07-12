@@ -67,10 +67,10 @@ export class ExamplePlugin extends Plugin {
                     const playerName: string = event.body.sender;
                     const message: string = event.body.message;
                     const server: BedrockServer = this.mwss.getServer(event.server);
-        
+
                     // Ignore messages from the websocket server
-                    if (event.body.sender == "Teacher") return
-        
+                    if (event.body.sender == "Teacher") return;
+
                     await server.sendCommand(`say ${playerName} said ${message}`);
                 }
             }
@@ -181,12 +181,15 @@ JSON response:
 
 - [x] Have command feedback be sent back to the method that sent the command
   - [ ] include timeout error
-- [x] Implement REST API
 - [x] Build SDK for interacting with the API
-  - [ ] Set up helper function to set up a simple webserver for event callbacks
-- [ ] Abstracted custom Command API/simplification of commands
-- [ ] Build a plugin for some sort of passthrough; so yo can still use the classroom tool
+  - [ ] Set up helper function to set up a simple webserver for event callbacks/webhooks
+- [x] Abstracted custom Command API/simplification of commands
+- [ ] Build a plugin for some sort of passthrough; so you can still use the classroom tool
   - [ ] Some sort of generic packet event
+- [ ] A full permissions API
+  - [ ] Text based permissions -- for now
+  - [ ] Node based permissions
+- [ ] Create way to mute certain events in the log (eg, PlayerTransform)
 
 ## Resources
 
@@ -202,9 +205,9 @@ JSON response:
 
 <https://gist.github.com/pirosuke/1ca2aa4d8920f41dfbabcbc7dc2a669f>
 
-<https://github.com/Sandertv/mcwss/blob/master/encryption.go#L16>
+<https://github.com/Sandertv/mcwss/>
 
-<https://github.com/Nathan-Nesbitt/Minecraft_API/blob/development/src/minecraft_api.js>
+<https://github.com/Nathan-Nesbitt/Minecraft_API>
 
 <https://github.com/askvictor/mineclass>
 

@@ -49,7 +49,7 @@ export class MinecraftRESTServer {
         // Start webserver
         this.app.listen(this.port, () => {
             logger(`MC BE Management REST API running at http://${this.ip}:${REST_PORT}`);
-            // sendDiscordWebhook('MC BE Management REST API', `Running at http://${this.ip}:${REST_PORT}`);
+            sendDiscordWebhook('MC BE Management REST API', `Running at http://${this.ip}:${REST_PORT}`);
         });
     }
 
