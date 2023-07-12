@@ -9,13 +9,14 @@ import { TellCommandResponseMessage } from "./commands/TellCommandResponse.js";
 import { BedrockPlayer } from "./api/player/BedrockPlayer.js";
 import { PlayerJoinEvent } from "./events/PlayerJoinEvent.js";
 import { PlayerLeaveEvent } from "./events/PlayerLeaveEvent.js";
-import { PermissionsHandler } from "./api/permission/Permissions.js";
+import { PermissionsHandler } from "./api/permission/PermissionsHandler.js";
+import { PlayerTransformEvent } from "./events/PlayerTransformEvent.js";
 
 type BedrockPlayerMap = { [key: string]: BedrockPlayer };
 
 export class BedrockServer {
     // Parameters
-    public userID: string;
+    public serverId: string;
     public ws: WebSocket;
     public isAlive: boolean;
     public events: any;
@@ -24,8 +25,8 @@ export class BedrockServer {
     private permissionsHandler: PermissionsHandler = new PermissionsHandler();
 
     // Constructor
-    constructor(userID: string, ws: any) {
-        this.userID = userID;
+    constructor(serverId: string, ws: any) {
+        this.serverId = serverId;
         this.ws = ws;
         this.isAlive = true;
         this.events = {};
@@ -45,26 +46,42 @@ export class BedrockServer {
 
         // Handle events
         if (res.header?.messagePurpose == "event") {
-            const event: BedrockEvent = new BedrockEvent(this.userID, res.header, res.body);
-            const eventName = event.header.eventName;
+            const event: BedrockEvent = new BedrockEvent(this.serverId, res.header, res.body);
+            const eventName: string = event.header.eventName;
 
-
-            // Update player cache
+            // Handle player events
             switch (eventName) {
-                // Add player to cache
+                // Handle player join event
                 case EventName.PlayerJoin:
                     const playerJoinEvent: PlayerJoinEvent = new PlayerJoinEvent(event);
                     const player: BedrockPlayer = new BedrockPlayer(this, playerJoinEvent.getPlayer());
                     this.playerCache[player.getName()] = player;
+
+                    // Log join message
+                    logger(playerJoinEvent.getPlayer().name + " joined the server!");
                     break;
 
-                // Remove player from cache
+                // Handle player leave event
                 case EventName.PlayerLeave:
                     const playerLeaveEvent: PlayerLeaveEvent = new PlayerLeaveEvent(event);
                     delete this.playerCache[playerLeaveEvent.getPlayer().name];
+
+                    // Log leave message
+                    logger(playerLeaveEvent.getPlayer().name + " left the server!");
+                    break;
+
+                // Handle player transform event
+                case EventName.PlayerTransform:
+                    const playerTransformEvent: PlayerTransformEvent = new PlayerTransformEvent(event);
+                    this.playerCache[playerTransformEvent.getPlayer().name].updatePlayer(playerTransformEvent.getPlayer());
+
+                    // Ignore transform message
+                    break;
+
+                default:
+                    logger('Event: ' + eventName + ' from ' + this.serverId + ': ' + message);
                     break;
             }
-
 
             // Handle subscribed events
             if (this.events[eventName]) {
@@ -72,7 +89,6 @@ export class BedrockServer {
                     callback(event);
                 });
             }
-            logger('Event: ' + eventName + ' from ' + this.userID + ': ' + message);
 
         // Handle command responses
         } else if (res.header?.messagePurpose == "commandResponse") {
@@ -84,15 +100,15 @@ export class BedrockServer {
                 delete this.commandResponses[commandUUID];
             }
 
-            logger('CommandResponse from ' + this.userID + ': ' + message);
+            logger('CommandResponse from ' + this.serverId + ': ' + message);
 
         // Handle errors
         } else if (res.header?.messagePurpose == "error") {
-            logger('Error from ' + this.userID + ': ' + message);
+            logger('Error from ' + this.serverId + ': ' + message);
 
         // Handle other messages
         } else {
-            logger('Message from ' + this.userID + ': ' + message);
+            logger('Message from ' + this.serverId + ': ' + message);
         }
     }
 
@@ -116,7 +132,7 @@ export class BedrockServer {
         if (!this.events[event]) this.events[event] = [];
         this.events[event].push(callback);
 
-        logger('Subscribed to ' + event + ' from ' + this.userID);
+        logger('Subscribed to ' + event + ' from ' + this.serverId);
 
         // Send subscribe message
         const subscribeMessage: EventSubscribeMessage = new EventSubscribeMessage(event);
@@ -131,7 +147,7 @@ export class BedrockServer {
         const unsubscribeMessage: EventUnsubscribeMessage = new EventUnsubscribeMessage(event);
         await this.send(JSON.stringify(unsubscribeMessage));
 
-        logger('Unsubscribed from ' + event + " for " + this.userID);
+        logger('Unsubscribed from ' + event + " for " + this.serverId);
 
         // Remove event
         delete this.events[event];
@@ -139,7 +155,7 @@ export class BedrockServer {
 
     // Send command message
     async sendCommandMessage<T,R>(commandMessage: T): Promise<R> {
-        logger('CommandMessage to ' + this.userID + ': ' + JSON.stringify(commandMessage));
+        logger('CommandMessage to ' + this.serverId + ': ' + JSON.stringify(commandMessage));
         await this.send(JSON.stringify(commandMessage));
 
         const comandUUID: string = (<CommandRequestMessage>commandMessage).getUUID();

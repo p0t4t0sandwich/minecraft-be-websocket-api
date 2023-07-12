@@ -75,7 +75,8 @@ export class Plugin {
                         // Check if message is a command
                         if (message.startsWith(commandPrefix)) {
                             // Execute command
-                            await command.execute(server, player, message.slice(commandPrefix.length).trim().split(" "));
+                            const args: string[] = message.slice(commandPrefix.length).trim().split(" ").slice(1);
+                            await command.execute(server, player, args);
                             return;
                         }
                     }

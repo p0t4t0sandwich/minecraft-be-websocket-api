@@ -12,13 +12,13 @@ class ExampleCommand extends Command {
             "Example command",
             "!example",
             "!", [],
-            "example.permission", true
+            "examplePermission", true
         );
     }
 
     // Methods
     async execute(server: BedrockServer, player: BedrockPlayer, args: string[]) {
-        player.sendMessage("Example command executed!");
+        if (this.hasPermission(player)) player.sendMessage("§aExample command executed!");
     }
 }
 

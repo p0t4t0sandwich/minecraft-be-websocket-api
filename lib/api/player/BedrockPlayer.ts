@@ -31,6 +31,13 @@ class BedrockPlayer {
     sendMessage(message: string) {
         this.server.tellCommand(message, this.player.name);
     }
+
+    // Update Player
+    updatePlayer(player: Player) {
+        this.player.position = player.position;
+        this.player.yRot = player.yRot;
+        this.player.dimension = player.dimension;
+    }
 }
 
 
