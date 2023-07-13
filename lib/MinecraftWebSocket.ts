@@ -57,6 +57,11 @@ export class MinecraftWebSocket {
             );
         }
 
+        // Subscribe to PlayerJoin, PlayerLeave, and PlayerTransform events
+        await this.servers[userID].subscribeToEvent(EventName.PlayerJoin, (event: BedrockEvent) => {});
+        await this.servers[userID].subscribeToEvent(EventName.PlayerLeave, (event: BedrockEvent) => {});
+        await this.servers[userID].subscribeToEvent(EventName.PlayerTransform, (event: BedrockEvent) => {});
+
         ws.on('close', () => {
             delete this.servers[userID]
             logger('Disconnected: ' + userID)
@@ -95,11 +100,11 @@ export class MinecraftWebSocket {
         // Load listeners from plugin
         let pluginListeners: Listener[] = plugin.getListeners();
 
-        // Load listeners into server
-        await this.loadListeners(pluginListeners);
-
         // Start plugin
         await plugin.start(this);
+
+        // Load listeners into server
+        await this.loadListeners(pluginListeners);
     }
 
     // Load plugins -- Dynamic imports don't work, so I'm benching this for now -- needs a rewrite for the new plugin system

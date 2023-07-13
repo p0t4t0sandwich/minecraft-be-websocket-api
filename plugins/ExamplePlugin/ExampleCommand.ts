@@ -10,6 +10,7 @@ class ExampleCommand extends Command {
         super(
             "Example Command",
             "Example command",
+            "example",
             "!example",
             "!", [],
             "examplePermission", true

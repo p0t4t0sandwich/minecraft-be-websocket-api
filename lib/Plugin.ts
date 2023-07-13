@@ -68,14 +68,28 @@ export class Plugin {
                 const server: BedrockServer = this.mwss.getServer(event.server);
                 const player: BedrockPlayer = server.getPlayer(playerName);
 
+                if (player == undefined) return;
+
                 // Loop through commands
                 for (const command of Object.values(this.commands)) {
                     // Loop through command prefixes
                     for (const commandPrefix of command.getCommandPrefixes()) {
                         // Check if message is a command
-                        if (message.startsWith(commandPrefix)) {
+                        const cmd = message.slice(commandPrefix.length).trim().split(" ");
+
+                        //
+                        console.log(message);
+                        console.log(commandPrefix);
+                        console.log(message.startsWith(commandPrefix));
+
+                        console.log(command.getRootCommand());
+                        console.log(cmd[0]);
+                        console.log(command.getRootCommand() === cmd[0]);
+                        //
+
+                        if (message.startsWith(commandPrefix) && command.getRootCommand() === cmd[0]) {
                             // Execute command
-                            const args: string[] = message.slice(commandPrefix.length).trim().split(" ").slice(1);
+                            const args: string[] = cmd.slice(1);
                             await command.execute(server, player, args);
                             return;
                         }

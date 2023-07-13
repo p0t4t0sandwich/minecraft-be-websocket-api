@@ -11,6 +11,7 @@ class Command {
     // Properties
     private name: string;
     private description: string;
+    private rootCommand: string;
     private usage: string;
     private prefferedCommandPrefix: string;
     private commandPrefixes: string[];
@@ -18,9 +19,10 @@ class Command {
     private isPermissionDefault: boolean;
 
     // Constructor
-    constructor(name: string, description: string, usage: string, commandPrefix: string, alternateCommandPrefixes: string[], permission: string, isPermissionDefault: boolean) {
+    constructor(name: string, description: string, rootCommand: string, usage: string, commandPrefix: string, alternateCommandPrefixes: string[], permission: string, isPermissionDefault: boolean) {
         this.name = name;
         this.description = description;
+        this.rootCommand = rootCommand;
         this.usage = usage;
         this.prefferedCommandPrefix = commandPrefix;
         this.commandPrefixes = [commandPrefix, ...alternateCommandPrefixes];
@@ -39,6 +41,11 @@ class Command {
     // Get description
     getDescription(): string {
         return this.description;
+    }
+
+    // Get rootCommand
+    getRootCommand(): string {
+        return this.rootCommand;
     }
 
     // Get usage

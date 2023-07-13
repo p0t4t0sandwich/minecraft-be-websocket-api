@@ -29,7 +29,7 @@ class BedrockPlayer {
 
     // Send message
     sendMessage(message: string) {
-        this.server.tellCommand(message, this.player.name);
+        this.server.tellCommand(this.player.name, message);
     }
 
     // Update Player
@@ -39,7 +39,5 @@ class BedrockPlayer {
         this.player.dimension = player.dimension;
     }
 }
-
-
 
 export { BedrockPlayer }

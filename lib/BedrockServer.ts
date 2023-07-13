@@ -49,12 +49,15 @@ export class BedrockServer {
             const event: BedrockEvent = new BedrockEvent(this.serverId, res.header, res.body);
             const eventName: string = event.header.eventName;
 
+
+            let player: BedrockPlayer;
+
             // Handle player events
             switch (eventName) {
                 // Handle player join event
                 case EventName.PlayerJoin:
                     const playerJoinEvent: PlayerJoinEvent = new PlayerJoinEvent(event);
-                    const player: BedrockPlayer = new BedrockPlayer(this, playerJoinEvent.getPlayer());
+                    player = new BedrockPlayer(this, playerJoinEvent.getPlayer());
                     this.playerCache[player.getName()] = player;
 
                     // Log join message
@@ -73,9 +76,21 @@ export class BedrockServer {
                 // Handle player transform event
                 case EventName.PlayerTransform:
                     const playerTransformEvent: PlayerTransformEvent = new PlayerTransformEvent(event);
-                    this.playerCache[playerTransformEvent.getPlayer().name].updatePlayer(playerTransformEvent.getPlayer());
+                    player = this.playerCache[playerTransformEvent.getPlayer().name];
+
+                    if (player !== undefined) {
+                        player.updatePlayer(playerTransformEvent.getPlayer());
+                    } else {
+                        player = new BedrockPlayer(this, playerTransformEvent.getPlayer());
+                        this.playerCache[player.getName()] = player;
+                    }
 
                     // Ignore transform message
+                    break;
+
+                // Handle chunk changed event
+                case EventName.ChunkChanged:
+                    // Ignore chunk changed message
                     break;
 
                 default:
