@@ -10,7 +10,7 @@ import { BedrockPlayer } from "./api/player/BedrockPlayer.js";
 import { PlayerJoinEvent } from "./events/PlayerJoinEvent.js";
 import { PlayerLeaveEvent } from "./events/PlayerLeaveEvent.js";
 import { PermissionsHandler } from "./api/permission/PermissionsHandler.js";
-import { PlayerTransformEvent } from "./events/PlayerTransformEvent.js";
+import { PlayerMessageEvent } from "./events/PlayerMessageEvent.js";
 
 type BedrockPlayerMap = { [key: string]: BedrockPlayer };
 
@@ -56,53 +56,36 @@ export class BedrockServer {
             switch (eventName) {
                 // Handle player join event
                 case EventName.PlayerJoin:
-                    const playerJoinEvent: PlayerJoinEvent = new PlayerJoinEvent(event);
-                    player = new BedrockPlayer(this, playerJoinEvent.getPlayer());
-                    this.playerCache[player.getName()] = player;
-
                     // Log join message
-                    logger(playerJoinEvent.getPlayer().name + " joined the server!");
+                    logger(new PlayerJoinEvent(event).getPlayer().name + " joined the server!", this.serverId);
                     break;
 
                 // Handle player leave event
                 case EventName.PlayerLeave:
-                    const playerLeaveEvent: PlayerLeaveEvent = new PlayerLeaveEvent(event);
-                    delete this.playerCache[playerLeaveEvent.getPlayer().name];
-
                     // Log leave message
-                    logger(playerLeaveEvent.getPlayer().name + " left the server!");
+                    logger(new PlayerLeaveEvent(event).getPlayer().name + " left the server!", this.serverId);
                     break;
 
-                // Handle player transform event
-                case EventName.PlayerTransform:
-                    const playerTransformEvent: PlayerTransformEvent = new PlayerTransformEvent(event);
-                    player = this.playerCache[playerTransformEvent.getPlayer().name];
-
-                    if (player !== undefined) {
-                        player.updatePlayer(playerTransformEvent.getPlayer());
-                    } else {
-                        player = new BedrockPlayer(this, playerTransformEvent.getPlayer());
-                        this.playerCache[player.getName()] = player;
-                    }
-
-                    // Ignore transform message
-                    break;
-
-                // Handle chunk changed event
-                case EventName.ChunkChanged:
-                    // Ignore chunk changed message
-                    break;
+                case EventName.PlayerMessage:
+                    const playerMessageEvent = new PlayerMessageEvent(event)
+                    // Log message
+                    logger(playerMessageEvent.getSender() + ": " + playerMessageEvent.getMessage(), this.serverId);
 
                 default:
-                    logger('Event: ' + eventName + ' from ' + this.serverId + ': ' + message);
+                    const ignoreEventsInLog: EventName[] = [
+                        EventName.ChunkChanged,
+                        EventName.PlayerTransform
+                    ];
+
+                    if (ignoreEventsInLog.includes(<EventName> eventName)) break;
+
+                    logger('Event: ' + eventName + ': ' + message, this.serverId);
                     break;
             }
 
             // Handle subscribed events
             if (this.events[eventName]) {
-                this.events[eventName].forEach((callback: Function) => {
-                    callback(event);
-                });
+                this.events[eventName].forEach((callback: Function) => callback(event));
             }
 
         // Handle command responses
@@ -115,21 +98,32 @@ export class BedrockServer {
                 delete this.commandResponses[commandUUID];
             }
 
-            logger('CommandResponse from ' + this.serverId + ': ' + message);
+            logger('CommandResponse: ' + message, this.serverId);
 
         // Handle errors
         } else if (res.header?.messagePurpose == "error") {
-            logger('Error from ' + this.serverId + ': ' + message);
+            logger('Error: ' + message, this.serverId);
 
         // Handle other messages
         } else {
-            logger('Message from ' + this.serverId + ': ' + message);
+            logger('Message: ' + message, this.serverId);
         }
     }
 
-    // Get player
-    getPlayer(playerName: string): BedrockPlayer {
+    // Set player in cache
+    setPlayerInCache(player: BedrockPlayer) {
+        this.playerCache[player.getName()] = player;
+    }
+
+    // Get player from cache
+    getPlayerFromCache(playerName: string): BedrockPlayer {
         return this.playerCache[playerName];
+    }
+
+    // Remove player from cache
+    removePlayerFromCache(player: BedrockPlayer) {
+        const playerName: string = player.getName();
+        if (this.playerCache[playerName]) delete this.playerCache[playerName];
     }
 
     // Get permissions handler
@@ -147,7 +141,7 @@ export class BedrockServer {
         if (!this.events[event]) this.events[event] = [];
         this.events[event].push(callback);
 
-        logger('Subscribed to ' + event + ' from ' + this.serverId);
+        logger('Subscribed to ' + event, this.serverId);
 
         // Send subscribe message
         const subscribeMessage: EventSubscribeMessage = new EventSubscribeMessage(event);
@@ -162,7 +156,7 @@ export class BedrockServer {
         const unsubscribeMessage: EventUnsubscribeMessage = new EventUnsubscribeMessage(event);
         await this.send(JSON.stringify(unsubscribeMessage));
 
-        logger('Unsubscribed from ' + event + " for " + this.serverId);
+        logger('Unsubscribed from ' + event, this.serverId);
 
         // Remove event
         delete this.events[event];
@@ -170,7 +164,7 @@ export class BedrockServer {
 
     // Send command message
     async sendCommandMessage<T,R>(commandMessage: T): Promise<R> {
-        logger('CommandMessage to ' + this.serverId + ': ' + JSON.stringify(commandMessage));
+        logger('CommandMessage sent: ' + JSON.stringify(commandMessage), this.serverId);
         await this.send(JSON.stringify(commandMessage));
 
         const comandUUID: string = (<CommandRequestMessage>commandMessage).getUUID();
