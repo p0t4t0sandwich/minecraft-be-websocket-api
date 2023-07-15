@@ -79,6 +79,7 @@ class Command {
 
         if (playerPermission === undefined) {
             player.server.getPermissionsHandler().setPermission(player.getName(), this.permission, this.isPermissionDefault);
+            return this.isPermissionDefault;
         } else {
             return playerPermission;
         }

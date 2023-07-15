@@ -66,7 +66,7 @@ export class Plugin {
                 event = new PlayerMessageEvent(event);
                 const message: string = event.getMessage();
                 const server: BedrockServer = this.mwss.getServer(event.server);
-                const player: BedrockPlayer = server.getPlayer(playerName);
+                const player: BedrockPlayer = server.getPlayerFromCache(playerName);
 
                 if (player == undefined) return;
 

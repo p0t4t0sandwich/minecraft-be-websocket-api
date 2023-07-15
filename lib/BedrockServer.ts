@@ -70,6 +70,7 @@ export class BedrockServer {
                     const playerMessageEvent = new PlayerMessageEvent(event)
                     // Log message
                     logger(playerMessageEvent.getSender() + ": " + playerMessageEvent.getMessage(), this.serverId);
+                    break;
 
                 default:
                     const ignoreEventsInLog: EventName[] = [
