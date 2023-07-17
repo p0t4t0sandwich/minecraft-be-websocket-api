@@ -7,6 +7,7 @@ import { EventName } from "../../../events/BedrockEvent.js";
 import { PlayerJoinEvent } from "../../../events/PlayerJoinEvent.js";
 import { PlayerLeaveEvent } from "../../../events/PlayerLeaveEvent.js";
 import { PlayerTransformEvent } from "../../../events/PlayerTransformEvent.js";
+import { logger } from "../../../utils.js";
 import { BedrockPlayer } from "../../player/BedrockPlayer.js";
 
 export class PlayerCachePlugin extends Plugin {
@@ -69,6 +70,6 @@ export class PlayerCachePlugin extends Plugin {
     async start(mwss: MinecraftWebSocket) {
         this.mwss = mwss;
 
-        console.log("Player Cache plugin started!");
+        logger("Player Cache plugin started!", this.name);
     }
 }

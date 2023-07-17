@@ -6,6 +6,7 @@ import { MinecraftWebSocket } from "../../lib/MinecraftWebSocket.js";
 import { Plugin } from "../../lib/Plugin.js";
 import { BedrockEvent, EventName } from "../../lib/events/BedrockEvent.js";
 import { PlayerMessageEvent } from "../../lib/events/PlayerMessageEvent.js";
+import { logger } from "../../lib/utils.js";
 import { ExampleCommand } from "./ExampleCommand.js";
 
 export class ExamplePlugin extends Plugin {
@@ -91,6 +92,6 @@ export class ExamplePlugin extends Plugin {
         this.registerCommand(new ExampleCommand());
         this.addCommandListeners();
 
-        console.log("Example plugin started!");
+        logger("Example plugin started!", this.name);
     }
 }

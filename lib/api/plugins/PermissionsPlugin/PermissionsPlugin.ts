@@ -4,6 +4,7 @@ import { BedrockServer } from "../../../BedrockServer.js";
 import { DataStore } from "../../../DataStore.js";
 import { MinecraftWebSocket } from "../../../MinecraftWebSocket.js";
 import { Plugin } from "../../../Plugin.js";
+import { logger } from "../../../utils.js";
 
 export class PermissionsPlugin extends Plugin {
     // Properties
@@ -39,6 +40,6 @@ export class PermissionsPlugin extends Plugin {
     async start(mwss: MinecraftWebSocket): Promise<void> {
         this.mwss = mwss;
 
-        console.log("Permissions plugin started!");
+        logger("Permissions plugin started!", this.name);
     }
 }
