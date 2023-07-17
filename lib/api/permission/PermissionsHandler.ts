@@ -35,12 +35,7 @@ class PermissionsHandler {
 
         if (playerPermissions) {
             const permissionValue = playerPermissions.get(permission);
-
-            if (permissionValue) {
-                return permissionValue;
-            } else {
-                return false;
-            }
+            return permissionValue;
         } else {
             this.permissions.set(playerName, new Map());
             return undefined;

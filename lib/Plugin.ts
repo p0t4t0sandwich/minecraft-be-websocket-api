@@ -81,7 +81,7 @@ export class Plugin {
                         if (commandPrefix + command.getRootCommand() === cmd[0]) {
                             // Execute command
                             const args: string[] = cmd.slice(1);
-                            await command.execute(server, player, args);
+                            command.execute(server, player, args);
                             return;
                         }
                     }

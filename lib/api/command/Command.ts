@@ -77,8 +77,13 @@ class Command {
     hasPermission(player: BedrockPlayer): boolean {
         const playerPermission = player.hasPermission(this.permission);
 
+        console.log("Checking permission for " + player.getName() + " on " + this.permission + ": " + playerPermission);
+
         if (playerPermission === undefined) {
             player.server.getPermissionsHandler().setPermission(player.getName(), this.permission, this.isPermissionDefault);
+
+            console.log("Setting default permission for " + player.getName() + " on " + this.permission + ": " + this.isPermissionDefault);
+
             return this.isPermissionDefault;
         } else {
             return playerPermission;
