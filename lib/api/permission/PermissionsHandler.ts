@@ -3,12 +3,6 @@
  * @description Permissions API
  */
 
-import { BedrockPlayer } from "../player/BedrockPlayer.js";
-
-
-
-
-
 class PermissionsHandler {
     permissions: Map<string, Map<string, boolean>>;
 
