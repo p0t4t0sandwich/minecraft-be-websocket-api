@@ -20,12 +20,12 @@ import { BedrockEvent, EventBody } from "./BedrockEvent.js";
  * @property {number} variant The variant of the block that was broken
  */
 interface BlockBrokenBody extends EventBody {
-    block: Block,
-    count: number,
-    destructionMethod: string,
-    player: Player,
-    tool: Tool,
-    variant: number
+  block: Block;
+  count: number;
+  destructionMethod: string;
+  player: Player;
+  tool: Tool;
+  variant: number;
 }
 
 /**
@@ -39,57 +39,57 @@ interface BlockBrokenBody extends EventBody {
  * @property {BlockBrokenBody} body The body of the event packet
  */
 class BlockBrokenEvent extends BedrockEvent {
-    body: BlockBrokenBody;
+  body: BlockBrokenBody;
 
-    /**
-     * @constructor
-     * @param event The event packet
-     * @description Constructor for the BlockBrokenEvent class
-     * @memberof BlockBrokenEvent
-     */
-    constructor(event: BedrockEvent) {
-        super(event.getServer(), event.getHeader(), event.getBody());
-    }
+  /**
+   * @constructor
+   * @param event The event packet
+   * @description Constructor for the BlockBrokenEvent class
+   * @memberof BlockBrokenEvent
+   */
+  constructor(event: BedrockEvent) {
+    super(event.getServer(), event.getHeader(), event.getBody());
+  }
 
-    /**
-     * @method getBody
-     * @description Returns the body of the event packet
-     * @returns {BlockBrokenBody} The body of the event packet
-     * @memberof BlockBrokenEvent
-     */
-    getBody(): BlockBrokenBody {
-        return this.body;
-    }
+  /**
+   * @method getBody
+   * @description Returns the body of the event packet
+   * @returns {BlockBrokenBody} The body of the event packet
+   * @memberof BlockBrokenEvent
+   */
+  getBody(): BlockBrokenBody {
+    return this.body;
+  }
 
-    /**
-     * @method getPlayer
-     * @description Returns the player that broke the block
-     * @returns {Player} The player that broke the block
-     * @memberof BlockBrokenEvent
-     */
-    getPlayer(): Player {
-        return this.body.player;
-    }
+  /**
+   * @method getPlayer
+   * @description Returns the player that broke the block
+   * @returns {Player} The player that broke the block
+   * @memberof BlockBrokenEvent
+   */
+  getPlayer(): Player {
+    return this.body.player;
+  }
 
-    /**
-     * @method getBlock
-     * @description Returns the block that was broken
-     * @returns {Block} The block that was broken
-     * @memberof BlockBrokenEvent
-     */
-    getBlock(): Block {
-        return this.body.block;
-    }
+  /**
+   * @method getBlock
+   * @description Returns the block that was broken
+   * @returns {Block} The block that was broken
+   * @memberof BlockBrokenEvent
+   */
+  getBlock(): Block {
+    return this.body.block;
+  }
 
-    /**
-     * @method getTool
-     * @description Returns the tool used to break the block
-     * @returns {Tool} The tool used to break the block
-     * @memberof BlockBrokenEvent
-     */
-    getTool(): Tool {
-        return this.body.tool;
-    }
+  /**
+   * @method getTool
+   * @description Returns the tool used to break the block
+   * @returns {Tool} The tool used to break the block
+   * @memberof BlockBrokenEvent
+   */
+  getTool(): Tool {
+    return this.body.tool;
+  }
 }
 
-export { BlockBrokenBody, BlockBrokenEvent }
+export { BlockBrokenBody, BlockBrokenEvent };

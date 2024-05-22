@@ -47,7 +47,7 @@ type CommandResponseBody struct {
 
 // CommandResponse - The body of a command response message
 type CommandResponse struct {
-	Packet
+	*Packet
 	Body CommandResponseBody `json:"body"`
 }
 
@@ -62,7 +62,7 @@ func NewCommandResponse(packet *Packet) *CommandResponse {
 	}
 
 	return &CommandResponse{
-		Packet: *packet,
+		Packet: packet,
 		Body: CommandResponseBody{
 			Message:       bodyMap["message"].(string),
 			StatusCode:    bodyMap["statusCode"].(int),

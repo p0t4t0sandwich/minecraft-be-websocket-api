@@ -29,7 +29,9 @@ func NewAPIServer(address string, usingUDS bool) *APIServer {
 func (s *APIServer) Setup() http.Handler {
 	router := http.NewServeMux()
 	router.HandleFunc("/ws/{id}", WSHandler)
-	router.HandleFunc("/api/cmd/{id}", CMDHandler)
+	router.HandleFunc("POST /api/cmd/{id}", CMDHandler)
+	router.HandleFunc("POST /api/event/{id}/{name}", EventSubscribeHandler)
+	router.HandleFunc("DELETE /api/event/{id}/{name}", EventUnsubscribeHander)
 	router.Handle("/", http.FileServer(http.Dir("./public")))
 	return middleware.RequestLoggerMiddleware(cors.AllowAll().Handler(router))
 }
