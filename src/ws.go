@@ -1,11 +1,13 @@
 package server
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol"
 )
 
 var (
@@ -51,6 +53,29 @@ func WSHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println("Message type is not text")
 		}
 
-		log.Println(string(msg))
+		packet := &protocol.Packet{}
+		err = json.Unmarshal(msg, packet)
+		if err != nil {
+			log.Println(err.Error())
+			return
+		}
+
+		switch packet.Header.MessagePurpose {
+		case protocol.CommandResponseType:
+			response := &protocol.CommandResponse{}
+			err = json.Unmarshal(msg, response)
+			if err != nil {
+				log.Println(err.Error())
+				return
+			}
+			if response.Body.StatusCode != 0 {
+				log.Printf("[%s] Command status %d: %s", id, response.Body.StatusCode, response.Body.StatusMessage)
+			} else {
+				log.Printf("[%s] Command response: %s", id, response.Body.Message)
+			}
+		default:
+			log.Printf("[%s] %s", id, packet.Header.MessagePurpose)
+			log.Println(string(msg))
+		}
 	}
 }
