@@ -45,3 +45,39 @@ type BlockPlacedEvent struct {
 	*EventPacket
 	Body BlockPlacedBody `json:"body"`
 }
+
+// ItemUsedBody
+type ItemUsedBody struct {
+	Count     int    `json:"count"`
+	Item      Item   `json:"item"`
+	Player    Player `json:"player"`
+	UseMethod int    `json:"useMethod"`
+}
+
+// ItemUsedEvent
+type ItemUsedEvent struct {
+	*EventPacket
+	Body ItemUsedBody `json:"body"`
+}
+
+// PlayerJoinBody
+type PlayerJoinBody struct {
+	Player Player `json:"player"`
+}
+
+// PlayerJoinEvent
+type PlayerJoinEvent struct {
+	*EventPacket
+	Body PlayerJoinBody `json:"body"`
+}
+
+// PlayerLeaveBody
+type PlayerLeaveBody struct {
+	Player Player `json:"player"`
+}
+
+// PlayerLeaveEvent
+type PlayerLeaveEvent struct {
+	*EventPacket
+	Body PlayerLeaveBody `json:"body"`
+}

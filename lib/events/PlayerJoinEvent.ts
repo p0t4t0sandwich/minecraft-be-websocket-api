@@ -3,26 +3,26 @@ import { BedrockEvent, EventBody } from "./BedrockEvent.js";
 
 // PlayerJoinEvent
 interface PlayerJoinBody extends EventBody {
-    player: Player;
+  player: Player;
 }
 
 class PlayerJoinEvent extends BedrockEvent {
-    // Properties
-    body: PlayerJoinBody;
+  // Properties
+  body: PlayerJoinBody;
 
-    // Constructor
-    constructor(event: BedrockEvent) {
-        super(event.getServer(), event.getHeader(), event.getBody());
-    }
+  // Constructor
+  constructor(event: BedrockEvent) {
+    super(event.getServer(), event.getHeader(), event.getBody());
+  }
 
-    // Getters
-    getBody(): PlayerJoinBody {
-        return this.body;
-    }
+  // Getters
+  getBody(): PlayerJoinBody {
+    return this.body;
+  }
 
-    getPlayer(): Player {
-        return this.body.player;
-    }
+  getPlayer(): Player {
+    return this.body.player;
+  }
 }
 
-export { PlayerJoinBody, PlayerJoinEvent }
+export { PlayerJoinBody, PlayerJoinEvent };

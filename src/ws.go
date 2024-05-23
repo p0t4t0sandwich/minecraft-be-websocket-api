@@ -123,6 +123,45 @@ func HandleEvent(id string, event *events.EventPacket) {
 			return
 		}
 		log.Printf("[%s] [Event] Block placed by %s", id, blockPlaced.Body.Player.Name)
+	case events.ItemUsed:
+		itemUsed := &events.ItemUsedEvent{EventPacket: event}
+		body, err := json.Marshal(event.Body)
+		if err != nil {
+			log.Println(err.Error())
+			return
+		}
+		err = json.Unmarshal(body, &itemUsed.Body)
+		if err != nil {
+			log.Println(err.Error())
+			return
+		}
+		log.Printf("[%s] [Event] Item used by %s", id, itemUsed.Body.Player.Name)
+	case events.PlayerJoin:
+		playerJoin := &events.PlayerJoinEvent{EventPacket: event}
+		body, err := json.Marshal(event.Body)
+		if err != nil {
+			log.Println(err.Error())
+			return
+		}
+		err = json.Unmarshal(body, &playerJoin.Body)
+		if err != nil {
+			log.Println(err.Error())
+			return
+		}
+		log.Printf("[%s] [Event] Player joined: %s", id, playerJoin.Body.Player.Name)
+	case events.PlayerLeave:
+		playerLeave := &events.PlayerLeaveEvent{EventPacket: event}
+		body, err := json.Marshal(event.Body)
+		if err != nil {
+			log.Println(err.Error())
+			return
+		}
+		err = json.Unmarshal(body, &playerLeave.Body)
+		if err != nil {
+			log.Println(err.Error())
+			return
+		}
+		log.Printf("[%s] [Event] Player left: %s", id, playerLeave.Body.Player.Name)
 	default:
 		log.Printf("[%s] [Event] %s", id, event.Header.EventName)
 		log.Println(event.Body)

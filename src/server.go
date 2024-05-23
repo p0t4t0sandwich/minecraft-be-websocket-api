@@ -15,6 +15,7 @@ import (
 type APIServer struct {
 	Address  string
 	UsingUDS bool
+	Router   *http.ServeMux
 }
 
 // NewAPIServer - Create a new API server
@@ -22,18 +23,17 @@ func NewAPIServer(address string, usingUDS bool) *APIServer {
 	return &APIServer{
 		Address:  address,
 		UsingUDS: usingUDS,
+		Router:   http.NewServeMux(),
 	}
 }
 
 // Setup - Setup the API server
 func (s *APIServer) Setup() http.Handler {
-	router := http.NewServeMux()
-	router.HandleFunc("/ws/{id}", WSHandler)
-	router.HandleFunc("POST /api/cmd/{id}", CMDHandler)
-	router.HandleFunc("POST /api/event/{id}/{name}", EventSubscribeHandler)
-	router.HandleFunc("DELETE /api/event/{id}/{name}", EventUnsubscribeHander)
-	router.Handle("/", http.FileServer(http.Dir("./public")))
-	return middleware.RequestLoggerMiddleware(cors.AllowAll().Handler(router))
+	s.Router.HandleFunc("/ws/{id}", WSHandler)
+	s.Router.HandleFunc("POST /api/cmd/{id}", CMDHandler)
+	s.Router.HandleFunc("POST /api/event/{id}/{name}", EventSubscribeHandler)
+	s.Router.HandleFunc("DELETE /api/event/{id}/{name}", EventUnsubscribeHander)
+	return middleware.RequestLoggerMiddleware(cors.AllowAll().Handler(s.Router))
 }
 
 // Run - Start the API server
