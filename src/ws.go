@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -123,7 +122,12 @@ func (wss *WebSocketServer) HandlePacket(id string, msg []byte) {
 			log.Println(err.Error())
 			return
 		}
-		wss.HandleCommand(id, msg, packetJSON, command)
+		commandName, ok := wss.PopCommand(command.Header.RequestId)
+		if !ok {
+			log.Printf("[%s] Command response: %s", id, command.Body.StatusMessage)
+			return
+		}
+		commands.HandleCommand(id, msg, packetJSON, command, commandName)
 	case protocol.EventType:
 		event := &events.EventPacket{}
 		err = json.Unmarshal(msg, event)
@@ -131,124 +135,9 @@ func (wss *WebSocketServer) HandlePacket(id string, msg []byte) {
 			log.Println(err.Error())
 			return
 		}
-		wss.HandleEvent(id, msg, packetJSON, event)
+		events.HandleEvent(id, msg, packetJSON, event)
 	default:
 		log.Printf("[%s] %s", id, messagePurpose)
 		log.Println(string(msg))
-	}
-}
-
-// HandleCommand - Handle a command packet
-func (wss *WebSocketServer) HandleCommand(id string, msg []byte, packetJSON map[string]interface{}, packet *commands.CommandResponse) {
-	commandName, ok := wss.PopCommand(packet.Header.RequestId)
-	if !ok {
-		log.Printf("[%s] Command response: %s", id, packet.Body.StatusMessage)
-		return
-	}
-
-	if packet.Body.StatusCode != 0 && commandName != "" {
-		packet.Body.StatusMessage = strings.ReplaceAll(packet.Body.StatusMessage, "\n", "\n\t\t")
-		log.Printf("[%s] Command %s status %d: %s", id, commandName, packet.Body.StatusCode, packet.Body.StatusMessage)
-		return
-	}
-
-	switch commandName {
-	case commands.Effect:
-		commands.HandleEffect(id, msg, packetJSON)
-	case commands.GameMode:
-		commands.HandleGamemode(id, msg, packetJSON)
-	case commands.GlobalPause:
-		commands.HandleGlobalPause(id, msg, packetJSON)
-	case commands.List:
-		commands.HandleList(id, msg, packetJSON)
-	case commands.Say:
-		commands.HandleSay(id, msg, packetJSON)
-	case commands.Summon:
-		commands.HandleSummon(id, msg, packetJSON)
-	case commands.Teleport:
-		commands.HandleTeleport(id, msg, packetJSON)
-	case commands.Tell:
-		commands.HandleTell(id, msg, packetJSON)
-	default:
-		log.Println(string(msg))
-		if packet.Body.StatusCode != 0 {
-			log.Printf("[%s] Command status %d: %s", id, packet.Body.StatusCode, packet.Body.StatusMessage)
-		} else {
-			log.Printf("[%s] Command response: %s", id, packet.Body.StatusMessage)
-		}
-	}
-}
-
-// HandleEvent - Handle an event packet
-func (wss *WebSocketServer) HandleEvent(id string, msg []byte, packetJSON map[string]interface{}, event *events.EventPacket) {
-	switch event.Header.EventName {
-	case events.BlockBroken:
-		blockBroken := &events.BlockBrokenEvent{EventPacket: event}
-		body, err := json.Marshal(event.Body)
-		if err != nil {
-			log.Println(err.Error())
-			return
-		}
-		err = json.Unmarshal(body, &blockBroken.Body)
-		if err != nil {
-			log.Println(err.Error())
-			return
-		}
-		log.Printf("[%s] [Event] Block broken by %s", id, blockBroken.Body.Player.Name)
-	case events.BlockPlaced:
-		blockPlaced := &events.BlockPlacedEvent{EventPacket: event}
-		body, err := json.Marshal(event.Body)
-		if err != nil {
-			log.Println(err.Error())
-			return
-		}
-		err = json.Unmarshal(body, &blockPlaced.Body)
-		if err != nil {
-			log.Println(err.Error())
-			return
-		}
-		log.Printf("[%s] [Event] Block placed by %s", id, blockPlaced.Body.Player.Name)
-	case events.ItemUsed:
-		itemUsed := &events.ItemUsedEvent{EventPacket: event}
-		body, err := json.Marshal(event.Body)
-		if err != nil {
-			log.Println(err.Error())
-			return
-		}
-		err = json.Unmarshal(body, &itemUsed.Body)
-		if err != nil {
-			log.Println(err.Error())
-			return
-		}
-		log.Printf("[%s] [Event] Item used by %s", id, itemUsed.Body.Player.Name)
-	case events.PlayerJoin:
-		playerJoin := &events.PlayerJoinEvent{EventPacket: event}
-		body, err := json.Marshal(event.Body)
-		if err != nil {
-			log.Println(err.Error())
-			return
-		}
-		err = json.Unmarshal(body, &playerJoin.Body)
-		if err != nil {
-			log.Println(err.Error())
-			return
-		}
-		log.Printf("[%s] [Event] Player joined: %s", id, playerJoin.Body.Player.Name)
-	case events.PlayerLeave:
-		playerLeave := &events.PlayerLeaveEvent{EventPacket: event}
-		body, err := json.Marshal(event.Body)
-		if err != nil {
-			log.Println(err.Error())
-			return
-		}
-		err = json.Unmarshal(body, &playerLeave.Body)
-		if err != nil {
-			log.Println(err.Error())
-			return
-		}
-		log.Printf("[%s] [Event] Player left: %s", id, playerLeave.Body.Player.Name)
-	default:
-		log.Printf("[%s] [Event] %s", id, event.Header.EventName)
-		log.Println(event.Body)
 	}
 }

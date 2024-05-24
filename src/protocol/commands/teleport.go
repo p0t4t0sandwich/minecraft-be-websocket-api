@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol"
-	mctypes "github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/types"
+	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/mctypes"
 )
 
 // tp <destination: target>
