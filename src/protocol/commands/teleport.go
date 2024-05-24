@@ -3,7 +3,6 @@ package commands
 import (
 	"encoding/json"
 	"log"
-	"strconv"
 
 	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol"
 	mctypes "github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/types"
@@ -17,11 +16,6 @@ import (
 // NewTeleportRequest - Sends a teleport request
 func NewTeleportRequest(destination string) *protocol.Packet {
 	return NewCommandPacket("tp " + destination)
-}
-
-// Float64ToString - Converts a float64 to a string
-func Float64ToString(f float64) string {
-	return strconv.FormatFloat(f, 'f', -1, 64)
 }
 
 // NewTeleportRequestWithCoordinates - Sends a teleport request with coordinates

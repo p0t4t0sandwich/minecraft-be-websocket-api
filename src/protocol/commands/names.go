@@ -11,6 +11,7 @@ const (
 	GlobalPause CommandName = "globalpause"
 	List        CommandName = "list"
 	Say         CommandName = "say"
+	Summon      CommandName = "summon"
 	Teleport    CommandName = "tp"
 	Tell        CommandName = "tell"
 )

@@ -163,6 +163,8 @@ func (wss *WebSocketServer) HandleCommand(id string, msg []byte, packetJSON map[
 		commands.HandleList(id, msg, packetJSON)
 	case commands.Say:
 		commands.HandleSay(id, msg, packetJSON)
+	case commands.Summon:
+		commands.HandleSummon(id, msg, packetJSON)
 	case commands.Teleport:
 		commands.HandleTeleport(id, msg, packetJSON)
 	case commands.Tell:

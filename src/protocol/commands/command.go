@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"strconv"
+
 	"github.com/google/uuid"
 	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol"
 )
@@ -64,4 +66,9 @@ func NewCommandResponse(packet *protocol.Packet) *CommandResponse {
 			StatusMessage: bodyMap["statusMessage"].(string),
 		},
 	}
+}
+
+// Float64ToString - Converts a float64 to a string
+func Float64ToString(f float64) string {
+	return strconv.FormatFloat(f, 'f', -1, 64)
 }
