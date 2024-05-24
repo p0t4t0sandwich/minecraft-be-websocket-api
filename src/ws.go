@@ -5,19 +5,66 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol"
+	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/commands"
 	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/events"
 )
 
-var (
-	upgrader = websocket.Upgrader{}
+var upgrader = websocket.Upgrader{}
 
-	// websocketMap - A map of websockets
-	websocketMap = make(map[string]*websocket.Conn)
-)
+// WebSocketServer
+type WebSocketServer struct {
+	conns    map[string]*websocket.Conn
+	commands map[uuid.UUID]commands.CommandName
+}
 
-func WSHandler(w http.ResponseWriter, r *http.Request) {
+// NewWebSocketServer - Create a new WebSocket relay
+func NewWebSocketServer() *WebSocketServer {
+	return &WebSocketServer{
+		conns:    make(map[string]*websocket.Conn),
+		commands: make(map[uuid.UUID]commands.CommandName),
+	}
+}
+
+// Add - Add a connection to the relay
+func (r *WebSocketServer) Add(id string, conn *websocket.Conn) {
+	r.conns[id] = conn
+}
+
+// Remove - Remove a connection from the relay
+func (r *WebSocketServer) Remove(id string) {
+	delete(r.conns, id)
+}
+
+// Send - Send a message to a connection
+func (r *WebSocketServer) Send(id string, msg []byte) error {
+	conn, ok := r.conns[id]
+	if !ok {
+		return nil
+	}
+	return conn.WriteMessage(websocket.TextMessage, msg)
+}
+
+// AddCommand - Add a command to the relay
+func (r *WebSocketServer) AddCommand(id uuid.UUID, command commands.CommandName) {
+	r.commands[id] = command
+}
+
+// PopCommand - Pop a command from the relay
+func (r *WebSocketServer) PopCommand(id uuid.UUID) (commands.CommandName, bool) {
+	command, ok := r.commands[id]
+	if ok {
+		delete(r.commands, id)
+	}
+	return command, ok
+}
+
+// PopCommand - Pop a command from the relay
+
+// WSHandler - Handle a WebSocket connection
+func (wss *WebSocketServer) WSHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if id == "" {
 		http.Error(w, "ID is required", http.StatusBadRequest)
@@ -30,10 +77,10 @@ func WSHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer ws.Close()
-	defer delete(websocketMap, id)
+	defer wss.Remove(id)
 	defer log.Printf("[%s] < Disconnected", id)
 
-	websocketMap[id] = ws
+	wss.Add(id, ws)
 	log.Printf("[%s] > Connected", id)
 
 	for {
@@ -44,12 +91,12 @@ func WSHandler(w http.ResponseWriter, r *http.Request) {
 		} else if msgType != websocket.TextMessage {
 			log.Println("Message type is not text")
 		}
-		HandlePacket(id, msg)
+		wss.HandlePacket(id, msg)
 	}
 }
 
 // HandlePacket - Handle a packet
-func HandlePacket(id string, msg []byte) {
+func (wss *WebSocketServer) HandlePacket(id string, msg []byte) {
 	packetJSON := make(map[string]interface{})
 	err := json.Unmarshal(msg, &packetJSON)
 	if err != nil {
@@ -69,17 +116,13 @@ func HandlePacket(id string, msg []byte) {
 	}
 	switch protocol.MessageType(messagePurpose) {
 	case protocol.CommandResponseType:
-		response := &protocol.CommandResponse{}
-		err = json.Unmarshal(msg, response)
+		command := &commands.CommandResponse{}
+		err = json.Unmarshal(msg, command)
 		if err != nil {
 			log.Println(err.Error())
 			return
 		}
-		if response.Body.StatusCode != 0 {
-			log.Printf("[%s] Command status %d: %s", id, response.Body.StatusCode, response.Body.StatusMessage)
-		} else {
-			log.Printf("[%s] Command response: %s", id, response.Body.Message)
-		}
+		wss.HandleCommand(id, msg, packetJSON, command)
 	case protocol.EventType:
 		event := &events.EventPacket{}
 		err = json.Unmarshal(msg, event)
@@ -87,15 +130,46 @@ func HandlePacket(id string, msg []byte) {
 			log.Println(err.Error())
 			return
 		}
-		HandleEvent(id, event)
+		wss.HandleEvent(id, msg, packetJSON, event)
 	default:
 		log.Printf("[%s] %s", id, messagePurpose)
 		log.Println(string(msg))
 	}
 }
 
+// HandleCommand - Handle a command packet
+func (wss *WebSocketServer) HandleCommand(id string, msg []byte, packetJSON map[string]interface{}, command *commands.CommandResponse) {
+	commandName, ok := wss.PopCommand(command.Header.RequestId)
+	if !ok {
+		log.Printf("[%s] Command response: %s", id, command.Body.StatusMessage)
+		return
+	}
+
+	switch commandName {
+	case commands.GlobalPause:
+		if isPaused, ok := packetJSON["body"].(map[string]interface{})["isPaused"].(bool); ok {
+			log.Printf("[%s] Command response: Global pause state is %t", id, isPaused)
+		} else {
+			log.Printf("[%s] Command response: %s", id, command.Body.StatusMessage)
+		}
+	default:
+		log.Println(string(msg))
+		if command.Body.StatusCode != 0 {
+			log.Printf("[%s] Command status %d: %s", id, command.Body.StatusCode, command.Body.StatusMessage)
+		} else {
+			if command.Body.Message == "" {
+				command.Body.Message = command.Body.StatusMessage
+			}
+			if command.Body.Message == "" {
+				command.Body.Message = "Command executed successfully"
+			}
+			log.Printf("[%s] Command response: %s", id, command.Body.Message)
+		}
+	}
+}
+
 // HandleEvent - Handle an event packet
-func HandleEvent(id string, event *events.EventPacket) {
+func (wss *WebSocketServer) HandleEvent(id string, msg []byte, packetJSON map[string]interface{}, event *events.EventPacket) {
 	switch event.Header.EventName {
 	case events.BlockBroken:
 		blockBroken := &events.BlockBrokenEvent{EventPacket: event}

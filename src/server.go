@@ -29,10 +29,11 @@ func NewAPIServer(address string, usingUDS bool) *APIServer {
 
 // Setup - Setup the API server
 func (s *APIServer) Setup() http.Handler {
-	s.Router.HandleFunc("/ws/{id}", WSHandler)
-	s.Router.HandleFunc("POST /api/cmd/{id}", CMDHandler)
-	s.Router.HandleFunc("POST /api/event/{id}/{name}", EventSubscribeHandler)
-	s.Router.HandleFunc("DELETE /api/event/{id}/{name}", EventUnsubscribeHander)
+	wss := NewWebSocketServer()
+	s.Router.HandleFunc("/ws/{id}", wss.WSHandler)
+	s.Router.HandleFunc("POST /api/cmd/{id}", CMDHandler(wss))
+	s.Router.HandleFunc("POST /api/event/{id}/{name}", EventSubscribeHandler(wss))
+	s.Router.HandleFunc("DELETE /api/event/{id}/{name}", EventUnsubscribeHander(wss))
 	return middleware.RequestLoggerMiddleware(cors.AllowAll().Handler(s.Router))
 }
 
