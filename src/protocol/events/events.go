@@ -1,6 +1,9 @@
 package events
 
-import "github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol"
+import (
+	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol"
+	mctypes "github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/types"
+)
 
 // EventHeader - Adds an event name to the regular header
 type EventHeader struct {
@@ -16,12 +19,12 @@ type EventPacket struct {
 
 // BlockBrokenBody
 type BlockBrokenBody struct {
-	Block             Block  `json:"block"`
-	Count             int    `json:"count"`
-	DestructionMethod int    `json:"destructionMethod"`
-	Player            Player `json:"player"`
-	Tool              Tool   `json:"tool"`
-	Varient           int    `json:"varient"`
+	Block             mctypes.Block  `json:"block"`
+	Count             int            `json:"count"`
+	DestructionMethod int            `json:"destructionMethod"`
+	Player            mctypes.Player `json:"player"`
+	Tool              mctypes.Tool   `json:"tool"`
+	Varient           int            `json:"varient"`
 }
 
 // BlockBrokenEvent
@@ -32,12 +35,12 @@ type BlockBrokenEvent struct {
 
 // BlockPlacedBody
 type BlockPlacedBody struct {
-	Block            Block  `json:"block"`
-	Count            int    `json:"count"`
-	PlacedUnderwater bool   `json:"placedUnderwater"`
-	PlacementMethod  int    `json:"placementMethod"`
-	Player           Player `json:"player"`
-	Tool             Tool   `json:"tool"`
+	Block            mctypes.Block  `json:"block"`
+	Count            int            `json:"count"`
+	PlacedUnderwater bool           `json:"placedUnderwater"`
+	PlacementMethod  int            `json:"placementMethod"`
+	Player           mctypes.Player `json:"player"`
+	Tool             mctypes.Tool   `json:"tool"`
 }
 
 // BlockPlacedEvent
@@ -48,10 +51,10 @@ type BlockPlacedEvent struct {
 
 // ItemUsedBody
 type ItemUsedBody struct {
-	Count     int    `json:"count"`
-	Item      Item   `json:"item"`
-	Player    Player `json:"player"`
-	UseMethod int    `json:"useMethod"`
+	Count     int            `json:"count"`
+	Item      mctypes.Item   `json:"item"`
+	Player    mctypes.Player `json:"player"`
+	UseMethod int            `json:"useMethod"`
 }
 
 // ItemUsedEvent
@@ -62,7 +65,7 @@ type ItemUsedEvent struct {
 
 // PlayerJoinBody
 type PlayerJoinBody struct {
-	Player Player `json:"player"`
+	Player mctypes.Player `json:"player"`
 }
 
 // PlayerJoinEvent
@@ -73,7 +76,7 @@ type PlayerJoinEvent struct {
 
 // PlayerLeaveBody
 type PlayerLeaveBody struct {
-	Player Player `json:"player"`
+	Player mctypes.Player `json:"player"`
 }
 
 // PlayerLeaveEvent

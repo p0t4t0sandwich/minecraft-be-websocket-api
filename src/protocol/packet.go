@@ -30,7 +30,7 @@ const (
 
 // header.messagePurpose = "error"
 // ErrorBody - The body of an error message
-type ErrorBody struct {
+type Body struct {
 	StatusCode    int    `json:"statusCode"`
 	StatusMessage string `json:"statusMessage"`
 }

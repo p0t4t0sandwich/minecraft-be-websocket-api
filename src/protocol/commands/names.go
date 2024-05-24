@@ -6,7 +6,13 @@ import "strings"
 type CommandName string
 
 const (
+	Effect      CommandName = "effect"
+	GameMode    CommandName = "gamemode"
 	GlobalPause CommandName = "globalpause"
+	List        CommandName = "list"
+	Say         CommandName = "say"
+	Teleport    CommandName = "tp"
+	Tell        CommandName = "tell"
 )
 
 // FromString - Convert a string to a CommandName

@@ -44,33 +44,22 @@ func NewCommandPacket(command string) *protocol.Packet {
 	}
 }
 
-// CommandResponseBody - The body of a command response message
-type CommandResponseBody struct {
-	Message       string `json:"message,omitempty"`
-	StatusCode    int    `json:"statusCode"`
-	StatusMessage string `json:"statusMessage,omitempty"`
-}
-
 // CommandResponse - The body of a command response message
 type CommandResponse struct {
 	*protocol.Packet
-	Body CommandResponseBody `json:"body"`
+	Body protocol.Body `json:"body"`
 }
 
 // NewCommandResponse - Create a new command response packet
 func NewCommandResponse(packet *protocol.Packet) *CommandResponse {
 	bodyMap := packet.Body.(map[string]interface{})
-	if _, ok := bodyMap["message"]; !ok {
-		bodyMap["message"] = ""
-	}
 	if _, ok := bodyMap["statusMessage"]; !ok {
 		bodyMap["statusMessage"] = ""
 	}
 
 	return &CommandResponse{
 		Packet: packet,
-		Body: CommandResponseBody{
-			Message:       bodyMap["message"].(string),
+		Body: protocol.Body{
 			StatusCode:    bodyMap["statusCode"].(int),
 			StatusMessage: bodyMap["statusMessage"].(string),
 		},

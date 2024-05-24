@@ -1,4 +1,4 @@
-package events
+package mctypes
 
 // NameSpace enum
 type NameSpace string
@@ -28,18 +28,21 @@ const (
 
 // Player
 type Player struct {
-	Color     string `json:"color"`
-	Dimension int    `json:"dimension"`
-	Id        int    `json:"id"`
-	Name      string `json:"name"`
-	Position  struct {
-		X float64 `json:"x"`
-		Y float64 `json:"y"`
-		Z float64 `json:"z"`
-	} `json:"position"`
-	Type    PlayerType `json:"type"`
-	Varient int        `json:"varient"`
-	YRot    float64    `json:"yRot"`
+	Color     string     `json:"color"`
+	Dimension int        `json:"dimension"`
+	Id        int        `json:"id"`
+	Name      string     `json:"name"`
+	Position  Position   `json:"position"`
+	Type      PlayerType `json:"type"`
+	Varient   int        `json:"varient"`
+	YRot      float64    `json:"yRot"`
+}
+
+// Position
+type Position struct {
+	X float64 `json:"x"`
+	Y float64 `json:"y"`
+	Z float64 `json:"z"`
 }
 
 // Tool

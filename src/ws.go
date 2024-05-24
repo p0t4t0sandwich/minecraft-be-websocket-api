@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -138,32 +139,40 @@ func (wss *WebSocketServer) HandlePacket(id string, msg []byte) {
 }
 
 // HandleCommand - Handle a command packet
-func (wss *WebSocketServer) HandleCommand(id string, msg []byte, packetJSON map[string]interface{}, command *commands.CommandResponse) {
-	commandName, ok := wss.PopCommand(command.Header.RequestId)
+func (wss *WebSocketServer) HandleCommand(id string, msg []byte, packetJSON map[string]interface{}, packet *commands.CommandResponse) {
+	commandName, ok := wss.PopCommand(packet.Header.RequestId)
 	if !ok {
-		log.Printf("[%s] Command response: %s", id, command.Body.StatusMessage)
+		log.Printf("[%s] Command response: %s", id, packet.Body.StatusMessage)
+		return
+	}
+
+	if packet.Body.StatusCode != 0 && commandName != "" {
+		packet.Body.StatusMessage = strings.ReplaceAll(packet.Body.StatusMessage, "\n", "\n\t\t")
+		log.Printf("[%s] Command %s status %d: %s", id, commandName, packet.Body.StatusCode, packet.Body.StatusMessage)
 		return
 	}
 
 	switch commandName {
+	case commands.Effect:
+		commands.HandleEffect(id, msg, packetJSON)
+	case commands.GameMode:
+		commands.HandleGamemode(id, msg, packetJSON)
 	case commands.GlobalPause:
-		if isPaused, ok := packetJSON["body"].(map[string]interface{})["isPaused"].(bool); ok {
-			log.Printf("[%s] Command response: Global pause state is %t", id, isPaused)
-		} else {
-			log.Printf("[%s] Command response: %s", id, command.Body.StatusMessage)
-		}
+		commands.HandleGlobalPause(id, msg, packetJSON)
+	case commands.List:
+		commands.HandleList(id, msg, packetJSON)
+	case commands.Say:
+		commands.HandleSay(id, msg, packetJSON)
+	case commands.Teleport:
+		commands.HandleTeleport(id, msg, packetJSON)
+	case commands.Tell:
+		commands.HandleTell(id, msg, packetJSON)
 	default:
 		log.Println(string(msg))
-		if command.Body.StatusCode != 0 {
-			log.Printf("[%s] Command status %d: %s", id, command.Body.StatusCode, command.Body.StatusMessage)
+		if packet.Body.StatusCode != 0 {
+			log.Printf("[%s] Command status %d: %s", id, packet.Body.StatusCode, packet.Body.StatusMessage)
 		} else {
-			if command.Body.Message == "" {
-				command.Body.Message = command.Body.StatusMessage
-			}
-			if command.Body.Message == "" {
-				command.Body.Message = "Command executed successfully"
-			}
-			log.Printf("[%s] Command response: %s", id, command.Body.Message)
+			log.Printf("[%s] Command response: %s", id, packet.Body.StatusMessage)
 		}
 	}
 }
