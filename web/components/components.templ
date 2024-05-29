@@ -1,0 +1,76 @@
+package components
+
+templ Root() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<title>Sci-Fi Minecraft Camp Administration</title>
+		</head>
+		<script>
+
+		// Label handling
+		let label = "default";
+		function setLabel() {
+			label = document.getElementById("serverLabel").value;
+		}
+		window.onload = setLabel;
+
+		// Command sending
+		function sendCmd(cmd) {
+			fetch(`/api/cmd/${label}`, {
+				method: "POST",
+				body: JSON.stringify({cmd: cmd}),
+				headers: {"Content-Type": "application/json"}
+			});
+		}
+
+        function fiveMinuteWarning() {
+            sendCmd("title @a times 0 100 0");
+			sendCmd("title @a title 5 minute warning!");
+        }
+
+		function flashDarkness() {
+			sendCmd("effect @a blindness 2 2");
+		}
+    </script>
+		<body>
+			<!-- This is a dummy frame to prevent the page from reloading when a form is submitted -->
+			<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+			<h1>Sci-Fi Minecraft Camp Administration</h1>
+			<!-- Set server label -->
+			<p>Set server label:</p>
+			<form onSubmit="setLabel()" target="dummyframe">
+				<input type="text" id="serverLabel" name="serverLabel" placeholder="Server Label"/>
+				<input type="submit" value="Submit"/>
+			</form>
+			<!-- Pause buttons -->
+			<p>Pause buttons:</p>
+			<button onclick="sendCmd('globalpause true')">Pause Server</button>
+			<button onclick="sendCmd('globalpause false')">Unpause Server</button>
+			<!-- Attention Utils -->
+			<p>Attention Utils:</p>
+			<button onclick="fiveMinuteWarning()">Five Min Warning</button>
+			<button onclick="flashDarkness()">Flash Darkness</button>
+			<br/>
+			<p>General Utils:</p>
+			<p>Clear player inventory:</p>
+			<form onSubmit="sendCmd('clear ' + document.getElementById('clearPlayer').value + ' ' + document.getElementById('clearItem').value)" target="dummyframe">
+				<input type="text" id="clearPlayer" name="player" placeholder="Player"/>
+				<input type="text" id="clearItem" name="item" placeholder="Item"/>
+				<input type="submit" value="Clear"/>
+			</form>
+			<p>Remove entity:</p>
+			<form onSubmit="sendCmd('kill @e[type=' + document.getElementById('entityType').value + ']')" target="dummyframe">
+				<input type="text" id="entityType" name="entityType" placeholder="Entity Type"/>
+				<input type="submit" value="Remove"/>
+			</form>
+			<!-- Custom command -->
+			<p>Custom command:</p>
+			<form onSubmit="sendCmd(document.getElementById('customCmd').value)" target="dummyframe">
+				<input type="text" id="customCmd" name="customCmd" placeholder="Custom Command"/>
+				<input type="submit" value="Submit"/>
+			</form>
+		</body>
+	</html>
+}

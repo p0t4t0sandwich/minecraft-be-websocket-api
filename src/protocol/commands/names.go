@@ -9,6 +9,7 @@ const (
 	Effect      CommandName = "effect"
 	GameMode    CommandName = "gamemode"
 	GlobalPause CommandName = "globalpause"
+	Kill        CommandName = "kill"
 	List        CommandName = "list"
 	Say         CommandName = "say"
 	Summon      CommandName = "summon"

@@ -90,6 +90,8 @@ func HandleCommand(id string, msg []byte, packetJSON map[string]interface{}, pac
 		HandleGamemode(id, msg, packetJSON)
 	case GlobalPause:
 		HandleGlobalPause(id, msg, packetJSON)
+	case Kill:
+		HandleKill(id, msg, packetJSON)
 	case List:
 		HandleList(id, msg, packetJSON)
 	case Say:

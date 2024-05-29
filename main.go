@@ -5,6 +5,7 @@ import (
 	"os"
 
 	server "github.com/p0t4t0sandwich/minecraft-be-websocket-api/src"
+	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/web"
 )
 
 func main() {
@@ -17,5 +18,8 @@ func main() {
 	}
 
 	server := server.NewAPIServer(address, useUDS)
+
+	server.Router = web.ApplyRoutes(server.Router)
+
 	log.Fatal(server.Run())
 }

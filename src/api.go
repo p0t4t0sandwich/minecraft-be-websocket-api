@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol"
@@ -34,6 +35,7 @@ func CMDHandler(wss *WebSocketServer) http.HandlerFunc {
 			return
 		}
 
+		log.Printf("[%s] Sending command %s", id, body.Command)
 		err = wss.Send(id, data)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -64,6 +66,7 @@ func EventSubscribeHandler(wss *WebSocketServer) http.HandlerFunc {
 			return
 		}
 
+		log.Printf("[%s] Subscribing to event %s", id, eventName)
 		err = wss.Send(id, data)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -93,6 +96,7 @@ func EventUnsubscribeHander(wss *WebSocketServer) http.HandlerFunc {
 			return
 		}
 
+		log.Printf("[%s] Unsubscribing from event %s", id, eventName)
 		err = wss.Send(id, data)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
