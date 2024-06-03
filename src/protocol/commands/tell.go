@@ -29,7 +29,7 @@ type TellResponse struct {
 }
 
 // HandleTell - Handle a tell response
-func HandleTell(id string, msg []byte, packetJSON map[string]interface{}) {
+func HandleTell(id string, msg []byte, packetJSON map[string]interface{}, packet *CommandResponse) {
 	tell := &TellResponse{}
 	err := json.Unmarshal(msg, tell)
 	if err != nil {

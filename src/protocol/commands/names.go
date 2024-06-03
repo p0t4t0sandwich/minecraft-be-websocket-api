@@ -15,6 +15,7 @@ const (
 	Summon      CommandName = "summon"
 	Teleport    CommandName = "tp"
 	Tell        CommandName = "tell"
+	Unknown     CommandName = "unknown"
 )
 
 // FromString - Convert a string to a CommandName

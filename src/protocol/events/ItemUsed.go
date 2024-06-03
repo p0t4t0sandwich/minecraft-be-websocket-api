@@ -22,7 +22,7 @@ type ItemUsedEvent struct {
 }
 
 // HandleItemUsed
-func HandleItemUsed(id string, event *EventPacket) {
+func HandleItemUsed(id string, msg []byte, packetJSON map[string]interface{}, event *EventPacket) {
 	itemUsed := &ItemUsedEvent{EventPacket: event}
 	body, err := json.Marshal(event.Body)
 	if err != nil {

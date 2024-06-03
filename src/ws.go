@@ -12,19 +12,27 @@ import (
 	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/events"
 )
 
+type PacketCallback func(id string, msg []byte, packetJSON map[string]interface{}, packet *protocol.Packet)
+type CommandCallback func(id string, msg []byte, packetJSON map[string]interface{}, command *commands.CommandResponse)
+type EventCallback func(id string, msg []byte, packetJSON map[string]interface{}, event *events.EventPacket)
+
 var upgrader = websocket.Upgrader{}
 
 // WebSocketServer
 type WebSocketServer struct {
-	conns    map[string]*websocket.Conn
-	commands map[uuid.UUID]commands.CommandName
+	conns            map[string]*websocket.Conn
+	commands         map[uuid.UUID]commands.CommandName
+	commandListeners map[commands.CommandName][]CommandCallback
+	eventListeners   map[events.EventName][]EventCallback
 }
 
 // NewWebSocketServer - Create a new WebSocket relay
 func NewWebSocketServer() *WebSocketServer {
 	return &WebSocketServer{
-		conns:    make(map[string]*websocket.Conn),
-		commands: make(map[uuid.UUID]commands.CommandName),
+		conns:            make(map[string]*websocket.Conn),
+		commands:         make(map[uuid.UUID]commands.CommandName),
+		commandListeners: make(map[commands.CommandName][]CommandCallback),
+		eventListeners:   make(map[events.EventName][]EventCallback),
 	}
 }
 
@@ -61,7 +69,29 @@ func (r *WebSocketServer) PopCommand(id uuid.UUID) (commands.CommandName, bool) 
 	return command, ok
 }
 
-// PopCommand - Pop a command from the relay
+// AddCommandListener - Add a command listener
+func (r *WebSocketServer) AddCommandListener(command commands.CommandName, callback CommandCallback) {
+	r.commandListeners[command] = append(r.commandListeners[command], callback)
+}
+
+// AddEventListener - Add an event listener
+func (r *WebSocketServer) AddEventListener(event events.EventName, callback EventCallback) {
+	r.eventListeners[event] = append(r.eventListeners[event], callback)
+}
+
+// HandleCommand - Handle a command packet
+func (r *WebSocketServer) HandleCommand(id string, msg []byte, packetJSON map[string]interface{}, command *commands.CommandResponse, commandName commands.CommandName) {
+	for _, callback := range r.commandListeners[commandName] {
+		callback(id, msg, packetJSON, command)
+	}
+}
+
+// HandleEvent - Handle an event packet
+func (r *WebSocketServer) HandleEvent(id string, msg []byte, packetJSON map[string]interface{}, event *events.EventPacket) {
+	for _, callback := range r.eventListeners[event.Header.EventName] {
+		callback(id, msg, packetJSON, event)
+	}
+}
 
 // WSHandler - Handle a WebSocket connection
 func (wss *WebSocketServer) WSHandler(w http.ResponseWriter, r *http.Request) {
@@ -127,7 +157,7 @@ func (wss *WebSocketServer) HandlePacket(id string, msg []byte) {
 			log.Printf("[%s] Command response: %s", id, command.Body.StatusMessage)
 			return
 		}
-		commands.HandleCommand(id, msg, packetJSON, command, commandName)
+		wss.HandleCommand(id, msg, packetJSON, command, commandName)
 	case protocol.EventType:
 		event := &events.EventPacket{}
 		err = json.Unmarshal(msg, event)
@@ -135,7 +165,7 @@ func (wss *WebSocketServer) HandlePacket(id string, msg []byte) {
 			log.Println(err.Error())
 			return
 		}
-		events.HandleEvent(id, msg, packetJSON, event)
+		wss.HandleEvent(id, msg, packetJSON, event)
 	default:
 		log.Printf("[%s] %s", id, messagePurpose)
 		log.Println(string(msg))

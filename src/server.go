@@ -9,6 +9,8 @@ import (
 	"syscall"
 
 	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/middleware"
+	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/commands"
+	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/events"
 	"github.com/rs/cors"
 )
 
@@ -30,6 +32,13 @@ func NewAPIServer(address string, usingUDS bool) *APIServer {
 // Setup - Setup the API server
 func (s *APIServer) Setup() http.Handler {
 	wss := NewWebSocketServer()
+	for commandName, callback := range commands.GetCommandListeners() {
+		wss.AddCommandListener(commandName, callback)
+	}
+	for eventName, callback := range events.GetEventListeners() {
+		wss.AddEventListener(eventName, callback)
+	}
+
 	s.Router.HandleFunc("/ws/{id}", wss.WSHandler)
 	s.Router.HandleFunc("POST /api/cmd/{id}", CMDHandler(wss))
 	s.Router.HandleFunc("POST /api/event/{id}/{name}", EventSubscribeHandler(wss))

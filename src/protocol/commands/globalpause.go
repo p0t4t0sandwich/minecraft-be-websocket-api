@@ -35,7 +35,7 @@ type GlobalPauseResponse struct {
 }
 
 // HandleGlobalPause - Handle a global pause response
-func HandleGlobalPause(id string, msg []byte, packetJSON map[string]interface{}) {
+func HandleGlobalPause(id string, msg []byte, packetJSON map[string]interface{}, packet *CommandResponse) {
 	body := packetJSON["body"].(map[string]interface{})
 	if isPaused, ok := body["isPaused"].(bool); ok {
 		log.Printf("[%s] Command /globalpause: Global pause state is %t", id, isPaused)

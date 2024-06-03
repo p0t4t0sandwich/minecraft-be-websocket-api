@@ -226,4 +226,6 @@ const (
 	CodeBuilderDownload                          EventName = "CodeBuilderDownload"
 	ControlRemappedByPlayer                      EventName = "ControlRemappedByPlayer"
 	EduiOSPurchaseTransaction                    EventName = "EduiOSPurchaseTransaction"
+
+	Unknown EventName = "Unknown"
 )

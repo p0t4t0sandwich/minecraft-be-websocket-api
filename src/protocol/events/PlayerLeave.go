@@ -19,7 +19,7 @@ type PlayerLeaveEvent struct {
 }
 
 // HandlePlayerLeave
-func HandlePlayerLeave(id string, event *EventPacket) {
+func HandlePlayerLeave(id string, msg []byte, packetJSON map[string]interface{}, event *EventPacket) {
 	playerLeave := &PlayerLeaveEvent{EventPacket: event}
 	body, err := json.Marshal(event.Body)
 	if err != nil {

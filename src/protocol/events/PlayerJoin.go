@@ -19,7 +19,7 @@ type PlayerJoinEvent struct {
 }
 
 // HandlePlayerJoin
-func HandlePlayerJoin(id string, event *EventPacket) {
+func HandlePlayerJoin(id string, msg []byte, packetJSON map[string]interface{}, event *EventPacket) {
 	playerJoin := &PlayerJoinEvent{EventPacket: event}
 	body, err := json.Marshal(event.Body)
 	if err != nil {

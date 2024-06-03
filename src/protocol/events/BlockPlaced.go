@@ -24,7 +24,7 @@ type BlockPlacedEvent struct {
 }
 
 // HandleBlockPlaced
-func HandleBlockPlaced(id string, event *EventPacket) {
+func HandleBlockPlaced(id string, msg []byte, packetJSON map[string]interface{}, event *EventPacket) {
 	blockPlaced := &BlockPlacedEvent{EventPacket: event}
 	body, err := json.Marshal(event.Body)
 	if err != nil {

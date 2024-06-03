@@ -23,7 +23,7 @@ type PlayerTravelledEvent struct {
 }
 
 // HandlePlayerTravelled - Handle a PlayerTravelled event
-func HandlePlayerTravelled(id string, event *EventPacket) {
+func HandlePlayerTravelled(id string, msg []byte, packetJSON map[string]interface{}, event *EventPacket) {
 	playerTravelled := &PlayerTravelledEvent{EventPacket: event}
 	body, err := json.Marshal(event.Body)
 	if err != nil {

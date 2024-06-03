@@ -27,7 +27,7 @@ type SayResponse struct {
 }
 
 // HandleSay - Handle a say response
-func HandleSay(id string, msg []byte, packetJSON map[string]interface{}) {
+func HandleSay(id string, msg []byte, packetJSON map[string]interface{}, packet *CommandResponse) {
 	say := &SayResponse{}
 	err := json.Unmarshal(msg, say)
 	if err != nil {

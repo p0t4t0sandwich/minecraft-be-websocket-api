@@ -33,7 +33,7 @@ type KillResponse struct {
 }
 
 // HandleKill - Handle an kill response
-func HandleKill(id string, msg []byte, packetJSON map[string]interface{}) {
+func HandleKill(id string, msg []byte, packetJSON map[string]interface{}, packet *CommandResponse) {
 	kill := &KillResponse{}
 	err := json.Unmarshal(msg, kill)
 	if err != nil {

@@ -29,7 +29,7 @@ type GamemodeResponse struct {
 }
 
 // HandleGamemode - Handle a gamemode response
-func HandleGamemode(id string, msg []byte, packetJSON map[string]interface{}) {
+func HandleGamemode(id string, msg []byte, packetJSON map[string]interface{}, packet *CommandResponse) {
 	gamemode := &GamemodeResponse{}
 	err := json.Unmarshal(msg, gamemode)
 	if err != nil {

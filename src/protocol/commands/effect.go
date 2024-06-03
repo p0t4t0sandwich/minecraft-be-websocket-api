@@ -37,7 +37,7 @@ type EffectResponse struct {
 }
 
 // HandleEffect - Handle an effect response
-func HandleEffect(id string, msg []byte, packetJSON map[string]interface{}) {
+func HandleEffect(id string, msg []byte, packetJSON map[string]interface{}, packet *CommandResponse) {
 	effect := &EffectResponse{}
 	err := json.Unmarshal(msg, effect)
 	if err != nil {

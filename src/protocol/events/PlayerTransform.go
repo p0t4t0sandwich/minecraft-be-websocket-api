@@ -19,7 +19,7 @@ type PlayerTransformEvent struct {
 }
 
 // HandlePlayerTransform - Handle a PlayerTransform event
-func HandlePlayerTransform(id string, event *EventPacket) {
+func HandlePlayerTransform(id string, msg []byte, packetJSON map[string]interface{}, event *EventPacket) {
 	playerTransform := &PlayerTransformEvent{EventPacket: event}
 	body, err := json.Marshal(event.Body)
 	if err != nil {

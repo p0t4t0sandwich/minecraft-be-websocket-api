@@ -34,7 +34,7 @@ type SummonResponse struct {
 }
 
 // HandleSummon - Handle a summon response
-func HandleSummon(id string, msg []byte, packetJSON map[string]interface{}) {
+func HandleSummon(id string, msg []byte, packetJSON map[string]interface{}, packet *CommandResponse) {
 	summon := &SummonResponse{}
 	err := json.Unmarshal(msg, summon)
 	if err != nil {

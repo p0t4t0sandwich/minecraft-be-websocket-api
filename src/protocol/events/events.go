@@ -18,27 +18,20 @@ type EventPacket struct {
 	Header EventHeader `json:"header"`
 }
 
-// HandleEvent - Handle an event packet
-func HandleEvent(id string, msg []byte, packetJSON map[string]interface{}, event *EventPacket) {
-	switch event.Header.EventName {
-	case BlockBroken:
-		HandleBlockBroken(id, event)
-	case BlockPlaced:
-		HandleBlockPlaced(id, event)
-	case ItemUsed:
-		HandleItemUsed(id, event)
-	case PlayerJoin:
-		HandlePlayerJoin(id, event)
-	case PlayerLeave:
-		HandlePlayerLeave(id, event)
-	case PlayerMessage:
-		HandlePlayerMessage(id, event)
-	case PlayerTransform:
-		HandlePlayerTransform(id, event)
-	case PlayerTravelled:
-		HandlePlayerTravelled(id, event)
-	default:
-		log.Printf("[%s] [Event] %s", id, event.Header.EventName)
-		log.Println(string(msg))
+// GetEventListeners - Get the event listeners
+func GetEventListeners() map[EventName]func(string, []byte, map[string]interface{}, *EventPacket) {
+	return map[EventName]func(string, []byte, map[string]interface{}, *EventPacket){
+		BlockBroken:     HandleBlockBroken,
+		BlockPlaced:     HandleBlockPlaced,
+		ItemUsed:        HandleItemUsed,
+		PlayerJoin:      HandlePlayerJoin,
+		PlayerLeave:     HandlePlayerLeave,
+		PlayerMessage:   HandlePlayerMessage,
+		PlayerTransform: HandlePlayerTransform,
+		PlayerTravelled: HandlePlayerTravelled,
+		Unknown: func(id string, msg []byte, packetJSON map[string]interface{}, packet *EventPacket) {
+			log.Printf("[%s] [Event] %s", id, packet.Header.EventName)
+			log.Println(string(msg))
+		},
 	}
 }

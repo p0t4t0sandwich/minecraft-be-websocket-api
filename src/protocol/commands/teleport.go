@@ -42,7 +42,7 @@ type TeleportResponse struct {
 }
 
 // HandleTeleport - Handle a teleport response
-func HandleTeleport(id string, msg []byte, packetJSON map[string]interface{}) {
+func HandleTeleport(id string, msg []byte, packetJSON map[string]interface{}, packet *CommandResponse) {
 	teleport := &TeleportResponse{}
 	err := json.Unmarshal(msg, teleport)
 	if err != nil {

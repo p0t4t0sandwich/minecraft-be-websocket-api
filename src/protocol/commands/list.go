@@ -39,7 +39,7 @@ func (r *ListResponse) GetPlayers() []string {
 }
 
 // HandleList - Handle a list response
-func HandleList(id string, msg []byte, packetJSON map[string]interface{}) {
+func HandleList(id string, msg []byte, packetJSON map[string]interface{}, packet *CommandResponse) {
 	list := &ListResponse{}
 	err := json.Unmarshal(msg, list)
 	if err != nil {

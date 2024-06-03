@@ -24,7 +24,7 @@ type BlockBrokenEvent struct {
 }
 
 // HandleBlockBroken
-func HandleBlockBroken(id string, event *EventPacket) {
+func HandleBlockBroken(id string, msg []byte, packetJSON map[string]interface{}, event *EventPacket) {
 	blockBroken := &BlockBrokenEvent{EventPacket: event}
 	body, err := json.Marshal(event.Body)
 	if err != nil {

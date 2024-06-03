@@ -29,7 +29,7 @@ type PlayerMessageEvent struct {
 }
 
 // HandlePlayerMessage
-func HandlePlayerMessage(id string, event *EventPacket) {
+func HandlePlayerMessage(id string, msg []byte, packetJSON map[string]interface{}, event *EventPacket) {
 	playerMessage := &PlayerMessageEvent{EventPacket: event}
 	body, err := json.Marshal(event.Body)
 	if err != nil {
