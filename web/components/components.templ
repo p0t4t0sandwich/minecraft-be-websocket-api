@@ -6,6 +6,7 @@ templ Root() {
 		<head>
 			<meta charset="UTF-8"/>
 			<title>Sci-Fi Minecraft Camp Administration</title>
+			<link rel="stylesheet" href="/public/styles.css"/>
 		</head>
 		<script>
 
@@ -58,9 +59,9 @@ templ Root() {
 		<body>
 			<!-- This is a dummy frame to prevent the page from reloading when a form is submitted -->
 			<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
-			<h1>Sci-Fi Minecraft Camp Administration</h1>
+			<p class="flex flex-row justify-center items-center text-lg">Sci-Fi Minecraft Camp Administration</p>
 			<!-- Set server label -->
-			<p>Set server label:</p>
+			<p class="py-2">Set server label:</p>
 			<form onSubmit="setLabel()" target="dummyframe">
 				<input type="text" id="serverLabel" name="serverLabel" placeholder="Server Label"/>
 				<input type="submit" value="Submit"/>
