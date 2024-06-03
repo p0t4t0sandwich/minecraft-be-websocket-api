@@ -33,6 +33,27 @@ templ Root() {
 		function flashDarkness() {
 			sendCmd("effect @a blindness 2 2");
 		}
+
+		// Entity clearing forever -- TODO: hardcoded for now
+		entityList = [
+			"ender_dragon",
+			"warden",
+			"wither",
+			"lingering_potion"
+		]
+
+		setInterval(() => {
+			entityList.forEach(entity => sendCmd(`kill @e[type=${entity}]`));
+		}, 1000);
+
+		// Item clearing forever -- TODO: hardcoded for now
+		itemList = [
+			"bedrock"
+		]
+
+		setInterval(() => {
+			itemList.forEach(item => sendCmd(`clear @a ${item}`));
+		}, 1000);
     </script>
 		<body>
 			<!-- This is a dummy frame to prevent the page from reloading when a form is submitted -->
