@@ -63,7 +63,7 @@ func Root() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex justify-start bg-pink-300 p-5 w-84 h-96\"><div class=\"p-3\"><!-- Pause buttons --><p>Pause buttons:</p><button onclick=\"sendCmd(&#39;globalpause true&#39;)\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\">Pause Server</button> <button onclick=\"sendCmd(&#39;globalpause false&#39;)\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\">Unpause Server</button></div><div class=\"p-3\"><!-- Attention Utils --><p>Attention Utils:</p><button onclick=\"fiveMinuteWarning()\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\">Five Min Warning</button> <button onclick=\"flashDarkness()\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\">Flash Darkness</button></div></div><p>General Utils:</p><div class=\"flex justify-start bg-green-300 p-5 w-84 h-96\"><!-- Custom command -->")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex justify-start bg-pink-300 p-5 w-84 h-96\"><div class=\"p-3\"><!-- Pause buttons --><p>Pause buttons:</p><button onclick=\"sendCmd(&#39;globalpause true&#39;)\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\">Pause Server</button> <button onclick=\"sendCmd(&#39;globalpause false&#39;)\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\">Unpause Server</button></div><div class=\"p-3\"><!-- Attention Utils --><p>Attention Utils:</p><button onclick=\"fiveMinuteWarning()\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\">Five Min Warning</button> <button onclick=\"flashDarkness()\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\">Flash Darkness</button></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -71,7 +71,7 @@ func Root() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!-- Ban forms -->")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><p>General Utils:</p><div class=\"flex justify-start bg-green-300 p-5 w-84 h-96\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -79,7 +79,15 @@ func Root() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = EntityList().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = ItemBanForm().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = ItemList().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -166,7 +174,7 @@ func EntityBanForm() templ.Component {
 	})
 }
 
-func ItemBanForm() templ.Component {
+func EntityList() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -179,7 +187,55 @@ func ItemBanForm() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"entityList\"><p>Banned entities:</p><div hx-post=\"/entitylist\" hx-trigger=\"load\" hx-target=\"#entityList\" hx-swap=\"outerHTML\"></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if !templ_7745c5c3_IsBuffer {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func ItemBanForm() templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+		if !templ_7745c5c3_IsBuffer {
+			templ_7745c5c3_Buffer = templ.GetBuffer()
+			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><p>Clear player inventory:</p><form onSubmit=\"sendCmd(&#39;clear &#39; + document.getElementById(&#39;clearPlayer&#39;).value + &#39; &#39; + document.getElementById(&#39;clearItem&#39;).value)\" target=\"dummyframe\"><input type=\"text\" id=\"clearPlayer\" name=\"player\" placeholder=\"Player\"> <input type=\"text\" id=\"clearItem\" name=\"item\" placeholder=\"Item\"> <input type=\"submit\" value=\"Clear\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\"></form><p>Ban an item:</p><form method=\"POST\" action=\"/banitem\" target=\"dummyframe\"><input type=\"text\" id=\"item\" name=\"item\" placeholder=\"Item Type\"> <input type=\"submit\" value=\"Ban\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\"></form><p>Unban an item:</p><form method=\"DELETE\" action=\"/banitem\" target=\"dummyframe\"><input type=\"text\" id=\"item\" name=\"item\" placeholder=\"Item Type\"> <input type=\"submit\" value=\"Unban\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\"></form></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if !templ_7745c5c3_IsBuffer {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func ItemList() templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+		if !templ_7745c5c3_IsBuffer {
+			templ_7745c5c3_Buffer = templ.GetBuffer()
+			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"itemList\"><p>Banned items:</p><div hx-post=\"/itemlist\" hx-trigger=\"load\" hx-target=\"#itemList\" hx-swap=\"outerHTML\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

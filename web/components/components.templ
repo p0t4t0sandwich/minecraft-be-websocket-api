@@ -60,14 +60,14 @@ templ Root() {
 					<button onclick="fiveMinuteWarning()" class="font-bold py-2 px-4 rounded bg-blue-500 text-white">Five Min Warning</button>
 					<button onclick="flashDarkness()" class="font-bold py-2 px-4 rounded bg-blue-500 text-white">Flash Darkness</button>
 				</div>
+				@CustomCommandForm()
 			</div>
 			<p>General Utils:</p>
 			<div class="flex justify-start bg-green-300 p-5 w-84 h-96">
-				<!-- Custom command -->
-				@CustomCommandForm()
-				<!-- Ban forms -->
 				@EntityBanForm()
+				@EntityList()
 				@ItemBanForm()
+				@ItemList()
 			</div>
 		</body>
 	</html>
@@ -111,6 +111,18 @@ templ EntityBanForm() {
 	</div>
 }
 
+templ EntityList() {
+	<div id="entityList">
+		<p>Banned entities:</p>
+		<div
+			hx-post="/entitylist"
+			hx-trigger="load"
+			hx-target="#entityList"
+			hx-swap="outerHTML"
+		></div>
+	</div>
+}
+
 templ ItemBanForm() {
 	<div>
 		<p>Clear player inventory:</p>
@@ -129,5 +141,17 @@ templ ItemBanForm() {
 			<input type="text" id="item" name="item" placeholder="Item Type"/>
 			<input type="submit" value="Unban" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
 		</form>
+	</div>
+}
+
+templ ItemList() {
+	<div id="itemList">
+		<p>Banned items:</p>
+		<div
+			hx-post="/itemlist"
+			hx-trigger="load"
+			hx-target="#itemList"
+			hx-swap="outerHTML"
+		></div>
 	</div>
 }

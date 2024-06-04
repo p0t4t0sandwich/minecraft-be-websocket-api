@@ -101,6 +101,14 @@ func (ws *WebServer) ApplyRoutes(router *http.ServeMux) *http.ServeMux {
 		}
 		http.Error(w, "Entity is not banned", http.StatusBadRequest)
 	}))
+	router.Handle("POST /entitylist", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		htmlList := "<div id=\"entityList\"><p>Banned entities:</p><ul>"
+		for _, bannedMob := range ws.Config.BannedMobs {
+			htmlList += fmt.Sprintf("<li>%s</li>", bannedMob)
+		}
+		htmlList += "</ul><div hx-post=\"/entitylist\" hx-trigger=\"every 2s\" hx-target=\"#entityList\" hx-swap=\"outerHTML\"></div></div>"
+		w.Write([]byte(htmlList))
+	}))
 	router.Handle("POST /banitem", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		item := r.FormValue("item")
 		if item == "" {
@@ -132,6 +140,14 @@ func (ws *WebServer) ApplyRoutes(router *http.ServeMux) *http.ServeMux {
 			}
 		}
 		http.Error(w, "Item is not banned", http.StatusBadRequest)
+	}))
+	router.Handle("POST /itemlist", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		htmlList := "<div id=\"itemList\"><p>Banned items:</p><ul>"
+		for _, bannedItem := range ws.Config.BannedItems {
+			htmlList += fmt.Sprintf("<li>%s</li>", bannedItem)
+		}
+		htmlList += "</ul><div hx-post=\"/itemlist\" hx-trigger=\"every 2s\" hx-target=\"#itemList\" hx-swap=\"outerHTML\"></div></div>"
+		w.Write([]byte(htmlList))
 	}))
 	return router
 }
