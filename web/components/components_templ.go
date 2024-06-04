@@ -47,7 +47,7 @@ func Root() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>Sci-Fi Minecraft Camp Administration</title>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>Sci-Fi Minecraft Camp Administration</title><link rel=\"stylesheet\" href=\"/public/styles.css\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -55,7 +55,23 @@ func Root() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</head><script>\n\n\t\t// Label handling\n\t\tlet label = \"default\";\n\t\tfunction setLabel() {\n\t\t\tlabel = document.getElementById(\"label\").value;\n\t\t}\n\n\t\twindow.onload = setLabel;\n\n\t\t// Command sending\n\t\tfunction sendCmd(cmd) {\n\t\t\tfetch(`/api/cmd/${label}`, {\n\t\t\t\tmethod: \"POST\",\n\t\t\t\tbody: JSON.stringify({cmd: cmd}),\n\t\t\t\theaders: {\"Content-Type\": \"application/json\"}\n\t\t\t});\n\t\t}\n\n        function fiveMinuteWarning() {\n            sendCmd(\"title @a times 0 100 0\");\n\t\t\tsendCmd(\"title @a title 5 minute warning!\");\n        }\n\n\t\tfunction flashDarkness() {\n\t\t\tsendCmd(\"effect @a blindness 2 2\");\n\t\t}\n    </script><body><!-- This is a dummy frame to prevent the page from reloading when a form is submitted --><iframe name=\"dummyframe\" id=\"dummyframe\" style=\"display: none;\"></iframe><p class=\"flex flex-row justify-center items-center text-lg\">Sci-Fi Minecraft Camp Administration</p><!-- Set server label --><p class=\"py-2\">Set server label:</p><form onSubmit=\"setLabel()\" action=\"/setlabel\" target=\"dummyframe\"><input type=\"text\" id=\"label\" name=\"label\" placeholder=\"Server Label\"> <input type=\"submit\" value=\"Submit\"></form><!-- Pause buttons --><p>Pause buttons:</p><button onclick=\"sendCmd(&#39;globalpause true&#39;)\">Pause Server</button> <button onclick=\"sendCmd(&#39;globalpause false&#39;)\">Unpause Server</button><!-- Attention Utils --><p>Attention Utils:</p><button onclick=\"fiveMinuteWarning()\">Five Min Warning</button> <button onclick=\"flashDarkness()\">Flash Darkness</button><br><p>General Utils:</p><!-- Custom command --><p>Custom command:</p><form onSubmit=\"sendCmd(document.getElementById(&#39;customCmd&#39;).value)\" target=\"dummyframe\"><input type=\"text\" id=\"customCmd\" name=\"customCmd\" placeholder=\"Custom Command\"> <input type=\"submit\" value=\"Submit\"></form><!-- Ban forms -->")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</head><script>\n\n\t\t// Label handling\n\t\tlet label = \"default\";\n\t\tfunction setLabel() {\n\t\t\tlabel = document.getElementById(\"label\").value;\n\t\t}\n\n\t\twindow.onload = setLabel;\n\n\t\t// Command sending\n\t\tfunction sendCmd(cmd) {\n\t\t\tfetch(`/api/cmd/${label}`, {\n\t\t\t\tmethod: \"POST\",\n\t\t\t\tbody: JSON.stringify({cmd: cmd}),\n\t\t\t\theaders: {\"Content-Type\": \"application/json\"}\n\t\t\t});\n\t\t}\n\n        function fiveMinuteWarning() {\n            sendCmd(\"title @a times 0 100 0\");\n\t\t\tsendCmd(\"title @a title 5 minute warning!\");\n        }\n\n\t\tfunction flashDarkness() {\n\t\t\tsendCmd(\"effect @a blindness 2 2\");\n\t\t}\n    </script><body><!-- This is a dummy frame to prevent the page from reloading when a form is submitted --><iframe name=\"dummyframe\" id=\"dummyframe\" style=\"display: none;\"></iframe><p class=\"flex flex-row justify-center items-center text-lg\">Sci-Fi Minecraft Camp Administration</p><!-- Set server label -->")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = SetLabelForm().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex justify-start bg-pink-300 p-5 w-84 h-96\"><div class=\"p-3\"><!-- Pause buttons --><p>Pause buttons:</p><button onclick=\"sendCmd(&#39;globalpause true&#39;)\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\">Pause Server</button> <button onclick=\"sendCmd(&#39;globalpause false&#39;)\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\">Unpause Server</button></div><div class=\"p-3\"><!-- Attention Utils --><p>Attention Utils:</p><button onclick=\"fiveMinuteWarning()\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\">Five Min Warning</button> <button onclick=\"flashDarkness()\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\">Flash Darkness</button></div></div><p>General Utils:</p><div class=\"flex justify-start bg-green-300 p-5 w-84 h-96\"><!-- Custom command -->")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = CustomCommandForm().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!-- Ban forms -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -67,7 +83,55 @@ func Root() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></body></html>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if !templ_7745c5c3_IsBuffer {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func SetLabelForm() templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+		if !templ_7745c5c3_IsBuffer {
+			templ_7745c5c3_Buffer = templ.GetBuffer()
+			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<p class=\"py-2\">Set server label:</p><form onSubmit=\"setLabel()\" action=\"/setlabel\" target=\"dummyframe\"><input type=\"text\" id=\"label\" name=\"label\" placeholder=\"Server Label\"> <input type=\"submit\" value=\"Submit\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\"></form>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if !templ_7745c5c3_IsBuffer {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func CustomCommandForm() templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+		if !templ_7745c5c3_IsBuffer {
+			templ_7745c5c3_Buffer = templ.GetBuffer()
+			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><p>Custom command:</p><form onSubmit=\"sendCmd(document.getElementById(&#39;customCmd&#39;).value)\" target=\"dummyframe\"><input type=\"text\" id=\"customCmd\" name=\"customCmd\" placeholder=\"Custom Command\"> <input type=\"submit\" value=\"Submit\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\"></form></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -86,12 +150,12 @@ func EntityBanForm() templ.Component {
 			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<p>Remove entity:</p><form onSubmit=\"sendCmd(&#39;kill @e[type=&#39; + document.getElementById(&#39;entityType&#39;).value + &#39;]&#39;)\" target=\"dummyframe\"><input type=\"text\" id=\"entityType\" name=\"entityType\" placeholder=\"Entity Type\"> <input type=\"submit\" value=\"Remove\"></form><p>Ban an entity:</p><form method=\"POST\" action=\"/banentity\" target=\"dummyframe\"><input type=\"text\" id=\"entity\" name=\"entity\" placeholder=\"Entity Type\"> <input type=\"submit\" value=\"Ban\"></form><p>Unban an entity:</p><form method=\"DELETE\" action=\"/banentity\" target=\"dummyframe\"><input type=\"text\" id=\"entity\" name=\"entity\" placeholder=\"Entity Type\"> <input type=\"submit\" value=\"Unban\"></form>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><p>Remove entity:</p><form onSubmit=\"sendCmd(&#39;kill @e[type=&#39; + document.getElementById(&#39;entityType&#39;).value + &#39;]&#39;)\" target=\"dummyframe\"><input type=\"text\" id=\"entityType\" name=\"entityType\" placeholder=\"Entity Type\"> <input type=\"submit\" value=\"Remove\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\"></form><p>Ban an entity:</p><form method=\"POST\" action=\"/banentity\" target=\"dummyframe\"><input type=\"text\" id=\"entity\" name=\"entity\" placeholder=\"Entity Type\"> <input type=\"submit\" value=\"Ban\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\"></form><p>Unban an entity:</p><form method=\"DELETE\" action=\"/banentity\" target=\"dummyframe\"><input type=\"text\" id=\"entity\" name=\"entity\" placeholder=\"Entity Type\"> <input type=\"submit\" value=\"Unban\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\"></form></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -110,12 +174,12 @@ func ItemBanForm() templ.Component {
 			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<p>Clear player inventory:</p><form onSubmit=\"sendCmd(&#39;clear &#39; + document.getElementById(&#39;clearPlayer&#39;).value + &#39; &#39; + document.getElementById(&#39;clearItem&#39;).value)\" target=\"dummyframe\"><input type=\"text\" id=\"clearPlayer\" name=\"player\" placeholder=\"Player\"> <input type=\"text\" id=\"clearItem\" name=\"item\" placeholder=\"Item\"> <input type=\"submit\" value=\"Clear\"></form><p>Ban an item:</p><form method=\"POST\" action=\"/banitem\" target=\"dummyframe\"><input type=\"text\" id=\"item\" name=\"item\" placeholder=\"Item Type\"> <input type=\"submit\" value=\"Ban\"></form><p>Unban an item:</p><form method=\"DELETE\" action=\"/banitem\" target=\"dummyframe\"><input type=\"text\" id=\"item\" name=\"item\" placeholder=\"Item Type\"> <input type=\"submit\" value=\"Unban\"></form>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><p>Clear player inventory:</p><form onSubmit=\"sendCmd(&#39;clear &#39; + document.getElementById(&#39;clearPlayer&#39;).value + &#39; &#39; + document.getElementById(&#39;clearItem&#39;).value)\" target=\"dummyframe\"><input type=\"text\" id=\"clearPlayer\" name=\"player\" placeholder=\"Player\"> <input type=\"text\" id=\"clearItem\" name=\"item\" placeholder=\"Item\"> <input type=\"submit\" value=\"Clear\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\"></form><p>Ban an item:</p><form method=\"POST\" action=\"/banitem\" target=\"dummyframe\"><input type=\"text\" id=\"item\" name=\"item\" placeholder=\"Item Type\"> <input type=\"submit\" value=\"Ban\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\"></form><p>Unban an item:</p><form method=\"DELETE\" action=\"/banitem\" target=\"dummyframe\"><input type=\"text\" id=\"item\" name=\"item\" placeholder=\"Item Type\"> <input type=\"submit\" value=\"Unban\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\"></form></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

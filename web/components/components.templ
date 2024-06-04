@@ -10,7 +10,7 @@ templ Root() {
 		<head>
 			<meta charset="UTF-8"/>
 			<title>Sci-Fi Minecraft Camp Administration</title>
-			// <link rel="stylesheet" href="/public/styles.css"/>
+			<link rel="stylesheet" href="/public/styles.css"/>
 			@HTMXSetup()
 		</head>
 		<script>
@@ -46,67 +46,88 @@ templ Root() {
 			<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
 			<p class="flex flex-row justify-center items-center text-lg">Sci-Fi Minecraft Camp Administration</p>
 			<!-- Set server label -->
-			<p class="py-2">Set server label:</p>
-			<form onSubmit="setLabel()" action="/setlabel" target="dummyframe">
-				<input type="text" id="label" name="label" placeholder="Server Label"/>
-				<input type="submit" value="Submit"/>
-			</form>
-			<!-- Pause buttons -->
-			<p>Pause buttons:</p>
-			<button onclick="sendCmd('globalpause true')">Pause Server</button>
-			<button onclick="sendCmd('globalpause false')">Unpause Server</button>
-			<!-- Attention Utils -->
-			<p>Attention Utils:</p>
-			<button onclick="fiveMinuteWarning()">Five Min Warning</button>
-			<button onclick="flashDarkness()">Flash Darkness</button>
-			<br/>
+			@SetLabelForm()
+			<div class="flex justify-start bg-pink-300 p-5 w-84 h-96">
+				<div class="p-3">
+					<!-- Pause buttons -->
+					<p>Pause buttons:</p>
+					<button onclick="sendCmd('globalpause true')" class="font-bold py-2 px-4 rounded bg-blue-500 text-white">Pause Server</button>
+					<button onclick="sendCmd('globalpause false')" class="font-bold py-2 px-4 rounded bg-blue-500 text-white">Unpause Server</button>
+				</div>
+				<div class="p-3">
+					<!-- Attention Utils -->
+					<p>Attention Utils:</p>
+					<button onclick="fiveMinuteWarning()" class="font-bold py-2 px-4 rounded bg-blue-500 text-white">Five Min Warning</button>
+					<button onclick="flashDarkness()" class="font-bold py-2 px-4 rounded bg-blue-500 text-white">Flash Darkness</button>
+				</div>
+			</div>
 			<p>General Utils:</p>
-			<!-- Custom command -->
-			<p>Custom command:</p>
-			<form onSubmit="sendCmd(document.getElementById('customCmd').value)" target="dummyframe">
-				<input type="text" id="customCmd" name="customCmd" placeholder="Custom Command"/>
-				<input type="submit" value="Submit"/>
-			</form>
-			<!-- Ban forms -->
-			@EntityBanForm()
-			@ItemBanForm()
+			<div class="flex justify-start bg-green-300 p-5 w-84 h-96">
+				<!-- Custom command -->
+				@CustomCommandForm()
+				<!-- Ban forms -->
+				@EntityBanForm()
+				@ItemBanForm()
+			</div>
 		</body>
 	</html>
 }
 
-templ EntityBanForm() {
-	<p>Remove entity:</p>
-	<form onSubmit="sendCmd('kill @e[type=' + document.getElementById('entityType').value + ']')" target="dummyframe">
-		<input type="text" id="entityType" name="entityType" placeholder="Entity Type"/>
-		<input type="submit" value="Remove"/>
-	</form>
-	<p>Ban an entity:</p>
-	<form method="POST" action="/banentity" target="dummyframe">
-		<input type="text" id="entity" name="entity" placeholder="Entity Type"/>
-		<input type="submit" value="Ban"/>
-	</form>
-	<p>Unban an entity:</p>
-	<form method="DELETE" action="/banentity" target="dummyframe">
-		<input type="text" id="entity" name="entity" placeholder="Entity Type"/>
-		<input type="submit" value="Unban"/>
+templ SetLabelForm() {
+	<p class="py-2">Set server label:</p>
+	<form onSubmit="setLabel()" action="/setlabel" target="dummyframe">
+		<input type="text" id="label" name="label" placeholder="Server Label"/>
+		<input type="submit" value="Submit" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
 	</form>
 }
 
+templ CustomCommandForm() {
+	<div>
+		<p>Custom command:</p>
+		<form onSubmit="sendCmd(document.getElementById('customCmd').value)" target="dummyframe">
+			<input type="text" id="customCmd" name="customCmd" placeholder="Custom Command"/>
+			<input type="submit" value="Submit" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
+		</form>
+	</div>
+}
+
+templ EntityBanForm() {
+	<div>
+		<p>Remove entity:</p>
+		<form onSubmit="sendCmd('kill @e[type=' + document.getElementById('entityType').value + ']')" target="dummyframe">
+			<input type="text" id="entityType" name="entityType" placeholder="Entity Type"/>
+			<input type="submit" value="Remove" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
+		</form>
+		<p>Ban an entity:</p>
+		<form method="POST" action="/banentity" target="dummyframe">
+			<input type="text" id="entity" name="entity" placeholder="Entity Type"/>
+			<input type="submit" value="Ban" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
+		</form>
+		<p>Unban an entity:</p>
+		<form method="DELETE" action="/banentity" target="dummyframe">
+			<input type="text" id="entity" name="entity" placeholder="Entity Type"/>
+			<input type="submit" value="Unban" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
+		</form>
+	</div>
+}
+
 templ ItemBanForm() {
-	<p>Clear player inventory:</p>
-	<form onSubmit="sendCmd('clear ' + document.getElementById('clearPlayer').value + ' ' + document.getElementById('clearItem').value)" target="dummyframe">
-		<input type="text" id="clearPlayer" name="player" placeholder="Player"/>
-		<input type="text" id="clearItem" name="item" placeholder="Item"/>
-		<input type="submit" value="Clear"/>
-	</form>
-	<p>Ban an item:</p>
-	<form method="POST" action="/banitem" target="dummyframe">
-		<input type="text" id="item" name="item" placeholder="Item Type"/>
-		<input type="submit" value="Ban"/>
-	</form>
-	<p>Unban an item:</p>
-	<form method="DELETE" action="/banitem" target="dummyframe">
-		<input type="text" id="item" name="item" placeholder="Item Type"/>
-		<input type="submit" value="Unban"/>
-	</form>
+	<div>
+		<p>Clear player inventory:</p>
+		<form onSubmit="sendCmd('clear ' + document.getElementById('clearPlayer').value + ' ' + document.getElementById('clearItem').value)" target="dummyframe">
+			<input type="text" id="clearPlayer" name="player" placeholder="Player"/>
+			<input type="text" id="clearItem" name="item" placeholder="Item"/>
+			<input type="submit" value="Clear" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
+		</form>
+		<p>Ban an item:</p>
+		<form method="POST" action="/banitem" target="dummyframe">
+			<input type="text" id="item" name="item" placeholder="Item Type"/>
+			<input type="submit" value="Ban" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
+		</form>
+		<p>Unban an item:</p>
+		<form method="DELETE" action="/banitem" target="dummyframe">
+			<input type="text" id="item" name="item" placeholder="Item Type"/>
+			<input type="submit" value="Unban" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
+		</form>
+	</div>
 }
