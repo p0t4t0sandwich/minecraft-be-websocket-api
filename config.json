@@ -1,0 +1,11 @@
+{
+  "banned_entities": [
+    "ender_dragon",
+    "warden",
+    "wither",
+    "lingering_potion"
+  ],
+  "banned_items": [
+    "bedrock"
+  ]
+}

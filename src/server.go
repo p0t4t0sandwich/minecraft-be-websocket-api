@@ -18,31 +18,32 @@ type APIServer struct {
 	Address  string
 	UsingUDS bool
 	Router   *http.ServeMux
+	WSS      *WebSocketServer
 }
 
 // NewAPIServer - Create a new API server
-func NewAPIServer(address string, usingUDS bool) *APIServer {
+func NewAPIServer(address string, usingUDS bool, wss *WebSocketServer) *APIServer {
 	return &APIServer{
 		Address:  address,
 		UsingUDS: usingUDS,
 		Router:   http.NewServeMux(),
+		WSS:      wss,
 	}
 }
 
 // Setup - Setup the API server
 func (s *APIServer) Setup() http.Handler {
-	wss := NewWebSocketServer()
 	for commandName, callback := range commands.GetCommandListeners() {
-		wss.AddCommandListener(commandName, callback)
+		s.WSS.AddCommandListener(commandName, callback)
 	}
 	for eventName, callback := range events.GetEventListeners() {
-		wss.AddEventListener(eventName, callback)
+		s.WSS.AddEventListener(eventName, callback)
 	}
 
-	s.Router.HandleFunc("/ws/{id}", wss.WSHandler)
-	s.Router.HandleFunc("POST /api/cmd/{id}", CMDHandler(wss))
-	s.Router.HandleFunc("POST /api/event/{id}/{name}", EventSubscribeHandler(wss))
-	s.Router.HandleFunc("DELETE /api/event/{id}/{name}", EventUnsubscribeHander(wss))
+	s.Router.HandleFunc("/ws/{id}", s.WSS.WSHandler)
+	s.Router.HandleFunc("POST /api/cmd/{id}", CMDHandler(s.WSS))
+	s.Router.HandleFunc("POST /api/event/{id}/{name}", EventSubscribeHandler(s.WSS))
+	s.Router.HandleFunc("DELETE /api/event/{id}/{name}", EventUnsubscribeHander(s.WSS))
 	return middleware.RequestLoggerMiddleware(cors.AllowAll().Handler(s.Router))
 }
 

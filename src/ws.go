@@ -55,6 +55,15 @@ func (r *WebSocketServer) Send(id string, msg []byte) error {
 	return conn.WriteMessage(websocket.TextMessage, msg)
 }
 
+// SendPacket - Send a packet to a connection
+func (r *WebSocketServer) SendPacket(id string, packet *protocol.Packet) error {
+	msg, err := json.Marshal(packet)
+	if err != nil {
+		return err
+	}
+	return r.Send(id, msg)
+}
+
 // AddCommand - Add a command to the relay
 func (r *WebSocketServer) AddCommand(id uuid.UUID, command commands.CommandName) {
 	r.commands[id] = command

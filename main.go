@@ -17,9 +17,10 @@ func main() {
 		address = "0.0.0.0:8080"
 	}
 
-	server := server.NewAPIServer(address, useUDS)
-
-	server.Router = web.ApplyRoutes(server.Router)
+	wss := server.NewWebSocketServer()
+	server := server.NewAPIServer(address, useUDS, wss)
+	ws := web.NewWebServer(wss, web.NewConfig())
+	server.Router = ws.ApplyRoutes(server.Router)
 
 	log.Fatal(server.Run())
 }

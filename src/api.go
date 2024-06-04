@@ -28,15 +28,9 @@ func CMDHandler(wss *WebSocketServer) http.HandlerFunc {
 			return
 		}
 
-		msg := commands.NewCommandPacket(body.Command)
-		data, err := json.Marshal(msg)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
 		log.Printf("[%s] Sending command %s", id, body.Command)
-		err = wss.Send(id, data)
+		msg := commands.NewCommandPacket(body.Command)
+		err = wss.SendPacket(id, msg)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -59,15 +53,8 @@ func EventSubscribeHandler(wss *WebSocketServer) http.HandlerFunc {
 			return
 		}
 
-		msg := protocol.NewEventSubPacket(eventName, protocol.SubscribeType)
-		data, err := json.Marshal(msg)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
 		log.Printf("[%s] Subscribing to event %s", id, eventName)
-		err = wss.Send(id, data)
+		err := wss.SendPacket(id, protocol.NewEventSubPacket(eventName, protocol.SubscribeType))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -89,15 +76,8 @@ func EventUnsubscribeHander(wss *WebSocketServer) http.HandlerFunc {
 			return
 		}
 
-		msg := protocol.NewEventSubPacket(eventName, protocol.UnsubscribeType)
-		data, err := json.Marshal(msg)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
 		log.Printf("[%s] Unsubscribing from event %s", id, eventName)
-		err = wss.Send(id, data)
+		err := wss.SendPacket(id, protocol.NewEventSubPacket(eventName, protocol.UnsubscribeType))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
