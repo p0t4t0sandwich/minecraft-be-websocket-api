@@ -5,6 +5,7 @@ import (
 	"os"
 
 	server "github.com/p0t4t0sandwich/minecraft-be-websocket-api/src"
+	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/events"
 	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/web"
 )
 
@@ -21,6 +22,7 @@ func main() {
 	server := server.NewAPIServer(address, useUDS, wss)
 	ws := web.NewWebServer(wss, web.NewConfig())
 	server.Router = ws.ApplyRoutes(server.Router)
+	wss.AddEventListener(events.PlayerJoin, ws.HandlePlayerJoin)
 
 	log.Fatal(server.Run())
 }

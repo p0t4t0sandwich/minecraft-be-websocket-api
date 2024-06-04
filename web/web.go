@@ -10,13 +10,17 @@ import (
 
 	"github.com/a-h/templ"
 	server "github.com/p0t4t0sandwich/minecraft-be-websocket-api/src"
+	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol"
 	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/commands"
+	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/events"
+	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/mctypes"
 	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/web/components"
 )
 
 type Config struct {
-	BannedMobs  []string `json:"banned_entities"`
-	BannedItems []string `json:"banned_items"`
+	BannedMobs  []string       `json:"banned_entities"`
+	BannedItems []string       `json:"banned_items"`
+	Players     []SimplePlayer `json:"players"`
 }
 
 func NewConfig() *Config {
@@ -27,6 +31,43 @@ func NewConfig() *Config {
 	var config Config
 	_ = json.Unmarshal(configFile, &config)
 	return &config
+}
+
+type SimplePlayer struct {
+	Id       int    `json:"id"`
+	Name     string `json:"name"`
+	FakeName string `json:"-"`
+}
+
+func NewSimplePlayer(player mctypes.Player) *SimplePlayer {
+	return &SimplePlayer{
+		Id:       player.Id,
+		Name:     "Unknown",
+		FakeName: player.Name,
+	}
+}
+
+func (c *Config) GetPlayerById(id int) *SimplePlayer {
+	for _, player := range c.Players {
+		if player.Id == id {
+			return &player
+		}
+	}
+	return nil
+}
+
+func (c *Config) AddPlayer(player mctypes.Player) {
+	p := c.GetPlayerById(player.Id)
+	if p == nil {
+		c.Players = append(c.Players, *NewSimplePlayer(player))
+	}
+}
+
+func (c *Config) RenamePlayer(id int, name string) {
+	p := c.GetPlayerById(id)
+	if p != nil {
+		p.Name = name
+	}
 }
 
 func (c *Config) Save() {
@@ -47,6 +88,8 @@ func NewWebServer(wss *server.WebSocketServer, Config *Config) *WebServer {
 		Label:  "",
 	}
 
+	wss.SendPacket(ws.Label, events.NewEventSubPacket(events.PlayerJoin, protocol.SubscribeType))
+
 	go func() {
 		time.Sleep(1 * time.Second)
 		for _, bannedMob := range ws.Config.BannedMobs {
@@ -58,6 +101,23 @@ func NewWebServer(wss *server.WebSocketServer, Config *Config) *WebServer {
 	}()
 
 	return ws
+}
+
+func (ws *WebServer) HandlePlayerJoin(id string, msg []byte, packetJSON map[string]interface{}, event *events.EventPacket) {
+	playerJoin := &events.PlayerJoinEvent{EventPacket: event}
+	body, err := json.Marshal(event.Body)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &playerJoin.Body)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+
+	ws.Config.AddPlayer(playerJoin.Body.Player)
+	ws.Config.Save()
 }
 
 func (ws *WebServer) ApplyRoutes(router *http.ServeMux) *http.ServeMux {
@@ -102,7 +162,7 @@ func (ws *WebServer) ApplyRoutes(router *http.ServeMux) *http.ServeMux {
 		http.Error(w, "Entity is not banned", http.StatusBadRequest)
 	}))
 	router.Handle("POST /entitylist", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		htmlList := "<div id=\"entityList\"><p>Banned entities:</p><ul>"
+		htmlList := "<div id=\"entityList\"><p>Banned entities:</p><ul class=\"bg-orange-200\">"
 		for _, bannedMob := range ws.Config.BannedMobs {
 			htmlList += fmt.Sprintf("<li>%s</li>", bannedMob)
 		}
@@ -142,7 +202,7 @@ func (ws *WebServer) ApplyRoutes(router *http.ServeMux) *http.ServeMux {
 		http.Error(w, "Item is not banned", http.StatusBadRequest)
 	}))
 	router.Handle("POST /itemlist", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		htmlList := "<div id=\"itemList\"><p>Banned items:</p><ul>"
+		htmlList := "<div id=\"itemList\"><p>Banned items:</p><ul class=\"bg-orange-200\">"
 		for _, bannedItem := range ws.Config.BannedItems {
 			htmlList += fmt.Sprintf("<li>%s</li>", bannedItem)
 		}

@@ -7,6 +7,7 @@ import (
 
 	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol"
 	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/commands"
+	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/events"
 )
 
 // CMDHandler - Handle the CMD route
@@ -54,7 +55,7 @@ func EventSubscribeHandler(wss *WebSocketServer) http.HandlerFunc {
 		}
 
 		log.Printf("[%s] Subscribing to event %s", id, eventName)
-		err := wss.SendPacket(id, protocol.NewEventSubPacket(eventName, protocol.SubscribeType))
+		err := wss.SendPacket(id, events.NewEventSubPacket(events.EventName(eventName), protocol.SubscribeType))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -77,7 +78,7 @@ func EventUnsubscribeHander(wss *WebSocketServer) http.HandlerFunc {
 		}
 
 		log.Printf("[%s] Unsubscribing from event %s", id, eventName)
-		err := wss.SendPacket(id, protocol.NewEventSubPacket(eventName, protocol.UnsubscribeType))
+		err := wss.SendPacket(id, events.NewEventSubPacket(events.EventName(eventName), protocol.UnsubscribeType))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

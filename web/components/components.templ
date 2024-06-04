@@ -36,10 +36,6 @@ templ Root() {
             sendCmd("title @a times 0 100 0");
 			sendCmd("title @a title 5 minute warning!");
         }
-
-		function flashDarkness() {
-			sendCmd("effect @a blindness 2 2");
-		}
     </script>
 		<body>
 			<!-- This is a dummy frame to prevent the page from reloading when a form is submitted -->
@@ -58,7 +54,12 @@ templ Root() {
 					<!-- Attention Utils -->
 					<p>Attention Utils:</p>
 					<button onclick="fiveMinuteWarning()" class="font-bold py-2 px-4 rounded bg-blue-500 text-white">Five Min Warning</button>
-					<button onclick="flashDarkness()" class="font-bold py-2 px-4 rounded bg-blue-500 text-white">Flash Darkness</button>
+					<button onclick="sendCmd('effect @a blindness 2 2')" class="font-bold py-2 px-4 rounded bg-blue-500 text-white">Flash Darkness</button>
+				</div>
+				<div class="p-3">
+					<p>NightVision Utils:</p>
+					<button onclick="sendCmd('effect @a night_vision 1000000 1')" class="font-bold py-2 px-4 rounded bg-blue-500 text-white">Night Vision</button>
+					<button onclick="sendCmd('effect @a clear')" class="font-bold py-2 px-4 rounded bg-blue-500 text-white">Clear Effects</button>
 				</div>
 				@CustomCommandForm()
 			</div>
@@ -82,7 +83,7 @@ templ SetLabelForm() {
 }
 
 templ CustomCommandForm() {
-	<div>
+	<div class="p-3">
 		<p>Custom command:</p>
 		<form onSubmit="sendCmd(document.getElementById('customCmd').value)" target="dummyframe">
 			<input type="text" id="customCmd" name="customCmd" placeholder="Custom Command"/>
@@ -92,20 +93,20 @@ templ CustomCommandForm() {
 }
 
 templ EntityBanForm() {
-	<div>
+	<div class="p-3">
 		<p>Remove entity:</p>
 		<form onSubmit="sendCmd('kill @e[type=' + document.getElementById('entityType').value + ']')" target="dummyframe">
-			<input type="text" id="entityType" name="entityType" placeholder="Entity Type"/>
+			<input type="text" id="entityType" name="entityType" placeholder="Remove Entity"/>
 			<input type="submit" value="Remove" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
 		</form>
 		<p>Ban an entity:</p>
 		<form method="POST" action="/banentity" target="dummyframe">
-			<input type="text" id="entity" name="entity" placeholder="Entity Type"/>
+			<input type="text" id="entity" name="entity" placeholder="Ban Entity"/>
 			<input type="submit" value="Ban" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
 		</form>
 		<p>Unban an entity:</p>
 		<form method="DELETE" action="/banentity" target="dummyframe">
-			<input type="text" id="entity" name="entity" placeholder="Entity Type"/>
+			<input type="text" id="entity" name="entity" placeholder="Unban Entity"/>
 			<input type="submit" value="Unban" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
 		</form>
 	</div>
@@ -124,7 +125,7 @@ templ EntityList() {
 }
 
 templ ItemBanForm() {
-	<div>
+	<div class="p-3">
 		<p>Clear player inventory:</p>
 		<form onSubmit="sendCmd('clear ' + document.getElementById('clearPlayer').value + ' ' + document.getElementById('clearItem').value)" target="dummyframe">
 			<input type="text" id="clearPlayer" name="player" placeholder="Player"/>
@@ -133,12 +134,12 @@ templ ItemBanForm() {
 		</form>
 		<p>Ban an item:</p>
 		<form method="POST" action="/banitem" target="dummyframe">
-			<input type="text" id="item" name="item" placeholder="Item Type"/>
+			<input type="text" id="item" name="item" placeholder="Ban Item"/>
 			<input type="submit" value="Ban" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
 		</form>
 		<p>Unban an item:</p>
 		<form method="DELETE" action="/banitem" target="dummyframe">
-			<input type="text" id="item" name="item" placeholder="Item Type"/>
+			<input type="text" id="item" name="item" placeholder="Unban Item"/>
 			<input type="submit" value="Unban" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
 		</form>
 	</div>
@@ -148,6 +149,7 @@ templ ItemList() {
 	<div id="itemList">
 		<p>Banned items:</p>
 		<div
+			class="bg-orange-200"
 			hx-post="/itemlist"
 			hx-trigger="load"
 			hx-target="#itemList"
