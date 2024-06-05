@@ -71,6 +71,10 @@ func Root() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = PlayerListTable().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><p>General Utils:</p><div class=\"flex justify-start bg-green-300 p-5 w-84 h-96\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -150,7 +154,7 @@ func CustomCommandForm() templ.Component {
 	})
 }
 
-func EntityBanForm() templ.Component {
+func PlayerListTable() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -161,6 +165,30 @@ func EntityBanForm() templ.Component {
 		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
 		if templ_7745c5c3_Var5 == nil {
 			templ_7745c5c3_Var5 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<table><div id=\"playerList\"><tr hx-post=\"/playerlist\" hx-trigger=\"load\" hx-target=\"#playerList\" hx-swap=\"outerHTML\"></tr></div></table>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if !templ_7745c5c3_IsBuffer {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func EntityBanForm() templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+		if !templ_7745c5c3_IsBuffer {
+			templ_7745c5c3_Buffer = templ.GetBuffer()
+			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"p-3\"><p>Remove entity:</p><form onSubmit=\"sendCmd(&#39;kill @e[type=&#39; + document.getElementById(&#39;entityType&#39;).value + &#39;]&#39;)\" target=\"dummyframe\"><input type=\"text\" id=\"entityType\" name=\"entityType\" placeholder=\"Remove Entity\"> <input type=\"submit\" value=\"Remove\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\"></form><p>Ban an entity:</p><form method=\"POST\" action=\"/banentity\" target=\"dummyframe\"><input type=\"text\" id=\"entity\" name=\"entity\" placeholder=\"Ban Entity\"> <input type=\"submit\" value=\"Ban\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\"></form><p>Unban an entity:</p><form method=\"DELETE\" action=\"/banentity\" target=\"dummyframe\"><input type=\"text\" id=\"entity\" name=\"entity\" placeholder=\"Unban Entity\"> <input type=\"submit\" value=\"Unban\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\"></form></div>")
@@ -182,9 +210,9 @@ func EntityList() templ.Component {
 			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var6 == nil {
-			templ_7745c5c3_Var6 = templ.NopComponent
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"entityList\"><p>Banned entities:</p><div hx-post=\"/entitylist\" hx-trigger=\"load\" hx-target=\"#entityList\" hx-swap=\"outerHTML\"></div></div>")
@@ -206,9 +234,9 @@ func ItemBanForm() templ.Component {
 			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var7 == nil {
-			templ_7745c5c3_Var7 = templ.NopComponent
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"p-3\"><p>Clear player inventory:</p><form onSubmit=\"sendCmd(&#39;clear &#39; + document.getElementById(&#39;clearPlayer&#39;).value + &#39; &#39; + document.getElementById(&#39;clearItem&#39;).value)\" target=\"dummyframe\"><input type=\"text\" id=\"clearPlayer\" name=\"player\" placeholder=\"Player\"> <input type=\"text\" id=\"clearItem\" name=\"item\" placeholder=\"Item\"> <input type=\"submit\" value=\"Clear\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\"></form><p>Ban an item:</p><form method=\"POST\" action=\"/banitem\" target=\"dummyframe\"><input type=\"text\" id=\"item\" name=\"item\" placeholder=\"Ban Item\"> <input type=\"submit\" value=\"Ban\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\"></form><p>Unban an item:</p><form method=\"DELETE\" action=\"/banitem\" target=\"dummyframe\"><input type=\"text\" id=\"item\" name=\"item\" placeholder=\"Unban Item\"> <input type=\"submit\" value=\"Unban\" class=\"font-bold py-2 px-4 rounded bg-blue-500 text-white\"></form></div>")
@@ -230,9 +258,9 @@ func ItemList() templ.Component {
 			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var8 == nil {
-			templ_7745c5c3_Var8 = templ.NopComponent
+		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var9 == nil {
+			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"itemList\"><p>Banned items:</p><div class=\"bg-orange-200\" hx-post=\"/itemlist\" hx-trigger=\"load\" hx-target=\"#itemList\" hx-swap=\"outerHTML\"></div></div>")

@@ -251,5 +251,13 @@ func (ws *WebServer) ApplyRoutes(router *http.ServeMux) *http.ServeMux {
 		htmlList += "</ul><div hx-post=\"/itemlist\" hx-trigger=\"every 2s\" hx-target=\"#itemList\" hx-swap=\"outerHTML\"></div></div>"
 		w.Write([]byte(htmlList))
 	}))
+	router.Handle("POST /playerlist", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		htmlList := "<div id=\"playerList\"><p>Players:</p><ul class=\"bg-orange-200\">"
+		for _, player := range ws.Config.Players {
+			htmlList += fmt.Sprintf("<table><tr><td>%s</td><td>%s</td></tr></table>", player.Name, player.FakeName)
+		}
+		htmlList += "</ul><div hx-post=\"/playerlist\" hx-trigger=\"every 2s\" hx-target=\"#playerList\" hx-swap=\"outerHTML\"></div></div>"
+		w.Write([]byte(htmlList))
+	}))
 	return router
 }

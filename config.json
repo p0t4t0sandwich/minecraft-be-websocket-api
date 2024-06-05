@@ -7,5 +7,11 @@
   ],
   "banned_items": [
     "bedrock"
+  ],
+  "players": [
+    {
+      "id": 11111111,
+      "name": "player1"
+    }
   ]
 }
