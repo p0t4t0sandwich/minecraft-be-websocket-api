@@ -30,6 +30,15 @@ func NewConfig() *Config {
 	}
 	var config Config
 	_ = json.Unmarshal(configFile, &config)
+	if config.BannedMobs == nil {
+		config.BannedMobs = []string{}
+	}
+	if config.BannedItems == nil {
+		config.BannedItems = []string{}
+	}
+	if config.Players == nil {
+		config.Players = []SimplePlayer{}
+	}
 	return &config
 }
 
@@ -60,6 +69,10 @@ func (c *Config) AddPlayer(player mctypes.Player) {
 	p := c.GetPlayerById(player.Id)
 	if p == nil {
 		c.Players = append(c.Players, *NewSimplePlayer(player))
+	} else {
+		if p.FakeName != player.Name {
+			p.FakeName = player.Name
+		}
 	}
 }
 
@@ -67,6 +80,14 @@ func (c *Config) RenamePlayer(id int, name string) {
 	p := c.GetPlayerById(id)
 	if p != nil {
 		p.Name = name
+	}
+}
+
+// Just removes their Fake name, not the stored player obj
+func (c *Config) RemovePlayer(id int) {
+	p := c.GetPlayerById(id)
+	if p != nil {
+		p.FakeName = ""
 	}
 }
 
@@ -89,6 +110,7 @@ func NewWebServer(wss *server.WebSocketServer, Config *Config) *WebServer {
 	}
 
 	wss.SendPacket(ws.Label, events.NewEventSubPacket(events.PlayerJoin, protocol.SubscribeType))
+	wss.SendPacket(ws.Label, events.NewEventSubPacket(events.PlayerLeave, protocol.SubscribeType))
 
 	go func() {
 		time.Sleep(1 * time.Second)
@@ -118,6 +140,26 @@ func (ws *WebServer) HandlePlayerJoin(id string, msg []byte, packetJSON map[stri
 
 	ws.Config.AddPlayer(playerJoin.Body.Player)
 	ws.Config.Save()
+}
+
+func (ws *WebServer) HandlePlayerLeave(id string, msg []byte, packetJSON map[string]interface{}, event *events.EventPacket) {
+	playerLeave := &events.PlayerLeaveEvent{EventPacket: event}
+	body, err := json.Marshal(event.Body)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &playerLeave.Body)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+
+	p := ws.Config.GetPlayerById(playerLeave.Body.Player.Id)
+	if p != nil {
+		ws.Config.RemovePlayer(playerLeave.Body.Player.Id)
+		ws.Config.Save()
+	}
 }
 
 func (ws *WebServer) ApplyRoutes(router *http.ServeMux) *http.ServeMux {

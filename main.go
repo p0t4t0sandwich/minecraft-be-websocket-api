@@ -23,6 +23,7 @@ func main() {
 	ws := web.NewWebServer(wss, web.NewConfig())
 	server.Router = ws.ApplyRoutes(server.Router)
 	wss.AddEventListener(events.PlayerJoin, ws.HandlePlayerJoin)
+	wss.AddEventListener(events.PlayerLeave, ws.HandlePlayerLeave)
 
 	log.Fatal(server.Run())
 }
