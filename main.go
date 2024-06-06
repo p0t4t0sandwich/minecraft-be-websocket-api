@@ -18,9 +18,12 @@ func main() {
 		address = "0.0.0.0:8080"
 	}
 
+	logWriter := web.NewLogWriter("latest.log")
+	log.SetOutput(logWriter)
+
 	wss := server.NewWebSocketServer()
 	server := server.NewAPIServer(address, useUDS, wss)
-	ws := web.NewWebServer(wss, web.NewConfig())
+	ws := web.NewWebServer(wss, web.NewConfig(), logWriter)
 	server.Router = ws.ApplyRoutes(server.Router)
 	wss.AddEventListener(events.PlayerJoin, ws.HandlePlayerJoin)
 	wss.AddEventListener(events.PlayerLeave, ws.HandlePlayerLeave)

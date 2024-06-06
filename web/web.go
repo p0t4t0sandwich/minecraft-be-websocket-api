@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/a-h/templ"
@@ -40,20 +41,6 @@ func NewConfig() *Config {
 		config.Players = []SimplePlayer{}
 	}
 	return &config
-}
-
-type SimplePlayer struct {
-	Id       int    `json:"id"`
-	Name     string `json:"name"`
-	FakeName string `json:"-"`
-}
-
-func NewSimplePlayer(player mctypes.Player) *SimplePlayer {
-	return &SimplePlayer{
-		Id:       player.Id,
-		Name:     "Unknown",
-		FakeName: player.Name,
-	}
 }
 
 func (c *Config) GetPlayerById(id int) *SimplePlayer {
@@ -96,17 +83,62 @@ func (c *Config) Save() {
 	_ = os.WriteFile("./config.json", configFile, 0644)
 }
 
-type WebServer struct {
-	wss    *server.WebSocketServer
-	Config *Config
-	Label  string
+type SimplePlayer struct {
+	Id       int    `json:"id"`
+	Name     string `json:"name"`
+	FakeName string `json:"-"`
 }
 
-func NewWebServer(wss *server.WebSocketServer, Config *Config) *WebServer {
+func NewSimplePlayer(player mctypes.Player) *SimplePlayer {
+	return &SimplePlayer{
+		Id:       player.Id,
+		Name:     "Unknown",
+		FakeName: player.Name,
+	}
+}
+
+type LogWriter struct {
+	FileName     string
+	RecentEvents []string
+}
+
+func NewLogWriter(fileName string) *LogWriter {
+	return &LogWriter{
+		FileName:     fileName,
+		RecentEvents: []string{},
+	}
+}
+
+func (w *LogWriter) Write(p []byte) (n int, err error) {
+	if len(w.RecentEvents) > 30 {
+		w.RecentEvents = w.RecentEvents[1:]
+	}
+	if strings.Contains(string(p), "[Event]") {
+		w.RecentEvents = append(w.RecentEvents, string(p))
+	}
+
+	fmt.Print(string(p))
+	f, err := os.OpenFile(w.FileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return 0, err
+	}
+	defer f.Close()
+	return f.Write(p)
+}
+
+type WebServer struct {
+	wss       *server.WebSocketServer
+	Config    *Config
+	LogWriter *LogWriter
+	Label     string
+}
+
+func NewWebServer(wss *server.WebSocketServer, Config *Config, logWriter *LogWriter) *WebServer {
 	ws := &WebServer{
-		wss:    wss,
-		Config: Config,
-		Label:  "",
+		wss:       wss,
+		Config:    Config,
+		LogWriter: logWriter,
+		Label:     "",
 	}
 
 	wss.SendPacket(ws.Label, events.NewEventSubPacket(events.PlayerJoin, protocol.SubscribeType))
