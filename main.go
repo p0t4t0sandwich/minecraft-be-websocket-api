@@ -25,8 +25,7 @@ func main() {
 	server := server.NewAPIServer(address, useUDS, wss)
 	ws := web.NewWebServer(wss, web.NewConfig(), logWriter)
 	server.Router = ws.ApplyRoutes(server.Router)
-	wss.AddEventListener(events.PlayerJoin, ws.HandlePlayerJoin)
-	wss.AddEventListener(events.PlayerLeave, ws.HandlePlayerLeave)
+	wss.AddEventListener(events.WebSocketConnect, ws.HandleWebSocketConnect)
 
 	log.Fatal(server.Run())
 }

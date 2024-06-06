@@ -227,5 +227,6 @@ const (
 	ControlRemappedByPlayer                      EventName = "ControlRemappedByPlayer"
 	EduiOSPurchaseTransaction                    EventName = "EduiOSPurchaseTransaction"
 
-	Unknown EventName = "Unknown"
+	Unknown          EventName = "Unknown"
+	WebSocketConnect EventName = "WebSocketConnect"
 )

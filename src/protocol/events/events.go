@@ -16,7 +16,7 @@ type EventHeader struct {
 // EventPacket - Packet received as an event notification
 type EventPacket struct {
 	protocol.Packet
-	Header EventHeader `json:"header"`
+	Header *EventHeader `json:"header"`
 }
 
 // GetEventListeners - Get the event listeners

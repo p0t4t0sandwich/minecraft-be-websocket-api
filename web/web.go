@@ -113,8 +113,7 @@ func (w *LogWriter) Write(p []byte) (n int, err error) {
 	if len(w.RecentEvents) > 12 {
 		w.RecentEvents = w.RecentEvents[1:]
 	}
-	// TODO: Remove this when done testing
-	if true || strings.Contains(string(p), "[Event]") {
+	if strings.Contains(string(p), "[Event]") {
 		w.RecentEvents = append(w.RecentEvents, string(p))
 	}
 
@@ -156,6 +155,11 @@ func NewWebServer(wss *server.WebSocketServer, Config *Config, logWriter *LogWri
 	}()
 
 	return ws
+}
+
+func (ws *WebServer) HandleWebSocketConnect(id string, msg []byte, packetJSON map[string]interface{}, event *events.EventPacket) {
+	ws.wss.AddEventListener(events.PlayerJoin, ws.HandlePlayerJoin)
+	ws.wss.AddEventListener(events.PlayerLeave, ws.HandlePlayerLeave)
 }
 
 func (ws *WebServer) HandlePlayerJoin(id string, msg []byte, packetJSON map[string]interface{}, event *events.EventPacket) {

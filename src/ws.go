@@ -39,6 +39,16 @@ func NewWebSocketServer() *WebSocketServer {
 // Add - Add a connection to the relay
 func (r *WebSocketServer) Add(id string, conn *websocket.Conn) {
 	r.conns[id] = conn
+	r.HandleEvent(id, []byte{}, map[string]interface{}{}, &events.EventPacket{
+		Header: &events.EventHeader{
+			Header: protocol.Header{
+				MessagePurpose: protocol.EventType,
+				MessageType:    protocol.CommandResponseType,
+				Version:        1,
+			},
+			EventName: events.WebSocketConnect,
+		},
+	})
 }
 
 // Remove - Remove a connection from the relay
@@ -93,12 +103,22 @@ func (r *WebSocketServer) HandleCommand(id string, msg []byte, packetJSON map[st
 	for _, callback := range r.commandListeners[commandName] {
 		callback(id, msg, packetJSON, command)
 	}
+	if r.commandListeners[commandName] == nil {
+		for _, callback := range r.commandListeners[commands.Unknown] {
+			callback(id, msg, packetJSON, command)
+		}
+	}
 }
 
 // HandleEvent - Handle an event packet
 func (r *WebSocketServer) HandleEvent(id string, msg []byte, packetJSON map[string]interface{}, event *events.EventPacket) {
 	for _, callback := range r.eventListeners[event.Header.EventName] {
 		callback(id, msg, packetJSON, event)
+	}
+	if r.eventListeners[event.Header.EventName] == nil {
+		for _, callback := range r.eventListeners[events.Unknown] {
+			callback(id, msg, packetJSON, event)
+		}
 	}
 }
 
