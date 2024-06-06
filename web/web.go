@@ -110,10 +110,11 @@ func NewLogWriter(fileName string) *LogWriter {
 }
 
 func (w *LogWriter) Write(p []byte) (n int, err error) {
-	if len(w.RecentEvents) > 30 {
+	if len(w.RecentEvents) > 12 {
 		w.RecentEvents = w.RecentEvents[1:]
 	}
-	if strings.Contains(string(p), "[Event]") {
+	// TODO: Remove this when done testing
+	if true || strings.Contains(string(p), "[Event]") {
 		w.RecentEvents = append(w.RecentEvents, string(p))
 	}
 
@@ -289,6 +290,14 @@ func (ws *WebServer) ApplyRoutes(router *http.ServeMux) *http.ServeMux {
 			htmlList += fmt.Sprintf("<table><tr><td>%s</td><td>%s</td></tr></table>", player.Name, player.FakeName)
 		}
 		htmlList += "</ul><div hx-post=\"/playerlist\" hx-trigger=\"every 2s\" hx-target=\"#playerList\" hx-swap=\"outerHTML\"></div></div>"
+		w.Write([]byte(htmlList))
+	}))
+	router.Handle("POST /eventlog", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		htmlList := "<div id=\"eventLog\"><p>Recent events:</p><ul class=\"bg-yellow-200\">"
+		for _, event := range ws.LogWriter.RecentEvents {
+			htmlList += fmt.Sprintf("<li>%s</li>", event)
+		}
+		htmlList += "</ul><div hx-post=\"/eventlog\" hx-trigger=\"every 2s\" hx-target=\"#eventLog\" hx-swap=\"outerHTML\"></div></div>"
 		w.Write([]byte(htmlList))
 	}))
 	return router

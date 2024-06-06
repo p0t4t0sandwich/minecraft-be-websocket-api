@@ -70,6 +70,7 @@ templ Root() {
 				@EntityList()
 				@ItemBanForm()
 				@ItemList()
+				@EventLog()
 			</div>
 		</body>
 	</html>
@@ -160,13 +161,26 @@ templ ItemBanForm() {
 }
 
 templ ItemList() {
-	<div id="itemList">
-		<p>Banned items:</p>
+	<div class="p-3">
+		<div id="itemList" class="bg-orange-200">
+			<p>Banned items:</p>
+			<div
+				hx-post="/itemlist"
+				hx-trigger="load"
+				hx-target="#itemList"
+				hx-swap="outerHTML"
+			></div>
+		</div>
+	</div>
+}
+
+templ EventLog() {
+	<div id="eventLog" class="bg-yellow-200">
+		<p>Event Log:</p>
 		<div
-			class="bg-orange-200"
-			hx-post="/itemlist"
+			hx-post="/eventlog"
 			hx-trigger="load"
-			hx-target="#itemList"
+			hx-target="#eventLog"
 			hx-swap="outerHTML"
 		></div>
 	</div>
