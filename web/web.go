@@ -113,7 +113,7 @@ func (w *LogWriter) Write(p []byte) (n int, err error) {
 	if len(w.RecentEvents) > 12 {
 		w.RecentEvents = w.RecentEvents[1:]
 	}
-	if strings.Contains(string(p), "[Event]") {
+	if strings.Contains(string(p), "[Event]") && !strings.Contains(string(p), "PlayerTravelled") {
 		w.RecentEvents = append(w.RecentEvents, string(p))
 	}
 
@@ -127,22 +127,22 @@ func (w *LogWriter) Write(p []byte) (n int, err error) {
 }
 
 type WebServer struct {
-	wss       *server.WebSocketServer
-	Config    *Config
-	LogWriter *LogWriter
-	Label     string
+	wss        *server.WebSocketServer
+	Config     *Config
+	LogWriter  *LogWriter
+	Label      string
+	PlayerList map[int]mctypes.Player
 }
 
-func NewWebServer(wss *server.WebSocketServer, Config *Config, logWriter *LogWriter) *WebServer {
+func NewWebServer(wss *server.WebSocketServer, Config *Config) *WebServer {
 	ws := &WebServer{
-		wss:       wss,
-		Config:    Config,
-		LogWriter: logWriter,
-		Label:     "",
+		wss:        wss,
+		Config:     Config,
+		LogWriter:  NewLogWriter("latest.log"),
+		Label:      "",
+		PlayerList: make(map[int]mctypes.Player),
 	}
-
-	wss.SendPacket(ws.Label, events.NewEventSubPacket(events.PlayerJoin, protocol.SubscribeType))
-	wss.SendPacket(ws.Label, events.NewEventSubPacket(events.PlayerLeave, protocol.SubscribeType))
+	log.SetOutput(ws.LogWriter)
 
 	go func() {
 		time.Sleep(1 * time.Second)
@@ -158,8 +158,10 @@ func NewWebServer(wss *server.WebSocketServer, Config *Config, logWriter *LogWri
 }
 
 func (ws *WebServer) HandleWebSocketConnect(id string, msg []byte, packetJSON map[string]interface{}, event *events.EventPacket) {
-	ws.wss.AddEventListener(events.PlayerJoin, ws.HandlePlayerJoin)
-	ws.wss.AddEventListener(events.PlayerLeave, ws.HandlePlayerLeave)
+	ws.wss.SendPacket(ws.Label, events.NewEventSubPacket(events.PlayerJoin, protocol.SubscribeType))
+	ws.wss.SendPacket(ws.Label, events.NewEventSubPacket(events.PlayerLeave, protocol.SubscribeType))
+	ws.wss.SendPacket(ws.Label, events.NewEventSubPacket(events.PlayerTravelled, protocol.SubscribeType))
+	ws.wss.SendPacket(ws.Label, events.NewEventSubPacket(events.PlayerMessage, protocol.SubscribeType))
 }
 
 func (ws *WebServer) HandlePlayerJoin(id string, msg []byte, packetJSON map[string]interface{}, event *events.EventPacket) {
@@ -197,6 +199,23 @@ func (ws *WebServer) HandlePlayerLeave(id string, msg []byte, packetJSON map[str
 		ws.Config.RemovePlayer(playerLeave.Body.Player.Id)
 		ws.Config.Save()
 	}
+}
+
+func (ws *WebServer) HandlePlayerTravelled(id string, msg []byte, packetJSON map[string]interface{}, event *events.EventPacket) {
+	playerTravelled := &events.PlayerTravelledEvent{EventPacket: event}
+	body, err := json.Marshal(event.Body)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &playerTravelled.Body)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+
+	ws.PlayerList[playerTravelled.Body.Player.Id] = playerTravelled.Body.Player
+	ws.Config.Save()
 }
 
 func (ws *WebServer) ApplyRoutes(router *http.ServeMux) *http.ServeMux {
