@@ -262,6 +262,9 @@ func (ws *WebServer) ApplyRoutes(router *http.ServeMux) *http.ServeMux {
 	router.Handle("POST /entitylist", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		htmlList := "<div id=\"entityList\"><p>Banned entities:</p><ul class=\"bg-orange-200\">"
 		for _, bannedMob := range ws.Config.BannedMobs {
+			// TODO: Improve this later
+			ws.wss.SendPacket(ws.Label, commands.NewCommandPacket(fmt.Sprintf("remove @e[type=%s]", bannedMob)))
+			//
 			htmlList += fmt.Sprintf("<li>%s</li>", bannedMob)
 		}
 		htmlList += "</ul><div hx-post=\"/entitylist\" hx-trigger=\"every 2s\" hx-target=\"#entityList\" hx-swap=\"outerHTML\"></div></div>"
@@ -302,6 +305,9 @@ func (ws *WebServer) ApplyRoutes(router *http.ServeMux) *http.ServeMux {
 	router.Handle("POST /itemlist", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		htmlList := "<div id=\"itemList\"><p>Banned items:</p><ul class=\"bg-orange-200\">"
 		for _, bannedItem := range ws.Config.BannedItems {
+			// TODO: Improve this later
+			ws.wss.SendPacket(ws.Label, commands.NewCommandPacket(fmt.Sprintf("clear @a %s", bannedItem)))
+			//
 			htmlList += fmt.Sprintf("<li>%s</li>", bannedItem)
 		}
 		htmlList += "</ul><div hx-post=\"/itemlist\" hx-trigger=\"every 2s\" hx-target=\"#itemList\" hx-swap=\"outerHTML\"></div></div>"
