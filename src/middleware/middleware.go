@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -49,6 +50,15 @@ func RequestLoggerMiddleware(next http.Handler) http.Handler {
 		start := time.Now()
 		wrapped := &WrappedWriter{w, http.StatusOK}
 		next.ServeHTTP(wrapped, r)
+
+		if strings.Contains(r.URL.Path, "playerlist") ||
+			strings.Contains(r.URL.Path, "entitylist") ||
+			strings.Contains(r.URL.Path, "eventlog") ||
+			strings.Contains(r.URL.Path, "itemlist") ||
+			strings.Contains(r.URL.Path, "playerlist") ||
+			strings.Contains(r.URL.Path, "itemlist") {
+			return
+		}
 
 		cfConnectingIP := r.Header.Get("CF-Connecting-IP")
 		forwardedFor := r.Header.Get("X-Forwarded-For")
