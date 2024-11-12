@@ -16,7 +16,7 @@ You need to disable encrypted web sockets for this to work. There's no way in he
 
 ### Connecting to the Websocket from in-game or in a server's console
 
-Note: for some reason you can't run the command from the console, or from in-game. Feel free to submit a PR if you know a workaround.
+Note: for some reason on servers you can't run the command from the console, or from in-game. Feel free to submit a PR if you know a workaround.
 
 ```
 /connect ws://localhost:8080/ws/someid
