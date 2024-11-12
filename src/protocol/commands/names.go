@@ -18,11 +18,11 @@ const (
 	Unknown     CommandName = "unknown"
 )
 
-// FromString - Convert a string to a CommandName
+// FromString Convert a string to a CommandName
 func FromString(s string) CommandName {
 	split := strings.Split(s, " ")
 	if len(split) == 0 {
-		return CommandName("")
+		return ""
 	}
 	return CommandName(split[0])
 }

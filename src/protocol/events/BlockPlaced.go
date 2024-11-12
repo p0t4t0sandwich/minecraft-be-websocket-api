@@ -7,7 +7,7 @@ import (
 	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/mctypes"
 )
 
-// BlockPlacedBody
+// BlockPlacedBody The body of a block placed event
 type BlockPlacedBody struct {
 	Block            mctypes.Block  `json:"block"`
 	Count            int            `json:"count"`
@@ -17,13 +17,15 @@ type BlockPlacedBody struct {
 	Tool             mctypes.Tool   `json:"tool"`
 }
 
-// BlockPlacedEvent
+// BlockPlacedEvent Event for when a block is placed
 type BlockPlacedEvent struct {
 	*EventPacket
 	Body BlockPlacedBody `json:"body"`
 }
 
-// HandleBlockPlaced
+// HandleBlockPlaced Handle the block placed event
+//
+//goland:noinspection GoUnusedParameter
 func HandleBlockPlaced(id string, msg []byte, packetJSON map[string]interface{}, event *EventPacket) {
 	blockPlaced := &BlockPlacedEvent{EventPacket: event}
 	body, err := json.Marshal(event.Body)

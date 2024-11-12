@@ -21,7 +21,7 @@ type APIServer struct {
 	WSS      *WebSocketServer
 }
 
-// NewAPIServer - Create a new API server
+// NewAPIServer Create a new API server
 func NewAPIServer(address string, usingUDS bool, wss *WebSocketServer) *APIServer {
 	return &APIServer{
 		Address:  address,
@@ -31,7 +31,7 @@ func NewAPIServer(address string, usingUDS bool, wss *WebSocketServer) *APIServe
 	}
 }
 
-// Setup - Setup the API server
+// Setup Setup the API server
 func (s *APIServer) Setup() http.Handler {
 	for commandName, callback := range commands.GetCommandListeners() {
 		s.WSS.AddCommandListener(commandName, callback)
@@ -43,11 +43,11 @@ func (s *APIServer) Setup() http.Handler {
 	s.Router.HandleFunc("/ws/{id}", s.WSS.WSHandler)
 	s.Router.HandleFunc("POST /api/cmd/{id}", CMDHandler(s.WSS))
 	s.Router.HandleFunc("POST /api/event/{id}/{name}", EventSubscribeHandler(s.WSS))
-	s.Router.HandleFunc("DELETE /api/event/{id}/{name}", EventUnsubscribeHander(s.WSS))
+	s.Router.HandleFunc("DELETE /api/event/{id}/{name}", EventUnsubscribeHandler(s.WSS))
 	return middleware.RequestLoggerMiddleware(cors.AllowAll().Handler(s.Router))
 }
 
-// Run - Start the API server
+// Run Start the API server
 func (s *APIServer) Run() error {
 	server := http.Server{
 		Addr:    s.Address,
@@ -59,7 +59,10 @@ func (s *APIServer) Run() error {
 		signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 		go func() {
 			<-c
-			os.Remove(s.Address)
+			err := os.Remove(s.Address)
+			if err != nil {
+				return
+			}
 			os.Exit(1)
 		}()
 

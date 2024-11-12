@@ -7,7 +7,7 @@ import (
 	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/mctypes"
 )
 
-// PlayerTravelledBody - PlayerTravelled event body
+// PlayerTravelledBody PlayerTravelled event body
 type PlayerTravelledBody struct {
 	IsUnderWater    bool           `json:"isUnderWater"`
 	MetersTravelled float64        `json:"metersTravelled"`
@@ -16,13 +16,15 @@ type PlayerTravelledBody struct {
 	TravelMethod    int            `json:"travelMethod"`
 }
 
-// PlayerTravelledEvent - PlayerTravelled event
+// PlayerTravelledEvent PlayerTravelled event
 type PlayerTravelledEvent struct {
 	*EventPacket
 	Body PlayerTravelledBody `json:"body"`
 }
 
-// HandlePlayerTravelled - Handle a PlayerTravelled event
+// HandlePlayerTravelled Handle a PlayerTravelled event
+//
+//goland:noinspection GoUnusedParameter
 func HandlePlayerTravelled(id string, msg []byte, packetJSON map[string]interface{}, event *EventPacket) {
 	playerTravelled := &PlayerTravelledEvent{EventPacket: event}
 	body, err := json.Marshal(event.Body)

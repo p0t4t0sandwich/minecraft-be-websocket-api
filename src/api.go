@@ -10,7 +10,7 @@ import (
 	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/events"
 )
 
-// CMDHandler - Handle the CMD route
+// CMDHandler Handle the CMD route
 func CMDHandler(wss *WebSocketServer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
@@ -40,7 +40,7 @@ func CMDHandler(wss *WebSocketServer) http.HandlerFunc {
 	}
 }
 
-// EventSubscribeHandler - Handle the EventSubscribe route
+// EventSubscribeHandler Handle the EventSubscribe route
 func EventSubscribeHandler(wss *WebSocketServer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
@@ -50,7 +50,7 @@ func EventSubscribeHandler(wss *WebSocketServer) http.HandlerFunc {
 			return
 		}
 		if eventName == "" {
-			http.Error(w, "Event Name is requried", http.StatusBadRequest)
+			http.Error(w, "Event Name is required", http.StatusBadRequest)
 			return
 		}
 
@@ -63,8 +63,8 @@ func EventSubscribeHandler(wss *WebSocketServer) http.HandlerFunc {
 	}
 }
 
-// EventUnsubscribeHander - Handle the Unsubscribe route
-func EventUnsubscribeHander(wss *WebSocketServer) http.HandlerFunc {
+// EventUnsubscribeHandler Handle the Unsubscribe route
+func EventUnsubscribeHandler(wss *WebSocketServer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
 		eventName := r.PathValue("name")
@@ -73,7 +73,7 @@ func EventUnsubscribeHander(wss *WebSocketServer) http.HandlerFunc {
 			return
 		}
 		if eventName == "" {
-			http.Error(w, "Event Name is requried", http.StatusBadRequest)
+			http.Error(w, "Event Name is required", http.StatusBadRequest)
 			return
 		}
 

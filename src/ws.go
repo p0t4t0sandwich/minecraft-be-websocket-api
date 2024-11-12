@@ -18,7 +18,7 @@ type EventCallback func(id string, msg []byte, packetJSON map[string]interface{}
 
 var upgrader = websocket.Upgrader{}
 
-// WebSocketServer
+// WebSocketServer WebSocket relay
 type WebSocketServer struct {
 	conns            map[string]*websocket.Conn
 	commands         map[uuid.UUID]commands.CommandName
@@ -26,7 +26,7 @@ type WebSocketServer struct {
 	eventListeners   map[events.EventName][]EventCallback
 }
 
-// NewWebSocketServer - Create a new WebSocket relay
+// NewWebSocketServer Create a new WebSocket relay
 func NewWebSocketServer() *WebSocketServer {
 	return &WebSocketServer{
 		conns:            make(map[string]*websocket.Conn),
@@ -36,10 +36,10 @@ func NewWebSocketServer() *WebSocketServer {
 	}
 }
 
-// Add - Add a connection to the relay
-func (r *WebSocketServer) Add(id string, conn *websocket.Conn) {
-	r.conns[id] = conn
-	r.HandleEvent(id, []byte{}, map[string]interface{}{}, &events.EventPacket{
+// Add a connection to the relay
+func (wss *WebSocketServer) Add(id string, conn *websocket.Conn) {
+	wss.conns[id] = conn
+	wss.HandleEvent(id, []byte{}, map[string]interface{}{}, &events.EventPacket{
 		Header: &events.EventHeader{
 			Header: protocol.Header{
 				MessagePurpose: protocol.EventType,
@@ -51,78 +51,78 @@ func (r *WebSocketServer) Add(id string, conn *websocket.Conn) {
 	})
 }
 
-// Remove - Remove a connection from the relay
-func (r *WebSocketServer) Remove(id string) {
-	delete(r.conns, id)
+// Remove a connection from the relay
+func (wss *WebSocketServer) Remove(id string) {
+	delete(wss.conns, id)
 }
 
-// Send - Send a message to a connection
-func (r *WebSocketServer) Send(id string, msg []byte) error {
-	conn, ok := r.conns[id]
+// Send a message to a connection
+func (wss *WebSocketServer) Send(id string, msg []byte) error {
+	conn, ok := wss.conns[id]
 	if !ok {
 		return nil
 	}
 	return conn.WriteMessage(websocket.TextMessage, msg)
 }
 
-// SendPacket - Send a packet to a connection
-func (r *WebSocketServer) SendPacket(id string, packet *protocol.Packet) error {
+// SendPacket Send a packet to a connection
+func (wss *WebSocketServer) SendPacket(id string, packet *protocol.Packet) error {
 	msg, err := json.Marshal(packet)
 	if err != nil {
 		return err
 	}
-	return r.Send(id, msg)
+	return wss.Send(id, msg)
 }
 
-// AddCommand - Add a command to the relay
-func (r *WebSocketServer) AddCommand(id uuid.UUID, command commands.CommandName) {
-	r.commands[id] = command
+// AddCommand Add a command to the relay
+func (wss *WebSocketServer) AddCommand(id uuid.UUID, command commands.CommandName) {
+	wss.commands[id] = command
 }
 
-// PopCommand - Pop a command from the relay
-func (r *WebSocketServer) PopCommand(id uuid.UUID) (commands.CommandName, bool) {
-	command, ok := r.commands[id]
+// PopCommand Pop a command from the relay
+func (wss *WebSocketServer) PopCommand(id uuid.UUID) (commands.CommandName, bool) {
+	command, ok := wss.commands[id]
 	if ok {
-		delete(r.commands, id)
+		delete(wss.commands, id)
 	}
 	return command, ok
 }
 
-// AddCommandListener - Add a command listener
-func (r *WebSocketServer) AddCommandListener(command commands.CommandName, callback CommandCallback) {
-	r.commandListeners[command] = append(r.commandListeners[command], callback)
+// AddCommandListener Add a command listener
+func (wss *WebSocketServer) AddCommandListener(command commands.CommandName, callback CommandCallback) {
+	wss.commandListeners[command] = append(wss.commandListeners[command], callback)
 }
 
-// AddEventListener - Add an event listener
-func (r *WebSocketServer) AddEventListener(event events.EventName, callback EventCallback) {
-	r.eventListeners[event] = append(r.eventListeners[event], callback)
+// AddEventListener Add an event listener
+func (wss *WebSocketServer) AddEventListener(event events.EventName, callback EventCallback) {
+	wss.eventListeners[event] = append(wss.eventListeners[event], callback)
 }
 
-// HandleCommand - Handle a command packet
-func (r *WebSocketServer) HandleCommand(id string, msg []byte, packetJSON map[string]interface{}, command *commands.CommandResponse, commandName commands.CommandName) {
-	for _, callback := range r.commandListeners[commandName] {
+// HandleCommand Handle a command packet
+func (wss *WebSocketServer) HandleCommand(id string, msg []byte, packetJSON map[string]interface{}, command *commands.CommandResponse, commandName commands.CommandName) {
+	for _, callback := range wss.commandListeners[commandName] {
 		callback(id, msg, packetJSON, command)
 	}
-	if r.commandListeners[commandName] == nil {
-		for _, callback := range r.commandListeners[commands.Unknown] {
+	if wss.commandListeners[commandName] == nil {
+		for _, callback := range wss.commandListeners[commands.Unknown] {
 			callback(id, msg, packetJSON, command)
 		}
 	}
 }
 
-// HandleEvent - Handle an event packet
-func (r *WebSocketServer) HandleEvent(id string, msg []byte, packetJSON map[string]interface{}, event *events.EventPacket) {
-	for _, callback := range r.eventListeners[event.Header.EventName] {
+// HandleEvent Handle an event packet
+func (wss *WebSocketServer) HandleEvent(id string, msg []byte, packetJSON map[string]interface{}, event *events.EventPacket) {
+	for _, callback := range wss.eventListeners[event.Header.EventName] {
 		callback(id, msg, packetJSON, event)
 	}
-	if r.eventListeners[event.Header.EventName] == nil {
-		for _, callback := range r.eventListeners[events.Unknown] {
+	if wss.eventListeners[event.Header.EventName] == nil {
+		for _, callback := range wss.eventListeners[events.Unknown] {
 			callback(id, msg, packetJSON, event)
 		}
 	}
 }
 
-// WSHandler - Handle a WebSocket connection
+// WSHandler Handle a WebSocket connection
 func (wss *WebSocketServer) WSHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if id == "" {
@@ -135,7 +135,12 @@ func (wss *WebSocketServer) WSHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err.Error())
 		return
 	}
-	defer ws.Close()
+	defer func(ws *websocket.Conn) {
+		err := ws.Close()
+		if err != nil {
+			log.Println(err.Error())
+		}
+	}(ws)
 	defer wss.Remove(id)
 	defer log.Printf("[%s] < Disconnected", id)
 
@@ -154,7 +159,7 @@ func (wss *WebSocketServer) WSHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// HandlePacket - Handle a packet
+// HandlePacket Handle a packet
 func (wss *WebSocketServer) HandlePacket(id string, msg []byte) {
 	packetJSON := make(map[string]interface{})
 	err := json.Unmarshal(msg, &packetJSON)

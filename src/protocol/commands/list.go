@@ -10,7 +10,9 @@ import (
 
 // list
 
-// NewListRequest - Sends a list request
+// NewListRequest Sends a list request
+//
+//goland:noinspection GoUnusedExportedFunction
 func NewListRequest() *protocol.Packet {
 	return NewCommandPacket("list")
 }
@@ -19,7 +21,7 @@ func NewListRequest() *protocol.Packet {
 //     maxPlayerCount: number;
 //     players: string;
 
-// ListResponseBody - The body of a list response
+// ListResponseBody The body of a list response
 type ListResponseBody struct {
 	*protocol.Body
 	CurrentPlayerCount int    `json:"currentPlayerCount"`
@@ -27,18 +29,20 @@ type ListResponseBody struct {
 	Players            string `json:"players"`
 }
 
-// ListResponse - The body of a list response
+// ListResponse The body of a list response
 type ListResponse struct {
 	*protocol.Packet
 	Body ListResponseBody `json:"body"`
 }
 
-// GetPlayers - Get the players from a list response
+// GetPlayers Get the players from a list response
 func (r *ListResponse) GetPlayers() []string {
 	return strings.Split(r.Body.Players, ", ")
 }
 
-// HandleList - Handle a list response
+// HandleList Handle a list response
+//
+//goland:noinspection GoUnusedParameter
 func HandleList(id string, msg []byte, packetJSON map[string]interface{}, packet *CommandResponse) {
 	list := &ListResponse{}
 	err := json.Unmarshal(msg, list)

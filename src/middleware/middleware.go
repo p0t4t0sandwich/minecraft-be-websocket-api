@@ -10,19 +10,19 @@ import (
 	"time"
 )
 
-// WrappedWriter - Wrapper for http.ResponseWriter
+// WrappedWriter Wrapper for http.ResponseWriter
 type WrappedWriter struct {
 	http.ResponseWriter
 	statusCode int
 }
 
-// WriteHeader - Write the header
+// WriteHeader Write the header
 func (w *WrappedWriter) WriteHeader(statusCode int) {
 	w.ResponseWriter.WriteHeader(statusCode)
 	w.statusCode = statusCode
 }
 
-// Hijack - Impl for the Hijack method
+// Hijack Impl for the Hijack method
 func (w *WrappedWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 	h, ok := w.ResponseWriter.(http.Hijacker)
 	if !ok {
@@ -31,10 +31,12 @@ func (w *WrappedWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 	return h.Hijack()
 }
 
-// Middleware - Middleware type
+// Middleware Middleware type
 type Middleware func(http.Handler) http.Handler
 
-// CreateStack - Create a stack of middlewares
+// CreateStack Create a stack of middlewares
+//
+//goland:noinspection GoUnusedExportedFunction
 func CreateStack(middlewares ...Middleware) Middleware {
 	return func(next http.Handler) http.Handler {
 		for i := len(middlewares) - 1; i >= 0; i-- {
@@ -44,7 +46,7 @@ func CreateStack(middlewares ...Middleware) Middleware {
 	}
 }
 
-// RequestLoggerMiddleware - Log all requests
+// RequestLoggerMiddleware Log all requests
 func RequestLoggerMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()

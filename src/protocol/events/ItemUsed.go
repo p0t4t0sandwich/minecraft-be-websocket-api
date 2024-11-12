@@ -7,7 +7,7 @@ import (
 	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/mctypes"
 )
 
-// ItemUsedBody
+// ItemUsedBody The body of an item used event
 type ItemUsedBody struct {
 	Count     int            `json:"count"`
 	Item      mctypes.Item   `json:"item"`
@@ -15,13 +15,15 @@ type ItemUsedBody struct {
 	UseMethod int            `json:"useMethod"`
 }
 
-// ItemUsedEvent
+// ItemUsedEvent Event for when an item is used
 type ItemUsedEvent struct {
 	*EventPacket
 	Body ItemUsedBody `json:"body"`
 }
 
-// HandleItemUsed
+// HandleItemUsed Handle the item used event
+//
+//goland:noinspection GoUnusedParameter
 func HandleItemUsed(id string, msg []byte, packetJSON map[string]interface{}, event *EventPacket) {
 	itemUsed := &ItemUsedEvent{EventPacket: event}
 	body, err := json.Marshal(event.Body)

@@ -8,29 +8,29 @@ import (
 	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol"
 )
 
-// CommandTextResponse - The body of a command text response message
+// CommandTextResponse The body of a command text response message
 type CommandTextResponse string
 
-// Command Origin Types
+// OriginType Command Origin Types
 type OriginType string
 
 const (
 	OriginTypePlayer OriginType = "player"
 )
 
-// CommandOrigin - The origin of a command message
+// CommandOrigin The origin of a command message
 type CommandOrigin struct {
 	Type OriginType `json:"type"`
 }
 
-// CommandBody - The body of a command message
+// CommandBody The body of a command message
 type CommandBody struct {
 	Version     int           `json:"version"`
 	Origin      CommandOrigin `json:"origin"`
 	CommandLine string        `json:"commandLine"`
 }
 
-// NewCommandPacket - Create a new command packet
+// NewCommandPacket Create a new command packet
 func NewCommandPacket(command string) *protocol.Packet {
 	return &protocol.Packet{
 		Header: protocol.Header{
@@ -47,13 +47,15 @@ func NewCommandPacket(command string) *protocol.Packet {
 	}
 }
 
-// CommandResponse - The body of a command response message
+// CommandResponse The body of a command response message
 type CommandResponse struct {
 	*protocol.Packet
 	Body protocol.Body `json:"body"`
 }
 
-// NewCommandResponse - Create a new command response packet
+// NewCommandResponse Create a new command response packet
+//
+//goland:noinspection GoUnusedExportedFunction
 func NewCommandResponse(packet *protocol.Packet) *CommandResponse {
 	bodyMap := packet.Body.(map[string]interface{})
 	if _, ok := bodyMap["statusMessage"]; !ok {
@@ -69,12 +71,12 @@ func NewCommandResponse(packet *protocol.Packet) *CommandResponse {
 	}
 }
 
-// Float64ToString - Converts a float64 to a string
+// Float64ToString Converts a float64 to a string
 func Float64ToString(f float64) string {
 	return strconv.FormatFloat(f, 'f', -1, 64)
 }
 
-// GetCommandListeners - Handle a command packet
+// GetCommandListeners Handle a command packet
 func GetCommandListeners() map[CommandName]func(string, []byte, map[string]interface{}, *CommandResponse) {
 	return map[CommandName]func(string, []byte, map[string]interface{}, *CommandResponse){
 		Effect:      HandleEffect,

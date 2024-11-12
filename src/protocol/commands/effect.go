@@ -11,17 +11,21 @@ import (
 
 // effect <player: target> <effect: Effect> [seconds: int] [amplifier: int] [hideParticles: Boolean]
 
-// NewEffectRequest - Sends an effect request
+// NewEffectRequest Sends an effect request
+//
+//goland:noinspection GoUnusedExportedFunction
 func NewEffectRequest(target, effect string, seconds, amplifier int, hideParticles bool) *protocol.Packet {
 	return NewCommandPacket(fmt.Sprintf("effect %v %v %v %v %v", target, effect, seconds, amplifier, hideParticles))
 }
 
-// NewEffectClearRequest - Sends an effect clear request
+// NewEffectClearRequest Sends an effect clear request
+//
+//goland:noinspection GoUnusedExportedFunction
 func NewEffectClearRequest(target, effect string) *protocol.Packet {
 	return NewCommandPacket(fmt.Sprintf("effect %v clear %v", target, effect))
 }
 
-// EffectResponseBody - The body of an effect response
+// EffectResponseBody The body of an effect response
 type EffectResponseBody struct {
 	*protocol.Body
 	Player    []string `json:"player"`
@@ -30,13 +34,15 @@ type EffectResponseBody struct {
 	Amplifier int      `json:"amplifier,omitempty"`
 }
 
-// EffectResponse - The body of an effect response
+// EffectResponse The body of an effect response
 type EffectResponse struct {
 	*protocol.Packet
 	Body EffectResponseBody `json:"body"`
 }
 
-// HandleEffect - Handle an effect response
+// HandleEffect Handle an effect response
+//
+//goland:noinspection GoUnusedParameter
 func HandleEffect(id string, msg []byte, packetJSON map[string]interface{}, packet *CommandResponse) {
 	effect := &EffectResponse{}
 	err := json.Unmarshal(msg, effect)

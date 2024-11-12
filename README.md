@@ -14,182 +14,41 @@ You need to disable encrypted web sockets for this to work. There's no way in he
 
 ## Usage
 
-### Websocket API
+### Connecting to the Websocket from in-game or in a server's console
 
-`index.ts`
-
-```typescript
-import { MinecraftWebSocket } from "./lib/MinecraftWebSocket.js";
-
-// Import Plugins
-import { ExamplePlugin } from "./plugins/ExamplePlugin.js";
-
-async function main() {
-    // Minecraft Web Socket
-    const WEBSOCKET_PORT: number = <number><unknown>process.env.WEBSOCKET_PORT || 4005;
-    const mwss: MinecraftWebSocket = new MinecraftWebSocket(WEBSOCKET_PORT);
-
-    // Minecraft REST API
-    const REST_PORT: number = <number><unknown>process.env.REST_PORT || 4006;
-    mwss.startRestServer(REST_PORT);
-
-    // Load plugins
-    await mwss.loadPlugin(new ExamplePlugin());
-}
-main();
+Note: for some reason you can't run the command from the console, or from in-game. Feel free to submit a PR if you know a workaround.
 
 ```
-
-`./plugin/ExamplePlugin.ts`
-
-```typescript
-import { BedrockServer } from "../lib/BedrockServer.js";
-import { MinecraftWebSocket } from "../lib/MinecraftWebSocket.js";
-import { Plugin } from "../lib/Plugin.js";
-import { BedrockEvent, EventName, PlayerMessageEvent } from "../lib/events/Events.js";
-
-export class ExamplePlugin extends Plugin {
-    // Constructor
-    constructor() {
-        // Set plugin info
-        super(
-            "Example Plugin",
-            "An example plugin for MWSS.",
-            "1.0.0",
-            "p0t4t0sandwich"
-        );
-
-        // Set listeners
-        this.setListeners([
-            {
-                eventName: EventName.PlayerMessage,
-                callback: async (event: PlayerMessageEvent) => {
-                    const playerName: string = event.body.sender;
-                    const message: string = event.body.message;
-                    const server: BedrockServer = this.mwss.getServer(event.server);
-
-                    // Ignore messages from the websocket server
-                    if (event.body.sender == "Teacher") return;
-
-                    await server.sendCommand(`say ${playerName} said ${message}`);
-                }
-            }
-        ]);
-    }
-
-    // Methods
-
-    // Start
-    async start(mwss: MinecraftWebSocket) {
-        this.mwss = mwss;
-        console.log("Example plugin started!");
-    }
-}
+/connect ws://localhost:8080/ws/someid
 ```
 
 ### REST API
 
 #### Send Command
 
-URL encoded query/slug parameters:
-
 ```http
-POST /command/:server?command=say Hello World!
-POST /command?server=ServerName&command=say Hello World!
+POST /cmd/{id}
 ```
 
 JSON body:
 
 ```json
 {
-    "server": "ServerName",
-    "command": "say Hello World!"
-}
-```
-
-JSON response:
-
-```json
-{
-    "header": {
-        "requestId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-        "messagePurpose": "commandResponse",
-        "version": 1
-    },
-    "body": {
-        "message": "Hello World!",
-        "statusCode": 0
-    }
+    "cmd": "say Hello World"
 }
 ```
 
 #### Subscribe to an Event
 
-URL encoded query/slug parameters:
-
 ```http
-POST /event/:server?eventName=PlayerMessage?callback_uri=http://localhost:4000/event
-POST /event?server=ServerName&eventName=PlayerMessage?callback_uri=http://localhost:4000/event
-```
-
-JSON body:
-
-```json
-{
-    "server": "ServerName",
-    "eventName": "PlayerMessage",
-    "callback_uri": "http://localhost:4000/event"
-}
-```
-
-JSON response:
-
-```json
-{
-    "message": "Subscribed to PlayerMessage",
-}
+POST /api/event/{id}/{eventName}
 ```
 
 #### Unsubscribe from an Event
 
-URL encoded query/slug parameters:
-
 ```http
-DELETE /event/:server?eventName=PlayerMessage?callback_uri=http://localhost:4000/event
-DELETE /event?server=ServerName&eventName=PlayerMessage?callback_uri=http://localhost:4000/event
+DELETE /api/event/{id}/{eventName}
 ```
-
-JSON body:
-
-```json
-{
-    "server": "ServerName",
-    "eventName": "PlayerMessage",
-    "callback_uri": "http://localhost:4000/event"
-}
-```
-
-JSON response:
-
-```json
-{
-    "message": "Unsubscribed from PlayerMessage",
-}
-```
-
-## TODO
-
-- [x] Have command feedback be sent back to the method that sent the command
-  - [ ] include timeout error
-- [x] Build SDK for interacting with the API
-  - [ ] Set up helper function to set up a simple webserver for event callbacks/webhooks
-- [x] Abstracted custom Command API/simplification of commands
-- [ ] Build a plugin for some sort of passthrough; so you can still use the classroom tool
-  - [ ] Some sort of generic packet event
-- [x] A full permissions API
-  - [x] Text based permissions -- for now
-  - [ ] Node based permissions
-- [ ] Create way to mute certain events in the log (eg, PlayerTransform)
 
 ## Resources
 

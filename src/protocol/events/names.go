@@ -3,6 +3,7 @@ package events
 // EventName enum
 type EventName string
 
+//goland:noinspection GoUnusedConst
 const (
 	AdditionalContentLoaded           EventName = "AdditionalContentLoaded"
 	AgentCommand                      EventName = "AgentCommand"

@@ -13,35 +13,43 @@ import (
 // tp <target: target> <destination: x y z>
 // tp <target: target> <destination: target>
 
-// NewTeleportRequest - Sends a teleport request
+// NewTeleportRequest Sends a teleport request
+//
+//goland:noinspection GoUnusedExportedFunction
 func NewTeleportRequest(destination string) *protocol.Packet {
 	return NewCommandPacket("tp " + destination)
 }
 
-// NewTeleportRequestWithCoordinates - Sends a teleport request with coordinates
+// NewTeleportRequestWithCoordinates Sends a teleport request with coordinates
+//
+//goland:noinspection GoUnusedExportedFunction
 func NewTeleportRequestWithCoordinates(target string, x, y, z float64) *protocol.Packet {
 	return NewCommandPacket("tp " + target + " " + Float64ToString(x) + " " + Float64ToString(y) + " " + Float64ToString(z))
 }
 
-// NewTeleportRequestWithTarget - Sends a teleport request with a target
+// NewTeleportRequestWithTarget Sends a teleport request with a target
+//
+//goland:noinspection GoUnusedExportedFunction
 func NewTeleportRequestWithTarget(target, destination string) *protocol.Packet {
 	return NewCommandPacket("tp " + target + " " + destination)
 }
 
-// TeleportResponseBody - The body of a teleport response
+// TeleportResponseBody The body of a teleport response
 type TeleportResponseBody struct {
 	*protocol.Body
 	Destination mctypes.Position `json:"destination"`
 	Victim      []string         `json:"victim"`
 }
 
-// TeleportResponse - The body of a teleport response
+// TeleportResponse The body of a teleport response
 type TeleportResponse struct {
 	*protocol.Packet
 	Body TeleportResponseBody `json:"body"`
 }
 
-// HandleTeleport - Handle a teleport response
+// HandleTeleport Handle a teleport response
+//
+//goland:noinspection GoUnusedParameter
 func HandleTeleport(id string, msg []byte, packetJSON map[string]interface{}, packet *CommandResponse) {
 	teleport := &TeleportResponse{}
 	err := json.Unmarshal(msg, teleport)

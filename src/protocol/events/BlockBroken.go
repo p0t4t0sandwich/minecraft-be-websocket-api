@@ -7,7 +7,7 @@ import (
 	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/mctypes"
 )
 
-// BlockBrokenBody
+// BlockBrokenBody The body of a block broken event
 type BlockBrokenBody struct {
 	Block             mctypes.Block  `json:"block"`
 	Count             int            `json:"count"`
@@ -17,13 +17,15 @@ type BlockBrokenBody struct {
 	Varient           int            `json:"varient"`
 }
 
-// BlockBrokenEvent
+// BlockBrokenEvent Event for when a block is broken
 type BlockBrokenEvent struct {
 	*EventPacket
 	Body BlockBrokenBody `json:"body"`
 }
 
-// HandleBlockBroken
+// HandleBlockBroken Handle the block broken event
+//
+//goland:noinspection GoUnusedParameter
 func HandleBlockBroken(id string, msg []byte, packetJSON map[string]interface{}, event *EventPacket) {
 	blockBroken := &BlockBrokenEvent{EventPacket: event}
 	body, err := json.Marshal(event.Body)

@@ -9,24 +9,28 @@ import (
 
 // say <message: string>
 
-// NewSayRequest - Sends a say request
+// NewSayRequest Sends a say request
+//
+//goland:noinspection GoUnusedExportedFunction
 func NewSayRequest(message string) *protocol.Packet {
 	return NewCommandPacket("say " + message)
 }
 
-// SayResponseBody - The body of a say response
+// SayResponseBody The body of a say response
 type SayResponseBody struct {
 	*protocol.Body
 	Message string `json:"message"`
 }
 
-// SayResponse - The body of a say response
+// SayResponse The body of a say response
 type SayResponse struct {
 	*protocol.Packet
 	Body SayResponseBody `json:"body"`
 }
 
-// HandleSay - Handle a say response
+// HandleSay Handle a say response
+//
+//goland:noinspection GoUnusedParameter
 func HandleSay(id string, msg []byte, packetJSON map[string]interface{}, packet *CommandResponse) {
 	say := &SayResponse{}
 	err := json.Unmarshal(msg, say)

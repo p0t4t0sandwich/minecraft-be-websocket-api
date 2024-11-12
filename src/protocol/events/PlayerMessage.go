@@ -5,16 +5,17 @@ import (
 	"log"
 )
 
-// MessageType
+// MessageType The type of message
 type MessageType string
 
-var (
+//goland:noinspection GoUnusedConst
+const (
 	Chat MessageType = "chat"
 	Say  MessageType = "say"
 	Tell MessageType = "tell"
 )
 
-// PlayerMessageBody
+// PlayerMessageBody The body of a player message event
 type PlayerMessageBody struct {
 	Message  string      `json:"message"`
 	Sender   string      `json:"sender"`
@@ -22,13 +23,15 @@ type PlayerMessageBody struct {
 	Type     MessageType `json:"type"`
 }
 
-// PlayerMessageEvent
+// PlayerMessageEvent Event for when a player sends a message
 type PlayerMessageEvent struct {
 	*EventPacket
 	Body PlayerMessageBody `json:"body"`
 }
 
-// HandlePlayerMessage
+// HandlePlayerMessage Handle the player message event
+//
+//goland:noinspection GoUnusedParameter
 func HandlePlayerMessage(id string, msg []byte, packetJSON map[string]interface{}, event *EventPacket) {
 	playerMessage := &PlayerMessageEvent{EventPacket: event}
 	body, err := json.Marshal(event.Body)

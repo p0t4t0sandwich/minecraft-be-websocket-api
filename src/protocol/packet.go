@@ -2,13 +2,13 @@ package protocol
 
 import "github.com/google/uuid"
 
-// Packet - General packet structure
+// Packet General packet structure
 type Packet struct {
 	Header Header      `json:"header"`
 	Body   interface{} `json:"body"`
 }
 
-// Header - The header of a message
+// Header The header of a message
 type Header struct {
 	RequestId      uuid.UUID   `json:"requestId"`
 	MessagePurpose MessageType `json:"messagePurpose"`
@@ -16,9 +16,10 @@ type Header struct {
 	Version        int         `json:"version"`
 }
 
-// MessageType - The type of a message
+// MessageType The type of message
 type MessageType string
 
+//goland:noinspection GoUnusedConst
 const (
 	CommandRequestType  MessageType = "commandRequest"
 	CommandResponseType MessageType = "commandResponse"
@@ -28,8 +29,7 @@ const (
 	UnsubscribeType     MessageType = "unsubscribe"
 )
 
-// header.messagePurpose = "error"
-// ErrorBody - The body of an error message
+// Body The body of a message
 type Body struct {
 	StatusCode    int    `json:"statusCode"`
 	StatusMessage string `json:"statusMessage"`

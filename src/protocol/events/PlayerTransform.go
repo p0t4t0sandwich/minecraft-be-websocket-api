@@ -7,18 +7,20 @@ import (
 	"github.com/p0t4t0sandwich/minecraft-be-websocket-api/src/protocol/mctypes"
 )
 
-// PlayerTransformBody - PlayerTransform event body
+// PlayerTransformBody PlayerTransform event body
 type PlayerTransformBody struct {
 	Player mctypes.Player `json:"player"`
 }
 
-// PlayerTransformEvent - PlayerTransform event
+// PlayerTransformEvent PlayerTransform event
 type PlayerTransformEvent struct {
 	*EventPacket
 	Body PlayerTransformBody `json:"body"`
 }
 
-// HandlePlayerTransform - Handle a PlayerTransform event
+// HandlePlayerTransform Handle a PlayerTransform event
+//
+//goland:noinspection GoUnusedParameter
 func HandlePlayerTransform(id string, msg []byte, packetJSON map[string]interface{}, event *EventPacket) {
 	playerTransform := &PlayerTransformEvent{EventPacket: event}
 	body, err := json.Marshal(event.Body)

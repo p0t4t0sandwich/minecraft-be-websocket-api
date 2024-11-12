@@ -11,7 +11,9 @@ import (
 
 // kill <entity: target>[params]
 
-// NewKillRequest - Sends an kill request
+// NewKillRequest Sends a kill request
+//
+//goland:noinspection GoUnusedExportedFunction
 func NewKillRequest(target string, params ...string) *protocol.Packet {
 	command := fmt.Sprintf("kill %v", target)
 	if len(params) > 0 {
@@ -20,19 +22,21 @@ func NewKillRequest(target string, params ...string) *protocol.Packet {
 	return NewCommandPacket(command)
 }
 
-// KillResponseBody - The body of an kill response
+// KillResponseBody The body of a kill response
 type KillResponseBody struct {
 	*protocol.Body
 	TargetName []string `json:"targetname"`
 }
 
-// KillResponse - The body of an kill response
+// KillResponse The body of a kill response
 type KillResponse struct {
 	*protocol.Packet
 	Body KillResponseBody `json:"body"`
 }
 
-// HandleKill - Handle an kill response
+// HandleKill Handle a kill response
+//
+//goland:noinspection GoUnusedParameter
 func HandleKill(id string, msg []byte, packetJSON map[string]interface{}, packet *CommandResponse) {
 	kill := &KillResponse{}
 	err := json.Unmarshal(msg, kill)

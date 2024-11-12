@@ -10,30 +10,36 @@ import (
 
 // summon <entityType: string> <destination: string>
 
-// NewSummonRequest - Sends a summon request
+// NewSummonRequest Sends a summon request
+//
+//goland:noinspection GoUnusedExportedFunction
 func NewSummonRequest(entityType string, destination string) *protocol.Packet {
 	return NewCommandPacket("summon " + entityType + " " + destination)
 }
 
-// NewSummonRequestWithCoordinates - Sends a summon request with coordinates
+// NewSummonRequestWithCoordinates Sends a summon request with coordinates
+//
+//goland:noinspection GoUnusedExportedFunction
 func NewSummonRequestWithCoordinates(entityType string, x, y, z float64) *protocol.Packet {
 	return NewCommandPacket("summon " + entityType + " " + Float64ToString(x) + " " + Float64ToString(y) + " " + Float64ToString(z))
 }
 
-// SummonResponseBody - The body of a summon response
+// SummonResponseBody The body of a summon response
 type SummonResponseBody struct {
 	*protocol.Body
 	EntityType string           `json:"entityType"`
 	SpawnPos   mctypes.Position `json:"spawnPos"`
 }
 
-// SummonResponse - The body of a summon response
+// SummonResponse The body of a summon response
 type SummonResponse struct {
 	*protocol.Packet
 	Body SummonResponseBody `json:"body"`
 }
 
-// HandleSummon - Handle a summon response
+// HandleSummon Handle a summon response
+//
+//goland:noinspection GoUnusedParameter
 func HandleSummon(id string, msg []byte, packetJSON map[string]interface{}, packet *CommandResponse) {
 	summon := &SummonResponse{}
 	err := json.Unmarshal(msg, summon)

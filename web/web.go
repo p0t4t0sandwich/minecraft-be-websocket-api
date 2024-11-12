@@ -70,7 +70,7 @@ func (c *Config) RenamePlayer(id int, name string) {
 	}
 }
 
-// Just removes their Fake name, not the stored player obj
+// RemovePlayer Just removes their Fake name, not the stored player obj
 func (c *Config) RemovePlayer(id int) {
 	p := c.GetPlayerById(id)
 	if p != nil {
@@ -122,10 +122,16 @@ func (w *LogWriter) Write(p []byte) (n int, err error) {
 	if err != nil {
 		return 0, err
 	}
-	defer f.Close()
+	defer func(f *os.File) {
+		err := f.Close()
+		if err != nil {
+			log.Println(err.Error())
+		}
+	}(f)
 	return f.Write(p)
 }
 
+//goland:noinspection GoNameStartsWithPackageName
 type WebServer struct {
 	wss        *server.WebSocketServer
 	Config     *Config
@@ -147,23 +153,48 @@ func NewWebServer(wss *server.WebSocketServer, Config *Config) *WebServer {
 	go func() {
 		time.Sleep(1 * time.Second)
 		for _, bannedMob := range ws.Config.BannedMobs {
-			wss.SendPacket(ws.Label, commands.NewCommandPacket(fmt.Sprintf("kill @e[type=%s]", bannedMob)))
+			err := wss.SendPacket(ws.Label, commands.NewCommandPacket(fmt.Sprintf("kill @e[type=%s]", bannedMob)))
+			if err != nil {
+				log.Println(err.Error())
+				return
+			}
 		}
 		for _, bannedItem := range ws.Config.BannedItems {
-			wss.SendPacket(ws.Label, commands.NewCommandPacket(fmt.Sprintf("clear @a %s", bannedItem)))
+			err := wss.SendPacket(ws.Label, commands.NewCommandPacket(fmt.Sprintf("clear @a %s", bannedItem)))
+			if err != nil {
+				log.Println(err.Error())
+				return
+			}
 		}
 	}()
 
 	return ws
 }
 
+//goland:noinspection GoUnusedParameter
 func (ws *WebServer) HandleWebSocketConnect(id string, msg []byte, packetJSON map[string]interface{}, event *events.EventPacket) {
-	ws.wss.SendPacket(ws.Label, events.NewEventSubPacket(events.PlayerJoin, protocol.SubscribeType))
-	ws.wss.SendPacket(ws.Label, events.NewEventSubPacket(events.PlayerLeave, protocol.SubscribeType))
-	ws.wss.SendPacket(ws.Label, events.NewEventSubPacket(events.PlayerTravelled, protocol.SubscribeType))
-	ws.wss.SendPacket(ws.Label, events.NewEventSubPacket(events.PlayerMessage, protocol.SubscribeType))
+	err := ws.wss.SendPacket(ws.Label, events.NewEventSubPacket(events.PlayerJoin, protocol.SubscribeType))
+	if err != nil {
+		log.Println(err.Error())
+		err = nil
+	}
+	err = ws.wss.SendPacket(ws.Label, events.NewEventSubPacket(events.PlayerLeave, protocol.SubscribeType))
+	if err != nil {
+		log.Println(err.Error())
+		err = nil
+	}
+	err = ws.wss.SendPacket(ws.Label, events.NewEventSubPacket(events.PlayerTravelled, protocol.SubscribeType))
+	if err != nil {
+		log.Println(err.Error())
+		err = nil
+	}
+	err = ws.wss.SendPacket(ws.Label, events.NewEventSubPacket(events.PlayerMessage, protocol.SubscribeType))
+	if err != nil {
+		log.Println(err.Error())
+	}
 }
 
+//goland:noinspection GoUnusedParameter
 func (ws *WebServer) HandlePlayerJoin(id string, msg []byte, packetJSON map[string]interface{}, event *events.EventPacket) {
 	playerJoin := &events.PlayerJoinEvent{EventPacket: event}
 	body, err := json.Marshal(event.Body)
@@ -181,6 +212,7 @@ func (ws *WebServer) HandlePlayerJoin(id string, msg []byte, packetJSON map[stri
 	ws.Config.Save()
 }
 
+//goland:noinspection GoUnusedParameter
 func (ws *WebServer) HandlePlayerLeave(id string, msg []byte, packetJSON map[string]interface{}, event *events.EventPacket) {
 	playerLeave := &events.PlayerLeaveEvent{EventPacket: event}
 	body, err := json.Marshal(event.Body)
@@ -201,6 +233,7 @@ func (ws *WebServer) HandlePlayerLeave(id string, msg []byte, packetJSON map[str
 	}
 }
 
+//goland:noinspection GoUnusedParameter
 func (ws *WebServer) HandlePlayerTravelled(id string, msg []byte, packetJSON map[string]interface{}, event *events.EventPacket) {
 	playerTravelled := &events.PlayerTravelledEvent{EventPacket: event}
 	body, err := json.Marshal(event.Body)
@@ -263,12 +296,21 @@ func (ws *WebServer) ApplyRoutes(router *http.ServeMux) *http.ServeMux {
 		htmlList := "<div id=\"entityList\"><p>Banned entities:</p><ul class=\"bg-orange-200\">"
 		for _, bannedMob := range ws.Config.BannedMobs {
 			// TODO: Improve this later
-			ws.wss.SendPacket(ws.Label, commands.NewCommandPacket(fmt.Sprintf("remove @e[type=%s]", bannedMob)))
+			err := ws.wss.SendPacket(ws.Label, commands.NewCommandPacket(fmt.Sprintf("remove @e[type=%s]", bannedMob)))
+			if err != nil {
+				log.Println(err.Error())
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 			//
 			htmlList += fmt.Sprintf("<li>%s</li>", bannedMob)
 		}
 		htmlList += "</ul><div hx-post=\"/entitylist\" hx-trigger=\"every 2s\" hx-target=\"#entityList\" hx-swap=\"outerHTML\"></div></div>"
-		w.Write([]byte(htmlList))
+		_, err := w.Write([]byte(htmlList))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}))
 	router.Handle("POST /banitem", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		item := r.FormValue("item")
@@ -306,12 +348,20 @@ func (ws *WebServer) ApplyRoutes(router *http.ServeMux) *http.ServeMux {
 		htmlList := "<div id=\"itemList\"><p>Banned items:</p><ul class=\"bg-orange-200\">"
 		for _, bannedItem := range ws.Config.BannedItems {
 			// TODO: Improve this later
-			ws.wss.SendPacket(ws.Label, commands.NewCommandPacket(fmt.Sprintf("clear @a %s", bannedItem)))
+			err := ws.wss.SendPacket(ws.Label, commands.NewCommandPacket(fmt.Sprintf("clear @a %s", bannedItem)))
+			if err != nil {
+				log.Println(err.Error())
+				return
+			}
 			//
 			htmlList += fmt.Sprintf("<li>%s</li>", bannedItem)
 		}
 		htmlList += "</ul><div hx-post=\"/itemlist\" hx-trigger=\"every 2s\" hx-target=\"#itemList\" hx-swap=\"outerHTML\"></div></div>"
-		w.Write([]byte(htmlList))
+		_, err := w.Write([]byte(htmlList))
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	}))
 	router.Handle("POST /playerlist", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		htmlList := "<div id=\"playerList\"><p>Players:</p><ul class=\"bg-orange-200\">"
@@ -319,7 +369,11 @@ func (ws *WebServer) ApplyRoutes(router *http.ServeMux) *http.ServeMux {
 			htmlList += fmt.Sprintf("<table><tr><td>%s</td><td>%s</td></tr></table>", player.Name, player.FakeName)
 		}
 		htmlList += "</ul><div hx-post=\"/playerlist\" hx-trigger=\"every 2s\" hx-target=\"#playerList\" hx-swap=\"outerHTML\"></div></div>"
-		w.Write([]byte(htmlList))
+		_, err := w.Write([]byte(htmlList))
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	}))
 	router.Handle("POST /eventlog", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		htmlList := "<div id=\"eventLog\"><p>Recent events:</p><ul class=\"bg-yellow-200\">"
@@ -327,7 +381,11 @@ func (ws *WebServer) ApplyRoutes(router *http.ServeMux) *http.ServeMux {
 			htmlList += fmt.Sprintf("<li>%s</li>", event)
 		}
 		htmlList += "</ul><div hx-post=\"/eventlog\" hx-trigger=\"every 2s\" hx-target=\"#eventLog\" hx-swap=\"outerHTML\"></div></div>"
-		w.Write([]byte(htmlList))
+		_, err := w.Write([]byte(htmlList))
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	}))
 	return router
 }

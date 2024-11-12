@@ -39,7 +39,7 @@ templ Root() {
     </script>
 		<body>
 			<!-- This is a dummy frame to prevent the page from reloading when a form is submitted -->
-			<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+			<iframe name="dummy-frame" id="dummy-frame" style="display: none;"></iframe>
 			<p class="flex flex-row justify-center items-center text-lg">Sci-Fi Minecraft Camp Administration</p>
 			<!-- Set server label -->
 			@SetLabelForm()
@@ -78,7 +78,8 @@ templ Root() {
 
 templ SetLabelForm() {
 	<p class="py-2">Set server label:</p>
-	<form onSubmit="setLabel()" action="/setlabel" target="dummyframe">
+	<form onSubmit="setLabel()" action="/setlabel" target="dummy-frame">
+		<label for="label"></label>
 		<input type="text" id="label" name="label" placeholder="Server Label"/>
 		<input type="submit" value="Submit" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
 	</form>
@@ -87,7 +88,9 @@ templ SetLabelForm() {
 templ CustomCommandForm() {
 	<div class="p-3">
 		<p>Custom command:</p>
-		<form onSubmit="sendCmd(document.getElementById('customCmd').value)" target="dummyframe">
+		<!--suppress JSUnresolvedReference -->
+		<form onSubmit="sendCmd(document.getElementById('customCmd').value)" target="dummy-frame">
+			<label for="customCmd"></label>
 			<input type="text" id="customCmd" name="customCmd" placeholder="Custom Command"/>
 			<input type="submit" value="Submit" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
 		</form>
@@ -110,17 +113,20 @@ templ PlayerListTable() {
 templ EntityBanForm() {
 	<div class="p-3">
 		<p>Remove entity:</p>
-		<form onSubmit="sendCmd('kill @e[type=' + document.getElementById('entityType').value + ']')" target="dummyframe">
+		<!--suppress JSUnresolvedReference -->
+		<form onSubmit="sendCmd('kill @e[type=' + document.getElementById('entityType').value + ']')" target="dummy-frame">
+			<label for="entityType"></label>
 			<input type="text" id="entityType" name="entityType" placeholder="Remove Entity"/>
 			<input type="submit" value="Remove" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
 		</form>
 		<p>Ban an entity:</p>
-		<form method="POST" action="/banentity" target="dummyframe">
+		<form method="POST" action="/banentity" target="dummy-frame">
+			<label for="entity"></label>
 			<input type="text" id="entity" name="entity" placeholder="Ban Entity"/>
 			<input type="submit" value="Ban" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
 		</form>
 		<p>Unban an entity:</p>
-		<form method="DELETE" action="/banentity" target="dummyframe">
+		<form method="DELETE" action="/banentity" target="dummy-frame">
 			<input type="text" id="entity" name="entity" placeholder="Unban Entity"/>
 			<input type="submit" value="Unban" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
 		</form>
@@ -142,18 +148,23 @@ templ EntityList() {
 templ ItemBanForm() {
 	<div class="p-3">
 		<p>Clear player inventory:</p>
-		<form onSubmit="sendCmd('clear ' + document.getElementById('clearPlayer').value + ' ' + document.getElementById('clearItem').value)" target="dummyframe">
+		<!--suppress JSUnresolvedReference -->
+        <form onSubmit="sendCmd('clear ' + document.getElementById('clearPlayer').value + ' ' + document.getElementById('clearItem').value)" target="dummy-frame">
+			<label for="clearPlayer"></label>
 			<input type="text" id="clearPlayer" name="player" placeholder="Player"/>
+			<label for="clearItem"></label>
 			<input type="text" id="clearItem" name="item" placeholder="Item"/>
 			<input type="submit" value="Clear" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
 		</form>
 		<p>Ban an item:</p>
-		<form method="POST" action="/banitem" target="dummyframe">
+		<form method="POST" action="/banitem" target="dummy-frame">
+			<label for="item"></label>
 			<input type="text" id="item" name="item" placeholder="Ban Item"/>
 			<input type="submit" value="Ban" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
 		</form>
 		<p>Unban an item:</p>
-		<form method="DELETE" action="/banitem" target="dummyframe">
+		<form method="DELETE" action="/banitem" target="dummy-frame">
+		    <label for="item"></label>
 			<input type="text" id="item" name="item" placeholder="Unban Item"/>
 			<input type="submit" value="Unban" class="font-bold py-2 px-4 rounded bg-blue-500 text-white"/>
 		</form>

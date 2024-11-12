@@ -3,30 +3,32 @@ package mctypes
 // NameSpace enum
 type NameSpace string
 
+//goland:noinspection GoUnusedConst
 const (
 	MinecraftNameSpace = "minecraft"
 )
 
-// Block
+// Block type
 type Block struct {
 	Item
 }
 
-// Item
+// Item type
 type Item struct {
 	Aux       int       `json:"aux"`
 	Id        string    `json:"id"`
 	NameSpace NameSpace `json:"namespace"`
 }
 
-// PlayerType
+// PlayerType enum
 type PlayerType string
 
+//goland:noinspection GoUnusedConst
 const (
 	MinecraftPlayer PlayerType = "minecraft:player"
 )
 
-// Player
+// Player type
 type Player struct {
 	Color     string     `json:"color"`
 	Dimension int        `json:"dimension"`
@@ -38,14 +40,14 @@ type Player struct {
 	YRot      float64    `json:"yRot"`
 }
 
-// Position
+// Position type
 type Position struct {
 	X float64 `json:"x"`
 	Y float64 `json:"y"`
 	Z float64 `json:"z"`
 }
 
-// Tool
+// Tool type
 type Tool struct {
 	Enchantments  []string `json:"enchantments"`
 	FreeStackSize int      `json:"freeStackSize"`
